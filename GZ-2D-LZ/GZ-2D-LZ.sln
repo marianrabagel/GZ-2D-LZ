@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GZ-2D-LZ", "GZ-2D-LZ\GZ-2D-LZ.csproj", "{98E447CE-ABE6-4C14-853A-D7D7A58F5E46}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GZ-2D-LZUnitTests", "GZ-2D-LZUnitTests\GZ-2D-LZUnitTests.csproj", "{B8294DF0-00E3-40C4-AF1A-4FB4BA65C30C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{98E447CE-ABE6-4C14-853A-D7D7A58F5E46}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98E447CE-ABE6-4C14-853A-D7D7A58F5E46}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98E447CE-ABE6-4C14-853A-D7D7A58F5E46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8294DF0-00E3-40C4-AF1A-4FB4BA65C30C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8294DF0-00E3-40C4-AF1A-4FB4BA65C30C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8294DF0-00E3-40C4-AF1A-4FB4BA65C30C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8294DF0-00E3-40C4-AF1A-4FB4BA65C30C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
