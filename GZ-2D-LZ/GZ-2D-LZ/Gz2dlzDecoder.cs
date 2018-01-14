@@ -3,13 +3,14 @@ using System.Xml;
 
 namespace G2_2D_LZ
 {
-    public class Gz2dlzDecoder
+    public class Gz2dlzDecoder : BaseClass
     {
-        private string _inputFileName;
 
-        public Gz2dlzDecoder(string inputFileName)
+        public Gz2dlzDecoder(string inputFileName) : base(inputFileName)
         {
-            _inputFileName = inputFileName;
+            int height = 0;
+            int width = 0;
+            InitializeTables(height, width);
         }
 
         public void Decode()

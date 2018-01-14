@@ -42,6 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseClass.cs" />
+    <Compile Include="BlockDimension.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -49,7 +51,9 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Gz2dlzDecoder.cs" />
     <Compile Include="Gz2dlzEncoder.cs" />
+    <Compile Include="PixelLocation.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
