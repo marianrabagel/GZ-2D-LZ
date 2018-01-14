@@ -10,7 +10,7 @@ namespace G2_2D_LZ
     {
         protected string _inputFileName;
         protected bool[,] matchFlag; //has true when a suitable match for a block is found
-        protected bool[,] encodedPixels; //has true when a pixel has been encoded
+        protected bool[,] isPixelEncoded; //has true when a pixel has been encoded
         protected PixelLocation[,] matchLocation; //position of the match relative to the block being encoded
         protected BlockDimension[,] matchDimenstions; //widht and heigth of the block being encoded
         protected double[,] residual; //difference between the pixel in the actual block and the matching block
@@ -25,7 +25,7 @@ namespace G2_2D_LZ
         protected void InitializeTables(int height, int width)
         {
             matchFlag = new bool[height, width];
-            encodedPixels = new bool[height, width];
+            isPixelEncoded = new bool[height, width];
             matchLocation = new PixelLocation[height, width];
             matchDimenstions = new BlockDimension[height, width];
             residual = new double[height, width];

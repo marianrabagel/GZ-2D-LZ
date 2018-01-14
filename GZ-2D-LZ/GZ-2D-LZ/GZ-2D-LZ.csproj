@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseClass.cs" />
+    <Compile Include="BestMatch.cs" />
     <Compile Include="BlockDimension.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Form1.cs">
