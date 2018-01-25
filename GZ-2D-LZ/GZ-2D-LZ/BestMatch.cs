@@ -8,8 +8,8 @@ namespace G2_2D_LZ
 {
     public class BestMatch
     {
-        public int bestMatchHeight = 0;
-        public int bestMatchWidth = 0;
-        public int bestMatchSize = 0;
+        public int Height = 0;
+        public int Width = 0;
+        public int Size = 0;
     }
 }

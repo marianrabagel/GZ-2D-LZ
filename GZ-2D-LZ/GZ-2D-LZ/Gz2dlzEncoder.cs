@@ -19,6 +19,15 @@ namespace G2_2D_LZ
 
         public void Encode()
         {
+            PredictFirstRow();
+            int y = 1;
+            int x = 0;
+
+            while (IsPixelEncoded[y, x])
+            {
+                //LocateTheBestAproximateMatchForGivenRootPixel(x,y,)
+            }
+
             //predict one row of pixels and record each prediction error in the prediction error table
             //advance the encoder to the next unencoded pixel
             //while (more pixels to be encoded)
@@ -34,8 +43,8 @@ namespace G2_2D_LZ
             // statistically encode the matching tables
             //output the encoded image
         }
-
-        private BestMatch LocateTheBestAproximateMatchForAGivenRootPixel(int x, int y, int rootX, int rootY)
+        
+        private BestMatch LocateTheBestAproximateMatchForGivenRootPixel(int x, int y, int rootX, int rootY)
         {
             var workImage = CloneOriginalImage();
 
@@ -50,10 +59,10 @@ namespace G2_2D_LZ
                 {
                     var yIndex = rootY + rowOffset;
                     var xIndex = rootX + colOffset;
-                    if (isPixelEncoded[yIndex, xIndex] ||
+                    if (IsPixelEncoded[yIndex, xIndex] ||
                         (yIndex >= y && xIndex >= x))
                     {
-                        if (isPixelEncoded[y + rowOffset, x + colOffset])
+                        if (IsPixelEncoded[y + rowOffset, x + colOffset])
                         {
                             colOffset++;
                         }
@@ -78,15 +87,36 @@ namespace G2_2D_LZ
                 //by widthOfTheMatchInThePreviousRow x rowOffset
                 var matchMse = 0; // the mse between those possible newly encoded pixels and their corresponding 
                 //pixels inside the matched area
-                if (matchSize >= bestMatch.bestMatchSize && matchMse <= Constants.MaxMse)
+                if (matchSize >= bestMatch.Size && matchMse <= Constants.MaxMse)
                 {
-                    bestMatch.bestMatchHeight = rowOffset;
-                    bestMatch.bestMatchWidth = widthOfTheMatchInThePreviousRow;
-                    bestMatch.bestMatchSize = matchSize;
+                    bestMatch.Height = rowOffset;
+                    bestMatch.Width = widthOfTheMatchInThePreviousRow;
+                    bestMatch.Size = matchSize;
                 }
             } while (widthOfTheMatchInThePreviousRow == 0 || y + rowOffset == workImage.GetLength(0));
 
             return bestMatch;
+        }
+
+        private void PredictFirstRow()
+        {
+            var width = _originalImage.GetLength(1);
+
+            for (int i = 0; i < width; i++)
+            {
+                IsPixelEncoded[0, i] = true;
+                PredictionError[0, i] = _originalImage[0, i] - GetPredictionValue(i, 0);
+            }
+        }
+
+        private int GetPredictionValue(int x, int y)
+        {
+            if (x == 0)
+            {
+                return 128;
+            }
+
+            return _originalImage[y, x - 1];
         }
 
         private byte[,] CloneOriginalImage()
@@ -106,7 +136,7 @@ namespace G2_2D_LZ
 
         private void SaveImageInMemory()
         {
-            using (Bitmap bitmap = new Bitmap(_inputFileName))
+            using (Bitmap bitmap = new Bitmap(InputFileName))
             {
                 _originalImage = new byte[bitmap.Height, bitmap.Width];
 
@@ -123,6 +153,16 @@ namespace G2_2D_LZ
         public byte[,] GetOriginalImage()
         {
             return _originalImage;
+        }
+
+        public double[,] GetPredictionError()
+        {
+            return PredictionError;
+        }
+
+        public bool[,] GetEncodedPixels()
+        {
+            return IsPixelEncoded;
         }
     }
 }
