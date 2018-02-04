@@ -7,17 +7,22 @@ namespace GZ_2D_LZUnitTests
     [TestClass]
     public class Gz2dlzCoderTests
     {
-        string inputFileName = @"E:\Workspaces\GZ-2D-LZ\GZ-2D-LZ\GZ-2D-LZUnitTests\TestData\test.bmp";
+        string inputImage5x6 = @"E:\Workspaces\GZ-2D-LZ\GZ-2D-LZ\GZ-2D-LZUnitTests\TestData\test.bmp";
+        string inputImage512x512 = @"E:\Workspaces\GZ-2D-LZ\GZ-2D-LZ\GZ-2D-LZUnitTests\TestData\test200.bmp";
+        string inputImageChess = @"E:\Workspaces\GZ-2D-LZ\GZ-2D-LZ\GZ-2D-LZUnitTests\TestData\testChess.bmp";
+
         private Gz2dlzEncoder encoder;
+
         [TestInitialize]
         public void Setup()
         {
-            encoder = new Gz2dlzEncoder(inputFileName);
+            
         }
 
         [TestMethod]
-        public void TestThatImageIsLoadedIntoMemory()
+        public void ImageIsLoadedIntoMemory()
         {
+            encoder = new Gz2dlzEncoder(inputImage5x6);
             byte[,] testImage =
             {
                 {0, 255, 0, 255, 0, 255},
@@ -41,9 +46,10 @@ namespace GZ_2D_LZUnitTests
         }
 
         [TestMethod]
+        [Ignore]
         public void EncodesTheFirstRowWithTheExpectedValues()
         {
-            encoder.Encode();
+            //encoder.PredictFirstRow();
 
             var predictionError = encoder.GetPredictionError();
             int y = 0;
@@ -54,11 +60,12 @@ namespace GZ_2D_LZUnitTests
                 Assert.AreEqual(firstRow[x], predictionError[y, x]);
             }
         }
-
-
+        
         [TestMethod]
         public void EncodesTheFirstRowIsMarkedAsEncoded()
         {
+            encoder = new Gz2dlzEncoder(inputImage5x6);
+
             encoder.Encode();
 
             var isEncodedPixel = encoder.GetEncodedPixels();
@@ -68,6 +75,99 @@ namespace GZ_2D_LZUnitTests
             {
                 Assert.IsTrue(isEncodedPixel[y, x]);
             }
+        }
+        
+        [TestMethod]
+        public void EncodeEncodesAllPixels()
+        {
+            encoder = new Gz2dlzEncoder(inputImage5x6);
+
+            encoder.Encode();
+
+            var isEncodedPixel = encoder.GetEncodedPixels();
+            for (int y = 0; y < isEncodedPixel.GetLength(0); y++)
+            {
+                for (int x = 0; x < isEncodedPixel.GetLength(1); x++)
+                {
+                    Assert.IsTrue(isEncodedPixel[y,x]);
+                }    
+            }
+        }
+        
+        [TestMethod]
+        public void EncodesHasNoMatchedPoints()
+        {
+            encoder = new Gz2dlzEncoder(inputImage5x6);
+
+            encoder.Encode();
+
+            var matchFlag = encoder.GetMatchFlag();
+            for (int y = 0; y < matchFlag.GetLength(0); y++)
+            {
+                for (int x = 0; x < matchFlag.GetLength(1); x++)
+                {
+                    Assert.IsFalse(matchFlag[y, x]);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void EncodesHasNoResidualValues()
+        {
+            encoder = new Gz2dlzEncoder(inputImage5x6);
+
+            encoder.Encode();
+
+            var residual = encoder.GetResidual();
+            for (int y = 0; y < residual.GetLength(0); y++)
+            {
+                for (int x = 0; x < residual.GetLength(1); x++)
+                {
+                    Assert.AreEqual(0, residual[y, x]);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void EncodesHasNoMatchLocation()
+        {
+            encoder = new Gz2dlzEncoder(inputImage5x6);
+
+            encoder.Encode();
+
+            var matchLocation = encoder.GetMatchLocation();
+            for (int y = 0; y < matchLocation.GetLength(0); y++)
+            {
+                for (int x = 0; x < matchLocation.GetLength(1); x++)
+                {
+                    Assert.AreEqual(null, matchLocation[y, x]);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void EncodesHasNoMatchDimensions()
+        {
+            encoder = new Gz2dlzEncoder(inputImage5x6);
+
+            encoder.Encode();
+
+            var matchDimensions = encoder.GetMatchDimensions();
+            for (int y = 0; y < matchDimensions.GetLength(0); y++)
+            {
+                for (int x = 0; x < matchDimensions.GetLength(1); x++)
+                {
+                    Assert.AreEqual(null, matchDimensions[y, x]);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void Test()
+        {
+            encoder = new Gz2dlzEncoder(inputImage512x512);
+            
+            encoder.Encode();
         }
     }
 }

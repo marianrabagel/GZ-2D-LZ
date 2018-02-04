@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
+using System.Windows.Forms;
 using GZ_2D_LZ;
 
 namespace G2_2D_LZ
@@ -20,12 +22,45 @@ namespace G2_2D_LZ
         public void Encode()
         {
             PredictFirstRow();
-            int y = 1;
-            int x = 0;
 
-            while (IsPixelEncoded[y, x])
+            for (int y = 1; y < WorkImage.GetLength(0); y++)
             {
-                //LocateTheBestAproximateMatchForGivenRootPixel(x,y,)
+                for (int x = 0; x < WorkImage.GetLength(1); x++)
+                {
+
+                    if (!IsPixelEncoded[y, x])
+                    {
+                        var rootPoint = new PixelLocation(GetRootX(x), GetRootY(y));
+                        var encoderPoint = new PixelLocation(x, y);
+
+                        var bestMatch = LocateTheBestAproximateMatchForGivenRootPixel(encoderPoint, rootPoint);
+
+                        if (bestMatch.Size > Constants.MinMatchSize)
+                        {
+                            MatchFlag[y, x] = true;
+                            MatchDimensions[y, x] = new BlockDimension(bestMatch.Width, bestMatch.Height);
+                            MatchLocation[y, x] = new PixelLocation(x - bestMatch.Width, y - bestMatch.Height);
+                            SetResidualValue(x, y);
+                        }
+                        else
+                        {
+                            MatchFlag[y, x] = false;
+                            for (int yy = 0; yy < Constants.NoMatchBlockWidth; yy++)
+                            {
+                                for (int xx = 0; xx < Constants.NoMatchBlockWidth; xx++)
+                                {
+                                    if (y + yy > WorkImage.GetLength(0) - 1 || x + xx > WorkImage.GetLength(1) -1 )
+                                    {
+                                        continue;
+                                    }
+                                    IsPixelEncoded[y + yy, x + xx] = true;
+                                    PredictionError[y + yy, x + xx] = WorkImage[y + yy, x + xx] -
+                                                                      GetPredictionValue(x + xx, y + yy);
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             //predict one row of pixels and record each prediction error in the prediction error table
@@ -43,33 +78,73 @@ namespace G2_2D_LZ
             // statistically encode the matching tables
             //output the encoded image
         }
-        
-        private BestMatch LocateTheBestAproximateMatchForGivenRootPixel(int x, int y, int rootX, int rootY)
-        {
-            var workImage = CloneOriginalImage();
 
+        private void SetResidualValue(int encoderX, int encoderY)
+        {
+            var matchDimension = MatchDimensions[encoderY, encoderX];
+            var matchLocation = MatchLocation[encoderY, encoderX];
+
+            for (int y = 0; y < matchDimension.Height; y++)
+            {
+                for (int x = 0; x < matchDimension.Width; x++)
+                {
+                    Residual[encoderY + y, encoderX + x] = WorkImage[encoderY + y, encoderX + x] -
+                                                           WorkImage[matchLocation.Y + y, matchLocation.X + x];
+                }
+            }
+        }
+
+        private int GetRootY(int y)
+        {
+            var rootY = y - Constants.SearchHeight;
+
+            if (rootY < 0)
+            {
+                rootY = y;
+            }
+
+            return rootY;
+        }
+
+        private int GetRootX(int x)
+        {
+            var rootX = x - Constants.SearchWidth;
+
+            if (rootX < 0)
+            {
+                rootX = x;
+            }
+
+            return rootX;
+        }
+
+        private BestMatch LocateTheBestAproximateMatchForGivenRootPixel(PixelLocation encoderPoint, PixelLocation rootPoint)
+        {
             BestMatch bestMatch = new BestMatch();
             var rowOffset = 0;
-            var widthOfTheMatchInThePreviousRow = GetOriginalImage().GetLength(1) - x;
+            var widthOfTheMatchInThePreviousRow = GetOriginalImage().GetLength(1) - 1 - encoderPoint.X;
 
             do
             {
                 var colOffset = 0;
                 do
                 {
-                    var yIndex = rootY + rowOffset;
-                    var xIndex = rootX + colOffset;
-                    if (IsPixelEncoded[yIndex, xIndex] ||
-                        (yIndex >= y && xIndex >= x))
+                    var nextRootPoint = new PixelLocation(rootPoint.X + colOffset, rootPoint.Y + rowOffset);
+
+                    if (IsPixelEncoded[nextRootPoint.Y, nextRootPoint.X] ||(
+                        nextRootPoint.Y >= encoderPoint.Y && nextRootPoint.X >= encoderPoint.X))
                     {
-                        if (IsPixelEncoded[y + rowOffset, x + colOffset])
+                        var nextToBeEncoded = new PixelLocation(encoderPoint.X + colOffset, encoderPoint.Y + rowOffset);
+
+                        if (IsPixelEncoded[nextToBeEncoded.Y, nextToBeEncoded.X])
                         {
                             colOffset++;
                         }
                         else
                         {
-                            var pixelToBeEncoded = workImage[y + rowOffset, x + rowOffset];
-                            var possibleMatchPixel = workImage[yIndex, xIndex];
+                            var pixelToBeEncoded = WorkImage[nextToBeEncoded.Y, nextToBeEncoded.X];
+                            var possibleMatchPixel = WorkImage[nextRootPoint.Y, nextRootPoint.X];
+
                             if (pixelToBeEncoded - possibleMatchPixel <= Constants.Threshold)
                             {
                                 colOffset++;
@@ -78,34 +153,59 @@ namespace G2_2D_LZ
                             {
                                 break;
                             }
+
                         }
                     }
                 } while (colOffset == widthOfTheMatchInThePreviousRow);
+
                 widthOfTheMatchInThePreviousRow = colOffset;
                 rowOffset++;
-                var matchSize = 0; // the number of possible newly encoded pixels inside the block identified
-                //by widthOfTheMatchInThePreviousRow x rowOffset
-                var matchMse = 0; // the mse between those possible newly encoded pixels and their corresponding 
-                //pixels inside the matched area
+                var matchSize = widthOfTheMatchInThePreviousRow * rowOffset;
+                PixelLocation matchedPoint = new PixelLocation
+                {
+                    X = rootPoint.X + widthOfTheMatchInThePreviousRow,
+                    Y = rootPoint.Y + rowOffset
+                };
+                var matchMse = GetMse(encoderPoint, matchedPoint, widthOfTheMatchInThePreviousRow, rowOffset);
                 if (matchSize >= bestMatch.Size && matchMse <= Constants.MaxMse)
                 {
                     bestMatch.Height = rowOffset;
                     bestMatch.Width = widthOfTheMatchInThePreviousRow;
                     bestMatch.Size = matchSize;
                 }
-            } while (widthOfTheMatchInThePreviousRow == 0 || y + rowOffset == workImage.GetLength(0));
+            } while (widthOfTheMatchInThePreviousRow == 0 || encoderPoint.Y + rowOffset == WorkImage.GetLength(0) - 1);
 
             return bestMatch;
         }
 
-        private void PredictFirstRow()
+        private int GetMse(PixelLocation encoderPoint, PixelLocation matchedPoint, int matchedBlockWidth, int matchBlockHeight)
         {
-            var width = _originalImage.GetLength(1);
+            var sum = 0;
+
+            for (int y = 0; y < matchBlockHeight; y++)
+            {
+                for (int x = 0; x < matchedBlockWidth; x++)
+                {
+                    var index1 = encoderPoint.X + x;
+                    if (index1 < WorkImage.GetLength(1))
+                    {
+                        sum += (int) Math.Pow(WorkImage[encoderPoint.Y + y, index1] -
+                                              WorkImage[matchedPoint.Y + y, matchedPoint.X + x], 2);
+                    }
+                }
+            }
+
+            return sum / matchBlockHeight * matchedBlockWidth;
+        }
+
+        protected void PredictFirstRow()
+        {
+            var width = WorkImage.GetLength(1);
 
             for (int i = 0; i < width; i++)
             {
                 IsPixelEncoded[0, i] = true;
-                PredictionError[0, i] = _originalImage[0, i] - GetPredictionValue(i, 0);
+                PredictionError[0, i] = WorkImage[0, i] - GetPredictionValue(i, 0);
             }
         }
 
@@ -116,12 +216,12 @@ namespace G2_2D_LZ
                 return 128;
             }
 
-            return _originalImage[y, x - 1];
+            return WorkImage[y, x - 1];
         }
 
-        private byte[,] CloneOriginalImage()
+        private void CloneOriginalImage(byte[,] workImage)
         {
-            byte[,] workImage = new byte[_originalImage.GetLength(0), _originalImage.GetLength(1)];
+            workImage = new byte[_originalImage.GetLength(0), _originalImage.GetLength(1)];
 
             for (int y = 0; y < _originalImage.GetLength(0); y++)
             {
@@ -130,8 +230,6 @@ namespace G2_2D_LZ
                     workImage[y, x] = _originalImage[y, x];
                 }
             }
-
-            return workImage;
         }
 
         private void SaveImageInMemory()
@@ -139,12 +237,14 @@ namespace G2_2D_LZ
             using (Bitmap bitmap = new Bitmap(InputFileName))
             {
                 _originalImage = new byte[bitmap.Height, bitmap.Width];
+                WorkImage = new byte[bitmap.Height, bitmap.Width];
 
                 for (int y = 0; y < bitmap.Height; y++)
                 {
                     for (int x = 0; x < bitmap.Width; x++)
                     {
                         _originalImage[y, x] = bitmap.GetPixel(x, y).R;
+                        WorkImage[y, x] = bitmap.GetPixel(x, y).R;
                     }
                 }
             }
@@ -160,9 +260,28 @@ namespace G2_2D_LZ
             return PredictionError;
         }
 
+        public double[,] GetResidual()
+        {
+            return Residual;
+        }
+
+        public bool[,] GetMatchFlag()
+        {
+            return MatchFlag;
+        }
+
         public bool[,] GetEncodedPixels()
         {
             return IsPixelEncoded;
+        }
+
+        public PixelLocation[,] GetMatchLocation()
+        {
+            return MatchLocation;
+        }
+        public BlockDimension[,] GetMatchDimensions()
+        {
+            return MatchDimensions;
         }
     }
 }

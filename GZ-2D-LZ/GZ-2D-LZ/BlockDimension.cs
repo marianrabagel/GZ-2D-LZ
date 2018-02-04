@@ -2,7 +2,14 @@
 {
     public class BlockDimension
     {
-        public int width;
-        public int height;
+        public int Width;
+        public int Height;
+
+        public BlockDimension(int width, int height)
+        {
+            Width = width;
+            Height = height;
+        }
+
     }
 }
