@@ -32,9 +32,10 @@ namespace G2_2D_LZ
 
                         if (bestMatch.Size > Constants.MinMatchSize)
                         {
+
                             MatchFlag[y, x] = true;
                             MatchDimensions[y, x] = new BlockDimension(bestMatch.Width, bestMatch.Height);
-                            MatchLocation[y, x] = new PixelLocation(x - bestMatch.Width, y - bestMatch.Height);
+                            MatchLocation[y, x] = rootPoint;
                             SetResidualValue(x, y);
                         }
                         else
@@ -100,7 +101,7 @@ namespace G2_2D_LZ
 
             if (rootY < 0)
             {
-                rootY = y;
+                rootY = 0;
             }
 
             return rootY;
@@ -112,7 +113,7 @@ namespace G2_2D_LZ
 
             if (rootX < 0)
             {
-                rootX = x;
+                rootX = 0;
             }
 
             return rootX;
@@ -150,7 +151,7 @@ namespace G2_2D_LZ
                             var pixelToBeEncoded = WorkImage[nextToBeEncoded.Y, nextToBeEncoded.X];
                             var possibleMatchPixel = WorkImage[nextRootPoint.Y, nextRootPoint.X];
 
-                            if (pixelToBeEncoded - possibleMatchPixel <= Constants.Threshold)
+                            if (Math.Abs(pixelToBeEncoded - possibleMatchPixel) <= Constants.Threshold)
                             {
                                 colOffset++;
                             }
@@ -257,12 +258,12 @@ namespace G2_2D_LZ
             return _originalImage;
         }
 
-        public double[,] GetPredictionError()
+        public int[,] GetPredictionError()
         {
             return PredictionError;
         }
 
-        public double[,] GetResidual()
+        public int[,] GetResidual()
         {
             return Residual;
         }

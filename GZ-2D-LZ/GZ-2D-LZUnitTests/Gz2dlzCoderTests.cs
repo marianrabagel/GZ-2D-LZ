@@ -11,6 +11,8 @@ namespace GZ_2D_LZUnitTests
         string inputImage5x6 = @"E:\Workspaces\GZ-2D-LZ\GZ-2D-LZ\GZ-2D-LZUnitTests\TestData\test.bmp";
         string inputImage512x512 = @"E:\Workspaces\GZ-2D-LZ\GZ-2D-LZ\GZ-2D-LZUnitTests\TestData\test200.bmp";
         string input4x4MatchBlock = @"E:\Workspaces\GZ-2D-LZ\GZ-2D-LZ\GZ-2D-LZUnitTests\TestData\4x4Block.bmp";
+        string inputChess = @"E:\Workspaces\GZ-2D-LZ\GZ-2D-LZ\GZ-2D-LZUnitTests\TestData\testChess.bmp";
+        string input2PosibleMatchBlocks = @"E:\Workspaces\GZ-2D-LZ\GZ-2D-LZ\GZ-2D-LZUnitTests\TestData\2PossibleMatchBlocks.bmp";
 
         private Gz2dlzEncoder encoder;
 
@@ -79,7 +81,7 @@ namespace GZ_2D_LZUnitTests
         }
         
         [TestMethod]
-        public void EncodeEncodesAllPixels()
+        public void EncodeEncodesAllPixelsForA5x6Image()
         {
             encoder = new Gz2dlzEncoder(inputImage5x6);
 
@@ -94,7 +96,24 @@ namespace GZ_2D_LZUnitTests
                 }    
             }
         }
-        
+
+        [TestMethod]
+        public void EncodeEncodesAllPixelsForAnImageWithAmatchingBlock()
+        {
+            encoder = new Gz2dlzEncoder(inputImage5x6);
+
+            encoder.Encode();
+
+            var isEncodedPixel = encoder.GetEncodedPixels();
+            for (int y = 0; y < isEncodedPixel.GetLength(0); y++)
+            {
+                for (int x = 0; x < isEncodedPixel.GetLength(1); x++)
+                {
+                    Assert.IsTrue(isEncodedPixel[y, x]);
+                }
+            }
+        }
+
         [TestMethod]
         public void EncodesHasNoMatchedPoints()
         {
@@ -166,19 +185,6 @@ namespace GZ_2D_LZUnitTests
         [TestMethod]
         public void LocateTheBestAproximateMatchForGivenRootPixelGivesTheExpectedBestMatch()
         {
-            void DisplayImageToOutputWindow(int height1, int width1, byte[,] bytes)
-            {
-                for (int y = 0; y < height1; y++)
-                {
-                    for (int x = 0; x < width1; x++)
-                    {
-                        System.Diagnostics.Debug.Write(bytes[y, x] + " ");
-                    }
-
-                    System.Diagnostics.Debug.WriteLine(" ");
-                }
-            }
-
             encoder = new Gz2dlzEncoder(input4x4MatchBlock);
             var originalImage = encoder.GetOriginalImage();
             var height = originalImage.GetLength(1);
@@ -197,7 +203,7 @@ namespace GZ_2D_LZUnitTests
                 encoder.IsPixelEncoded[0, i] = true;
             }
 
-            DisplayImageToOutputWindow(height, width, originalImage);
+            DisplayImageToOutputWindow(originalImage);
 
             var encoderPosition = new PixelLocation(5,5);
             var rootPosition = new PixelLocation(1, 1);
@@ -206,7 +212,46 @@ namespace GZ_2D_LZUnitTests
             Assert.AreEqual(4, bestMatch.Height);
             Assert.AreEqual(4, bestMatch.Width);
             Assert.AreEqual(16, bestMatch.Size);
+        }
 
+        private void DisplayImageToOutputWindow(byte[,] bytes)
+        {
+            int height1 = bytes.GetLength(0);
+            int width1 = bytes.GetLength(1);
+
+            for (int y = 0; y < height1; y++)
+            {
+                for (int x = 0; x < width1; x++)
+                {
+                    System.Diagnostics.Debug.Write(bytes[y, x] + " ");
+                }
+
+                System.Diagnostics.Debug.WriteLine(" ");
+            }
+        }
+
+        [TestMethod]
+        public void EncodeFindsTheExpectedBlockMatch()
+        {
+            encoder = new Gz2dlzEncoder(input4x4MatchBlock);
+
+            encoder.Encode();
+            
+            Assert.IsNotNull(encoder.GetMatchLocation()[6,5]);
+            Assert.AreEqual(1, encoder.GetMatchLocation()[6,5].X);
+            Assert.AreEqual(2, encoder.GetMatchLocation()[6,5].Y);
+        }
+
+        [TestMethod]
+        public void EncodeFindsTheExpectedBlockMatchIfThereAre2BlockAtTheSameOrigin()
+        {
+            encoder = new Gz2dlzEncoder(input2PosibleMatchBlocks);
+            DisplayImageToOutputWindow(encoder.GetOriginalImage());
+            encoder.Encode();
+
+            Assert.IsNotNull(encoder.GetMatchLocation()[1, 0]);
+            Assert.AreEqual(0, encoder.GetMatchLocation()[1, 0].X);
+            Assert.AreEqual(0, encoder.GetMatchLocation()[1, 0].Y);
         }
     }
 }
