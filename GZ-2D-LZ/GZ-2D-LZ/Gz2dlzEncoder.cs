@@ -32,7 +32,7 @@ namespace G2_2D_LZ
 
                         if (bestMatch.Size > Constants.MinMatchSize)
                         {
-
+                            //should I set IsPixelEncoded for the best match?
                             MatchFlag[y, x] = true;
                             MatchDimensions[y, x] = new BlockDimension(bestMatch.Width, bestMatch.Height);
                             MatchLocation[y, x] = rootPoint;
