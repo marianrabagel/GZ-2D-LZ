@@ -1,5 +1,6 @@
 ﻿using System;
 using G2_2D_LZ;
+using G2_2D_LZ.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GZ_2D_LZUnitTests
@@ -9,7 +10,7 @@ namespace GZ_2D_LZUnitTests
     {
         string inputImage5x6 = @"E:\Workspaces\GZ-2D-LZ\GZ-2D-LZ\GZ-2D-LZUnitTests\TestData\test.bmp";
         string inputImage512x512 = @"E:\Workspaces\GZ-2D-LZ\GZ-2D-LZ\GZ-2D-LZUnitTests\TestData\test200.bmp";
-        string inputImageChess = @"E:\Workspaces\GZ-2D-LZ\GZ-2D-LZ\GZ-2D-LZUnitTests\TestData\testChess.bmp";
+        string input4x4MatchBlock = @"E:\Workspaces\GZ-2D-LZ\GZ-2D-LZ\GZ-2D-LZUnitTests\TestData\4x4Block.bmp";
 
         private Gz2dlzEncoder encoder;
 
@@ -163,11 +164,49 @@ namespace GZ_2D_LZUnitTests
         }
 
         [TestMethod]
-        public void Test()
+        public void LocateTheBestAproximateMatchForGivenRootPixelGivesTheExpectedBestMatch()
         {
-            encoder = new Gz2dlzEncoder(inputImage512x512);
-            
-            encoder.Encode();
+            void DisplayImageToOutputWindow(int height1, int width1, byte[,] bytes)
+            {
+                for (int y = 0; y < height1; y++)
+                {
+                    for (int x = 0; x < width1; x++)
+                    {
+                        System.Diagnostics.Debug.Write(bytes[y, x] + " ");
+                    }
+
+                    System.Diagnostics.Debug.WriteLine(" ");
+                }
+            }
+
+            encoder = new Gz2dlzEncoder(input4x4MatchBlock);
+            var originalImage = encoder.GetOriginalImage();
+            var height = originalImage.GetLength(1);
+            var width = originalImage.GetLength(0);
+
+            for (int i = 0; i < width; i++)
+            {
+                encoder.IsPixelEncoded[0, i] = true;
+                encoder.IsPixelEncoded[1, i] = true;
+                encoder.IsPixelEncoded[2, i] = true;
+                encoder.IsPixelEncoded[3, i] = true;
+                encoder.IsPixelEncoded[4, i] = true;
+            }
+            for (int i = 0; i < 5; i++)
+            {
+                encoder.IsPixelEncoded[0, i] = true;
+            }
+
+            DisplayImageToOutputWindow(height, width, originalImage);
+
+            var encoderPosition = new PixelLocation(5,5);
+            var rootPosition = new PixelLocation(1, 1);
+            BestMatch bestMatch = encoder.LocateTheBestAproximateMatchForGivenRootPixel(encoderPosition, rootPosition);
+
+            Assert.AreEqual(4, bestMatch.Height);
+            Assert.AreEqual(4, bestMatch.Width);
+            Assert.AreEqual(16, bestMatch.Size);
+
         }
     }
 }

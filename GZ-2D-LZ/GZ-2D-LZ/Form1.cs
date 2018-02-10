@@ -2,7 +2,7 @@
 using System.IO;
 using System.Windows.Forms;
 
-namespace GZ_2D_LZ
+namespace G2_2D_LZ
 {
     public partial class Form1 : Form
     {

@@ -1,4 +1,4 @@
-﻿namespace G2_2D_LZ
+﻿namespace G2_2D_LZ.Helpers
 {
     public class BlockDimension
     {
