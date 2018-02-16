@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using G2_2D_LZ.Helpers;
 
@@ -13,6 +14,79 @@ namespace G2_2D_LZ
         {
             SaveImageInMemory();
             InitializeTables(_originalImage.GetLength(0), _originalImage.GetLength(1));
+        }
+
+        public void WriteMatrixToFileAsText()
+        {
+            using (StreamWriter streamWriter = new StreamWriter(InputFileName + ".mat"))
+            {
+                streamWriter.Write(WorkImage.GetLength(1) + " ");
+                streamWriter.Write(WorkImage.GetLength(0) + " ");
+                streamWriter.WriteLine();
+
+                WriteMatchFlagToFile(streamWriter);
+                WriteMatchLocationToFile(streamWriter);
+                WriteMatchDimensionsToFile(streamWriter);
+                WriteMatrixToFile(Residual, streamWriter);
+                WriteMatrixToFile(PredictionError, streamWriter);
+            }
+        }
+
+        private void WriteMatrixToFile(int[,] matrix, StreamWriter streamWriter)
+        {
+            for (int y = 0; y < matrix.GetLength(0); y++)
+            {
+                for (int x = 0; x < matrix.GetLength(1); x++)
+                {
+                    var format = matrix[y, x] + " ";
+                    streamWriter.Write(format);
+                }
+                streamWriter.WriteLine();
+            }
+        }
+
+        private void WriteMatchDimensionsToFile(StreamWriter streamWriter)
+        {
+            for (int y = 0; y < MatchDimensions.GetLength(0); y++)
+            {
+                for (int x = 0; x < MatchDimensions.GetLength(1); x++)
+                {
+                    var value = MatchDimensions[y, x] ?? new BlockDimension(0, 0);
+
+                    streamWriter.Write(value.Width + " ");
+                    streamWriter.Write(value.Height + " ");
+                }
+                streamWriter.WriteLine();
+            }
+        }
+
+        private void WriteMatchLocationToFile(StreamWriter streamWriter)
+        {
+            for (int y = 0; y < MatchLocation.GetLength(0); y++)
+            {
+                for (int x = 0; x < MatchLocation.GetLength(1); x++)
+                {
+                    var value = MatchLocation[y, x] ?? new PixelLocation(0, 0);
+                    streamWriter.Write(value.X + " ");
+                    streamWriter.Write(value.Y + " ");
+                }
+                streamWriter.WriteLine();
+            }
+        }
+
+        private void WriteMatchFlagToFile(StreamWriter streamWriter)
+        {
+            bool[,] matrix = MatchFlag;
+
+            for (int y = 0; y < matrix.GetLength(0); y++)
+            {
+                for (int x = 0; x < matrix.GetLength(1); x++)
+                {
+                    var value = matrix[y, x] ? 1 : 0;
+                    streamWriter.Write(value + " ");
+                }
+                streamWriter.WriteLine();
+            }
         }
 
         public void Encode()
@@ -258,33 +332,9 @@ namespace G2_2D_LZ
             return _originalImage;
         }
 
-        public int[,] GetPredictionError()
-        {
-            return PredictionError;
-        }
-
-        public int[,] GetResidual()
-        {
-            return Residual;
-        }
-
-        public bool[,] GetMatchFlag()
-        {
-            return MatchFlag;
-        }
-
         public bool[,] GetEncodedPixels()
         {
             return IsPixelEncoded;
-        }
-
-        public PixelLocation[,] GetMatchLocation()
-        {
-            return MatchLocation;
-        }
-        public BlockDimension[,] GetMatchDimensions()
-        {
-            return MatchDimensions;
         }
     }
 }

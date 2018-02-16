@@ -27,5 +27,30 @@ namespace G2_2D_LZ
             Residual = new int[height, width];
             PredictionError = new int[height, width];
         }
+
+        public int[,] GetPredictionError()
+        {
+            return PredictionError;
+        }
+
+
+        public int[,] GetResidual()
+        {
+            return Residual;
+        }
+
+        public bool[,] GetMatchFlag()
+        {
+            return MatchFlag;
+        }
+
+        public PixelLocation[,] GetMatchLocation()
+        {
+            return MatchLocation;
+        }
+        public BlockDimension[,] GetMatchDimensions()
+        {
+            return MatchDimensions;
+        }
     }
 }
