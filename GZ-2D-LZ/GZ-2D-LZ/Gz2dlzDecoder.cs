@@ -79,7 +79,7 @@ namespace G2_2D_LZ
                     var valueWidth = Convert.ToInt32(values[i++]);
                     var valueHeight = Convert.ToInt32(values[i++]);
 
-                    MatchDimensions[y, x] = new BlockDimension(valueWidth, valueHeight);
+                    MatchDimensions[y, x] = new Dimensions(valueWidth, valueHeight);
                 }
             }
         }
@@ -160,7 +160,7 @@ namespace G2_2D_LZ
             //read a value from the match flag table
             //if (match flag is true)
             //reproduce a block of pixels using the match dimension, location and residual tables
-            //if (match falg is false)
+            //if (match flag is false)
             //predict a block of pixels and correct the prediction errors using the prediction error table
             //get the next unencoded pixel
             //end while

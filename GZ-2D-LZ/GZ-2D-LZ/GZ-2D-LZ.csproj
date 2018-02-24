@@ -43,8 +43,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseClass.cs" />
+    <Compile Include="Contracts\IPredictor.cs" />
     <Compile Include="Helpers\BestMatch.cs" />
-    <Compile Include="Helpers\BlockDimension.cs" />
+    <Compile Include="Helpers\Dimensions.cs" />
     <Compile Include="Helpers\Constants.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -55,6 +56,7 @@
     <Compile Include="Gz2dlzDecoder.cs" />
     <Compile Include="Gz2dlzEncoder.cs" />
     <Compile Include="Helpers\PixelLocation.cs" />
+    <Compile Include="Predictors\ABasedPredictor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">

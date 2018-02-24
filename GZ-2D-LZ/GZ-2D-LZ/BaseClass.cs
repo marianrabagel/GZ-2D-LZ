@@ -8,7 +8,7 @@ namespace G2_2D_LZ
         protected bool[,] MatchFlag; //has true when a suitable match for a block is found
         public bool[,] IsPixelEncoded; //has true when a pixel has been encoded
         protected PixelLocation[,] MatchLocation; //position of the match relative to the block being encoded
-        protected BlockDimension[,] MatchDimensions; //width and heigth of the block being encoded
+        protected Dimensions[,] MatchDimensions; //width and heigth of the block being encoded
         protected int[,] Residual; //difference between the pixel in the actual block and the matching block
         protected int[,] PredictionError; // prediction error values
         public byte[,] WorkImage;
@@ -23,7 +23,7 @@ namespace G2_2D_LZ
             MatchFlag = new bool[height, width];
             IsPixelEncoded = new bool[height, width];
             MatchLocation = new PixelLocation[height, width];
-            MatchDimensions = new BlockDimension[height, width];
+            MatchDimensions = new Dimensions[height, width];
             Residual = new int[height, width];
             PredictionError = new int[height, width];
         }
@@ -32,8 +32,7 @@ namespace G2_2D_LZ
         {
             return PredictionError;
         }
-
-
+        
         public int[,] GetResidual()
         {
             return Residual;
@@ -49,7 +48,7 @@ namespace G2_2D_LZ
             return MatchLocation;
         }
 
-        public BlockDimension[,] GetMatchDimensions()
+        public Dimensions[,] GetMatchDimensions()
         {
             return MatchDimensions;
         }
