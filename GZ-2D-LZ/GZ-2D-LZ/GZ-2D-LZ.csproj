@@ -42,7 +42,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BaseClass.cs" />
     <Compile Include="Contracts\IPredictor.cs" />
     <Compile Include="Helpers\BestMatch.cs" />
     <Compile Include="Helpers\Dimensions.cs" />
