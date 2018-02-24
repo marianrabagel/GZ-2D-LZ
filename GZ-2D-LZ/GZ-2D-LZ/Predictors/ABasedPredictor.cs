@@ -6,19 +6,11 @@ namespace G2_2D_LZ.Predictors
 {
     public class ABasedPredictor: IPredictor
     {
-        private object[,] Matrix { get; set; }
+        private byte[,] Matrix { get; set; }
 
-        public void SetOriginalMatrix<T>(T[,] matrix)
+        public void SetOriginalMatrix(byte[,] matrix)
         {
-            Matrix = new object[matrix.GetLength(0), matrix.GetLength(1)];
-
-            for (int y = 0; y < matrix.GetLength(0); y++)
-            {
-                for (int x = 0; x < matrix.GetLength(1); x++)
-                {
-                    Matrix[y, x] = matrix[y, x];
-                }
-            }
+            Matrix = matrix;
         }
 
         public int GetPredictionValue(int x, int y)

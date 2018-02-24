@@ -20,7 +20,7 @@ namespace G2_2D_LZ
         public byte[,] WorkImage { get; private set; }
 
         private byte[,] _originalImage;
-        private IPredictor _predictor = new ABasedPredictor();
+        private readonly IPredictor _predictor = new ABasedPredictor();
         private readonly int _height;
         private readonly int _width;
 

@@ -1,20 +1,36 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
-using System.Security.Permissions;
-using System.Xml;
+using G2_2D_LZ.Contracts;
 using G2_2D_LZ.Helpers;
+using G2_2D_LZ.Predictors;
 
 namespace G2_2D_LZ
 {
-    public class Gz2dlzDecoder : BaseClass
+    public class Gz2DlzDecoder
     {
+        private readonly string InputFileName;
+
+        public bool[,] MatchFlag { get; private set; } //has true when a suitable match for a block is found
+        public bool[,] IsPixelEncoded { get; private set; } //has true when a pixel has been encoded
+        public PixelLocation[,] MatchLocation { get; private set; } //position of the match relative to the block being encoded
+        public Dimensions[,] MatchDimensions { get; private set; } //width and heigth of the block being encoded
+        public int[,] Residual { get; private set; } //difference between the pixel in the actual block and the matching block
+        public int[,] PredictionError { get; private set; } // prediction error values
+        public byte[,] WorkImage { get; private set; }
+
         private int _height;
         private int _width;
 
-        public Gz2dlzDecoder(string inputFileName) : base(inputFileName)
+        private readonly IPredictor _predictor = new ABasedPredictor();
+
+        public Gz2DlzDecoder(string inputFileName) 
         {
-            
+            InputFileName = inputFileName;
+        }
+        public Gz2DlzDecoder(string inputFileName, IPredictor predictor) : this(inputFileName)
+        {
+            _predictor = predictor;
         }
 
         public void LoadMatrixFromTxtFile()
@@ -25,7 +41,8 @@ namespace G2_2D_LZ
                 string[] values = fileContent.Split(' ');
                 _height = Convert.ToInt32(values[1]);
                 _width = Convert.ToInt32(values[0]);
-                InitializeTables(_height, _width);
+
+                InitializeTables();
                 WorkImage = new byte[_height, _width];
                 SetIsPixelEncodedToTrue();
 
@@ -53,6 +70,16 @@ namespace G2_2D_LZ
                     }
                 }
             }
+        }
+
+        protected void InitializeTables()
+        {
+            MatchFlag = new bool[_height, _width];
+            IsPixelEncoded = new bool[_height, _width];
+            MatchLocation = new PixelLocation[_height, _width];
+            MatchDimensions = new Dimensions[_height, _width];
+            Residual = new int[_height, _width];
+            PredictionError = new int[_height, _width];
         }
 
         private void SetIsPixelEncodedToTrue()
@@ -118,12 +145,14 @@ namespace G2_2D_LZ
 
         public void Decode()
         {
+            _predictor.SetOriginalMatrix(WorkImage);
+
             DecodeMatchingTables();
             DecodeFirstRow();
 
-            for (int y = 1; y < WorkImage.GetLength(0); y++)
+            for (int y = 1; y < _height; y++)
             {
-                for (int x = 0; x < WorkImage.GetLength(1); x++)
+                for (int x = 0; x < _width; x++)
                 {
                     if (IsPixelEncoded[y, x])
                     {
@@ -188,9 +217,9 @@ namespace G2_2D_LZ
             {
                 for (int j = 0; j < Constants.NoMatchBlockWidth; j++)
                 {
-                    if (y + i < WorkImage.GetLength(0) && x + j < WorkImage.GetLength(1))
+                    if (y + i < _height && x + j < _width)
                     {
-                        WorkImage[y + i, x + j] = (byte) (GetPredictionValue(x + j, y + i) + PredictionError[y + i, x + j]);
+                        WorkImage[y + i, x + j] = (byte) (_predictor.GetPredictionValue(x + j, y + i) + PredictionError[y + i, x + j]);
                     }
                 }
             }
@@ -201,7 +230,7 @@ namespace G2_2D_LZ
             for (int i = 0; i < _width; i++)
             {
                 IsPixelEncoded[0, i] = false;
-                WorkImage[0, i] = (byte) (GetPredictionValue(i, 0) + PredictionError[0, i]);
+                WorkImage[0, i] = (byte) (_predictor.GetPredictionValue(i, 0) + PredictionError[0, i]);
             }
         }
 
