@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Security.Permissions;
 using System.Xml;
@@ -130,7 +131,7 @@ namespace G2_2D_LZ
 
                         if (hasMatch)
                         {
-
+                            ReproduceImage(y, x);
                         }
                         else
                         {
@@ -140,6 +141,17 @@ namespace G2_2D_LZ
                     }
                 }
             }
+
+            Bitmap bitmap = new Bitmap(_width, _height);
+            for (int y = 0; y < _height; y++)
+            {
+                for (int x = 0; x < _width; x++)
+                {
+                    var color = WorkImage[y, x];
+                    bitmap.SetPixel(x, y, Color.FromArgb(color, color, color));
+                }
+            }
+            bitmap.Save(InputFileName + "decoded.bmp");
 
             //decode the matching tables
             //predict one row of pixels and correct each prediction error using the prediction error table
@@ -153,6 +165,21 @@ namespace G2_2D_LZ
             //get the next unencoded pixel
             //end while
             //output the reconstructed image
+        }
+
+        private void ReproduceImage(int y, int x)
+        {
+            var matchLocation = MatchLocation[y, x];
+            var matchDimension = MatchDimensions[y, x];
+            for (int i = 0; i < matchDimension.Height; i++)
+            {
+                for (int j = 0; j < matchDimension.Width; j++)
+                {
+                    WorkImage[y + i, x + j] =
+                        (byte) (WorkImage[matchLocation.Y + i, matchLocation.X + j] + Residual[y + i, x + j]);
+                    IsPixelEncoded[y + i, x + j] = false;
+                }
+            }
         }
 
         private void PredictNoMatchBlock(int y, int x)

@@ -106,11 +106,10 @@ namespace G2_2D_LZ
 
                         if (bestMatch.Size > Constants.MinMatchSize)
                         {
-                            //should I set IsPixelEncoded for the best match?
                             MatchFlag[y, x] = true;
                             MatchDimensions[y, x] = new BlockDimension(bestMatch.Width, bestMatch.Height);
                             MatchLocation[y, x] = rootPoint;
-                            SetResidualValue(x, y);
+                            SetResidualAndIsPixelEncoded(x, y);
                         }
                         else
                         {
@@ -154,17 +153,18 @@ namespace G2_2D_LZ
             }
         }
 
-        private void SetResidualValue(int encoderX, int encoderY)
+        private void SetResidualAndIsPixelEncoded(int encoderX, int encoderY)
         {
             var matchDimension = MatchDimensions[encoderY, encoderX];
             var matchLocation = MatchLocation[encoderY, encoderX];
 
-            for (int y = 0; y < matchDimension.Height; y++)
+            for (int i = 0; i < matchDimension.Height; i++)
             {
-                for (int x = 0; x < matchDimension.Width; x++)
+                for (int j = 0; j < matchDimension.Width; j++)
                 {
-                    Residual[encoderY + y, encoderX + x] = WorkImage[encoderY + y, encoderX + x] -
-                                                           WorkImage[matchLocation.Y + y, matchLocation.X + x];
+                    Residual[encoderY + i, encoderX + j] = WorkImage[encoderY + i, encoderX + j] -
+                                                           WorkImage[matchLocation.Y + i, matchLocation.X + j];
+                    IsPixelEncoded[encoderY + i, encoderX + j] = true;
                 }
             }
         }
