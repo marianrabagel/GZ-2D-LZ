@@ -285,30 +285,7 @@ namespace G2_2D_LZ
                 PredictionError[0, i] = WorkImage[0, i] - GetPredictionValue(i, 0);
             }
         }
-
-        private int GetPredictionValue(int x, int y)
-        {
-            if (x == 0)
-            {
-                return 128;
-            }
-
-            return WorkImage[y, x - 1];
-        }
-
-        private void CloneOriginalImage(byte[,] workImage)
-        {
-            workImage = new byte[_originalImage.GetLength(0), _originalImage.GetLength(1)];
-
-            for (int y = 0; y < _originalImage.GetLength(0); y++)
-            {
-                for (int x = 0; x < _originalImage.GetLength(1); x++)
-                {
-                    workImage[y, x] = _originalImage[y, x];
-                }
-            }
-        }
-
+        
         private void SaveImageInMemory()
         {
             using (Bitmap bitmap = new Bitmap(InputFileName))

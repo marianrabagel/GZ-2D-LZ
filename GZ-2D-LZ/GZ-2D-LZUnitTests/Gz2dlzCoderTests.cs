@@ -9,44 +9,19 @@ namespace GZ_2D_LZUnitTests
     [TestClass]
     public class Gz2dlzCoderTests
     {
-        string inputTestImage = Environment.CurrentDirectory + "\\TestData\\test.bmp";
-        string inputImage512x512 = Environment.CurrentDirectory  + "\\TestData\\test200.bmp";
-        string input4x4MatchBlock = Environment.CurrentDirectory + "\\TestData\\4x4Block.bmp";
-        string inputChess = Environment.CurrentDirectory + "\\TestData\\testChess.bmp";
-        string input2PosibleMatchBlocks = Environment.CurrentDirectory + "\\TestData\\2PossibleMatchBlocks.bmp";
-
         private Gz2dlzEncoder encoder;
-
-        [TestInitialize]
-        public void Setup()
-        {
-            
-        }
 
         [TestMethod]
         public void ImageIsLoadedIntoMemory()
         {
-            encoder = new Gz2dlzEncoder(inputTestImage);
-            byte[,] testImage =
-            {
-                {0, 255, 0, 255, 0, 255},
-                {0, 255, 0, 255, 0, 0},
-                {255, 0, 0, 0, 255, 255},
-                {0, 255, 0, 255, 0, 255},
-                {255, 0, 255, 255, 0, 0}
-            };
+            encoder = new Gz2dlzEncoder(Constants.InputTestImage);
+            
             byte[,] originalImage = encoder.GetOriginalImage();
 
             Assert.AreEqual(5, originalImage.GetLength(0));
             Assert.AreEqual(6, originalImage.GetLength(1));
 
-            for (int y = 0; y < originalImage.GetLength(0); y++)
-            {
-                for (int x = 0; x < originalImage.GetLength(1); x++)
-                {
-                    Assert.AreEqual(testImage[y,x], originalImage[y,x]);
-                }
-            }
+            AssertEachValue(Constants.TestImage, originalImage);
         }
 
         [TestMethod]
@@ -68,7 +43,7 @@ namespace GZ_2D_LZUnitTests
         [TestMethod]
         public void EncodesTheFirstRowIsMarkedAsEncoded()
         {
-            encoder = new Gz2dlzEncoder(inputTestImage);
+            encoder = new Gz2dlzEncoder(Constants.InputTestImage);
 
             encoder.Encode();
 
@@ -84,7 +59,7 @@ namespace GZ_2D_LZUnitTests
         [TestMethod]
         public void EncodeEncodesAllPixelsForA5x6Image()
         {
-            encoder = new Gz2dlzEncoder(inputTestImage);
+            encoder = new Gz2dlzEncoder(Constants.InputTestImage);
 
             encoder.Encode();
 
@@ -101,7 +76,7 @@ namespace GZ_2D_LZUnitTests
         [TestMethod]
         public void EncodeEncodesAllPixelsForAnImageWithAmatchingBlock()
         {
-            encoder = new Gz2dlzEncoder(inputTestImage);
+            encoder = new Gz2dlzEncoder(Constants.InputTestImage);
 
             encoder.Encode();
 
@@ -118,7 +93,7 @@ namespace GZ_2D_LZUnitTests
         [TestMethod]
         public void EncodesHasNoMatchedPoints()
         {
-            encoder = new Gz2dlzEncoder(inputTestImage);
+            encoder = new Gz2dlzEncoder(Constants.InputTestImage);
 
             encoder.Encode();
 
@@ -135,7 +110,7 @@ namespace GZ_2D_LZUnitTests
         [TestMethod]
         public void EncodesHasNoResidualValues()
         {
-            encoder = new Gz2dlzEncoder(inputTestImage);
+            encoder = new Gz2dlzEncoder(Constants.InputTestImage);
 
             encoder.Encode();
 
@@ -152,7 +127,7 @@ namespace GZ_2D_LZUnitTests
         [TestMethod]
         public void EncodesHasNoMatchLocation()
         {
-            encoder = new Gz2dlzEncoder(inputTestImage);
+            encoder = new Gz2dlzEncoder(Constants.InputTestImage);
 
             encoder.Encode();
 
@@ -169,7 +144,7 @@ namespace GZ_2D_LZUnitTests
         [TestMethod]
         public void EncodesHasNoMatchDimensions()
         {
-            encoder = new Gz2dlzEncoder(inputTestImage);
+            encoder = new Gz2dlzEncoder(Constants.InputTestImage);
 
             encoder.Encode();
 
@@ -186,9 +161,8 @@ namespace GZ_2D_LZUnitTests
         [TestMethod]
         public void LocateTheBestAproximateMatchForGivenRootPixelGivesTheExpectedBestMatch()
         {
-            encoder = new Gz2dlzEncoder(input4x4MatchBlock);
+            encoder = new Gz2dlzEncoder(Constants.Input4x4MatchBlock);
             var originalImage = encoder.GetOriginalImage();
-            var height = originalImage.GetLength(1);
             var width = originalImage.GetLength(0);
 
             for (int i = 0; i < width; i++)
@@ -234,7 +208,7 @@ namespace GZ_2D_LZUnitTests
         [TestMethod]
         public void EncodeFindsTheExpectedBlockMatch()
         {
-            encoder = new Gz2dlzEncoder(input4x4MatchBlock);
+            encoder = new Gz2dlzEncoder(Constants.Input4x4MatchBlock);
 
             encoder.Encode();
             
@@ -246,8 +220,8 @@ namespace GZ_2D_LZUnitTests
         [TestMethod]
         public void EncodeFindsTheExpectedBlockMatchIfThereAre2BlockAtTheSameOrigin()
         {
-            encoder = new Gz2dlzEncoder(input2PosibleMatchBlocks);
-            DisplayImageToOutputWindow(encoder.GetOriginalImage());
+            encoder = new Gz2dlzEncoder(Constants.Input2PosibleMatchBlocks);
+            //DisplayImageToOutputWindow(encoder.GetOriginalImage());
             encoder.Encode();
 
             Assert.IsNotNull(encoder.GetMatchLocation()[1, 0]);
@@ -258,7 +232,7 @@ namespace GZ_2D_LZUnitTests
         [TestMethod]
         public void WriteMatrixesToFileAsTextTestImageNoMatchOnlyPrediction()
         {
-            encoder = new Gz2dlzEncoder(inputTestImage);
+            encoder = new Gz2dlzEncoder(Constants.InputTestImage);
 
             encoder.Encode();
             encoder.WriteMatrixToFileAsText();
@@ -267,7 +241,7 @@ namespace GZ_2D_LZUnitTests
         [TestMethod]
         public void WriteMatrixesToFileAsTextOne4x4MatchBlock()
         {
-            encoder = new Gz2dlzEncoder(input4x4MatchBlock);
+            encoder = new Gz2dlzEncoder(Constants.Input4x4MatchBlock);
 
             encoder.Encode();
             encoder.WriteMatrixToFileAsText();
@@ -277,10 +251,24 @@ namespace GZ_2D_LZUnitTests
         [TestMethod]
         public void WriteMatrixesToFileAsTextBestMatchOutOfTwo()
         {
-            encoder = new Gz2dlzEncoder(input2PosibleMatchBlocks);
+            encoder = new Gz2dlzEncoder(Constants.Input2PosibleMatchBlocks);
 
             encoder.Encode();
             encoder.WriteMatrixToFileAsText();
+        }
+
+        private void AssertEachValue<T>(T[,] expectedValues, T[,] actualValues)
+        {
+            int height = actualValues.GetLength(0);
+            int width = actualValues.GetLength(1);
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    Assert.AreEqual(expectedValues[y, x], actualValues[y, x]);
+                }
+            }
         }
     }
 }

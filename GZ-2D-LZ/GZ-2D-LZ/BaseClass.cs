@@ -48,9 +48,25 @@ namespace G2_2D_LZ
         {
             return MatchLocation;
         }
+
         public BlockDimension[,] GetMatchDimensions()
         {
             return MatchDimensions;
+        }
+
+        public byte[,] GetWorkImage()
+        {
+            return WorkImage;
+        }
+
+        protected int GetPredictionValue(int x, int y)
+        {
+            if (x == 0)
+            {
+                return 128;
+            }
+
+            return WorkImage[y, x - 1];
         }
     }
 }

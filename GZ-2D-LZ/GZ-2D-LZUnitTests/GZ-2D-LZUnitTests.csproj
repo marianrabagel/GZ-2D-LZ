@@ -46,8 +46,10 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constants.cs" />
     <Compile Include="Gz2dlzCoderTests.cs" />
     <Compile Include="Gz2dlzDecoderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
