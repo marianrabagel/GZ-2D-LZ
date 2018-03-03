@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using G2_2D_LZ;
-using G2_2D_LZ.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GZ_2D_LZUnitTests
@@ -12,6 +11,7 @@ namespace GZ_2D_LZUnitTests
         private readonly string inputTestMatrixFile = Environment.CurrentDirectory + "\\TestData\\test.bmp.mat";
         private readonly string input4x4BlockMatrixFile = Environment.CurrentDirectory + "\\TestData\\4x4Block.bmp.mat";
         private readonly string input2PossibleMatchBlocksMatrixFile = Environment.CurrentDirectory + "\\TestData\\2PossibleMatchBlocks.bmp.mat";
+        private readonly string input2PossibleMatchBlocksFromTxtMatrixFile = Environment.CurrentDirectory + "\\TestData\\TxtMatrices\\2PossibleMatchBlocks.txt.mat";
         private readonly string inputLenaMatrixFile = Environment.CurrentDirectory + "\\TestData\\Lenna256an.bmp.mat";
 
 
@@ -382,6 +382,16 @@ namespace GZ_2D_LZUnitTests
 
             DisplayImageToOutputWindow(workImage);
             AssertEachValue(Constants.Image4x4Block, workImage);
+        }
+
+        [TestMethod]
+        public void Decode()
+        {
+            _decoder = new Gz2DlzDecoder(input2PossibleMatchBlocksFromTxtMatrixFile);
+            _decoder.LoadMatrixFromTxtFile();
+
+            _decoder.Decode();
+            _decoder.SaveAsTxtFile();
         }
 
         [TestMethod]

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Configuration;
 using G2_2D_LZ.Contracts;
 
 namespace G2_2D_LZ.Predictors

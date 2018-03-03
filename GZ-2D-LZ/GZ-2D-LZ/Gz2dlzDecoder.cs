@@ -171,16 +171,7 @@ namespace G2_2D_LZ
                 }
             }
 
-            Bitmap bitmap = new Bitmap(_width, _height);
-            for (int y = 0; y < _height; y++)
-            {
-                for (int x = 0; x < _width; x++)
-                {
-                    var color = WorkImage[y, x];
-                    bitmap.SetPixel(x, y, Color.FromArgb(color, color, color));
-                }
-            }
-            bitmap.Save(InputFileName + "decoded.bmp");
+            
 
             //decode the matching tables
             //predict one row of pixels and correct each prediction error using the prediction error table
@@ -194,6 +185,39 @@ namespace G2_2D_LZ
             //get the next unencoded pixel
             //end while
             //output the reconstructed image
+        }
+
+        public void SaveAsBitmap()
+        {
+            Bitmap bitmap = new Bitmap(_width, _height);
+
+            for (int y = 0; y < _height; y++)
+            {
+                for (int x = 0; x < _width; x++)
+                {
+                    var color = WorkImage[y, x];
+                    bitmap.SetPixel(x, y, Color.FromArgb(color, color, color));
+                }
+            }
+
+            bitmap.Save(InputFileName + ".decoded.bmp");
+        }
+
+        public void SaveAsTxtFile()
+        {
+            using (StreamWriter writer = new StreamWriter(InputFileName + ".decoded.txt"))
+            {
+                for (int y = 0; y < _height; y++)
+                {
+                    for (int x = 0; x < _width; x++)
+                    {
+                        byte value = WorkImage[y, x];
+                        writer.Write(value);
+                        writer.Write(" ");
+                    }
+                    writer.WriteLine();
+                }
+            }
         }
 
         private void ReproduceImage(int y, int x)

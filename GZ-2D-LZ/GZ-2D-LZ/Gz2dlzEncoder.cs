@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Drawing;
 using System.IO;
 using G2_2D_LZ.Contracts;
 using G2_2D_LZ.Helpers;
-using G2_2D_LZ.Predictors;
 
 namespace G2_2D_LZ
 {
-    public class Gz2DlzEncoder 
+    public class Gz2DlzEncoder
     {
-        private readonly string InputFileName;
-
-        public bool[,] MatchFlag { get; private set; } //has true when a suitable match for a block is found
+        public string InputFileName;
+        public bool[,] IsMatchFound { get; private set; } //has true when a suitable match for a block is found
         public bool[,] IsPixelEncoded { get; private set; } //has true when a pixel has been encoded
         public PixelLocation[,] MatchLocation { get; private set; } //position of the match relative to the block being encoded
         public Dimensions[,] MatchDimensions { get; private set; } //width and heigth of the block being encoded
@@ -20,37 +17,39 @@ namespace G2_2D_LZ
         public byte[,] WorkImage { get; private set; }
 
         private byte[,] _originalImage;
-        private readonly IPredictor _predictor = new ABasedPredictor();
+        private readonly IPredictor _predictor;
+        private IReader _reader;
         private readonly int _height;
         private readonly int _width;
 
-        public Gz2DlzEncoder(string inputFileName)
+        protected Gz2DlzEncoder(string inputFileName, IReader reader)
         {
             InputFileName = inputFileName;
-            LoadImageInMemory();
-
+            _reader = reader;
+            _originalImage = _reader.LoadImageInMemory(inputFileName);
             _height = _originalImage.GetLength(0);
             _width = _originalImage.GetLength(1);
 
-            InitializeTables();
+            InstatiateTables();
+            PopulateWorkImageFromOriginalImage();
         }
 
-        public Gz2DlzEncoder(string inputFileName, IPredictor predictor) : this(inputFileName)
+        private void PopulateWorkImageFromOriginalImage()
+        {
+            for (int y = 0; y < _height; y++)
+            {
+                for (int x = 0; x < _width; x++)
+                {
+                    WorkImage[y, x] = _originalImage[y, x];
+                }
+            }
+        }
+
+        public Gz2DlzEncoder(string inputFileName, IPredictor predictor, IReader reader) : this(inputFileName, reader)
         {
             _predictor = predictor;
         }
 
-        protected void InitializeTables()
-        {
-            MatchFlag = new bool[_height, _width];
-            IsPixelEncoded = new bool[_height, _width];
-            MatchLocation = new PixelLocation[_height, _width];
-            MatchDimensions = new Dimensions[_height, _width];
-            Residual = new int[_height, _width];
-            PredictionError = new int[_height, _width];
-        }
-        
-        //maybe move it to a writer class
         public void WriteMatrixToFileAsText()
         {
             using (StreamWriter streamWriter = new StreamWriter(InputFileName + ".mat"))
@@ -111,7 +110,7 @@ namespace G2_2D_LZ
 
         private void WriteMatchFlagToFile(StreamWriter streamWriter)
         {
-            bool[,] matrix = MatchFlag;
+            bool[,] matrix = IsMatchFound;
 
             for (int y = 0; y < matrix.GetLength(0); y++)
             {
@@ -124,6 +123,17 @@ namespace G2_2D_LZ
             }
         }
 
+        protected void InstatiateTables()
+        {
+            IsMatchFound = new bool[_height, _width];
+            IsPixelEncoded = new bool[_height, _width];
+            MatchLocation = new PixelLocation[_height, _width];
+            MatchDimensions = new Dimensions[_height, _width];
+            Residual = new int[_height, _width];
+            PredictionError = new int[_height, _width];
+            WorkImage = new byte[_height, _width];
+        }
+        
         public void Encode()
         {
             _predictor.SetOriginalMatrix(WorkImage);
@@ -143,14 +153,14 @@ namespace G2_2D_LZ
 
                         if (bestMatch.Size > Constants.MinMatchSize)
                         {
-                            MatchFlag[y, x] = true;
+                            IsMatchFound[y, x] = true;
                             MatchDimensions[y, x] = new Dimensions(bestMatch.Width, bestMatch.Height);
                             MatchLocation[y, x] = rootPoint;
                             SetResidualAndIsPixelEncoded(x, y);
                         }
                         else
                         {
-                            MatchFlag[y, x] = false;
+                            IsMatchFound[y, x] = false;
                             PredictNoMatchBlock(x, y); 
                             x += Constants.NoMatchBlockWidth - 1;
                         }
@@ -321,7 +331,7 @@ namespace G2_2D_LZ
                 PredictionError[0, i] = WorkImage[0, i] - _predictor.GetPredictionValue(i, 0);
             }
         }
-        
+        /*
         private void LoadImageInMemory()
         {
             using (Bitmap bitmap = new Bitmap(InputFileName))
@@ -338,6 +348,6 @@ namespace G2_2D_LZ
                     }
                 }
             }
-        }
+        }*/
     }
 }
