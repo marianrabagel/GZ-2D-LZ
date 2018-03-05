@@ -10,6 +10,7 @@ namespace GZ_2D_LZUnitTests
         public static string InputChessPath = Environment.CurrentDirectory + "\\TestData\\testChess.bmp";
         public static string Input2PosibleMatchBlocksPath = Environment.CurrentDirectory + "\\TestData\\2PossibleMatchBlocks.bmp";
         public static string LenaImagePath = Environment.CurrentDirectory + "\\TestData\\Lenna256an.bmp";
+        public static string LenaTxtImagePath = Environment.CurrentDirectory + "\\TestData\\TxtMatrices\\Lenna256an.txt";
         public static string Input2PosibleMatchBlocksTxtPath = Environment.CurrentDirectory + "\\TestData\\TxtMatrices\\2PossibleMatchBlocks.txt";
 
         public static byte[,] TestImage =

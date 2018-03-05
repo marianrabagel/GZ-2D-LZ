@@ -17,7 +17,7 @@ namespace G2_2D_LZ
         public byte[,] WorkImage { get; private set; }
 
         private byte[,] _originalImage;
-        private readonly IPredictor _predictor;
+        private readonly AbstractPredictor _abstractPredictor;
         private IReader _reader;
         private readonly int _height;
         private readonly int _width;
@@ -45,9 +45,9 @@ namespace G2_2D_LZ
             }
         }
 
-        public Gz2DlzEncoder(string inputFileName, IPredictor predictor, IReader reader) : this(inputFileName, reader)
+        public Gz2DlzEncoder(string inputFileName, AbstractPredictor abstractPredictor, IReader reader) : this(inputFileName, reader)
         {
-            _predictor = predictor;
+            _abstractPredictor = abstractPredictor;
         }
 
         public void WriteMatrixToFileAsText()
@@ -136,7 +136,7 @@ namespace G2_2D_LZ
         
         public void Encode()
         {
-            _predictor.SetOriginalMatrix(WorkImage);
+            _abstractPredictor.SetOriginalMatrix(WorkImage);
 
             PredictFirstRow();
 
@@ -193,7 +193,7 @@ namespace G2_2D_LZ
                     if (y + i < WorkImage.GetLength(0) && x + j < WorkImage.GetLength(1))
                     {
                         IsPixelEncoded[y + i, x + j] = true;
-                        PredictionError[y + i, x + j] = WorkImage[y + i, x + j] - _predictor.GetPredictionValue(x + j, y + i);
+                        PredictionError[y + i, x + j] = WorkImage[y + i, x + j] - _abstractPredictor.GetPredictionValue(x + j, y + i);
                     }
                 }
             }
@@ -328,7 +328,7 @@ namespace G2_2D_LZ
             for (int i = 0; i < _width; i++)
             {
                 IsPixelEncoded[0, i] = true;
-                PredictionError[0, i] = WorkImage[0, i] - _predictor.GetPredictionValue(i, 0);
+                PredictionError[0, i] = WorkImage[0, i] - _abstractPredictor.GetPredictionValue(i, 0);
             }
         }
         /*

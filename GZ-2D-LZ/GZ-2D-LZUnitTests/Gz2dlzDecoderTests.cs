@@ -13,6 +13,7 @@ namespace GZ_2D_LZUnitTests
         private readonly string input2PossibleMatchBlocksMatrixFile = Environment.CurrentDirectory + "\\TestData\\2PossibleMatchBlocks.bmp.mat";
         private readonly string input2PossibleMatchBlocksFromTxtMatrixFile = Environment.CurrentDirectory + "\\TestData\\TxtMatrices\\2PossibleMatchBlocks.txt.mat";
         private readonly string inputLenaMatrixFile = Environment.CurrentDirectory + "\\TestData\\Lenna256an.bmp.mat";
+        private readonly string inputLenaFromTxtMatrixFile = Environment.CurrentDirectory + "\\TestData\\TxtMatrices\\Lenna256an.txt.mat";
 
 
         Gz2DlzDecoder _decoder;
@@ -388,6 +389,16 @@ namespace GZ_2D_LZUnitTests
         public void Decode()
         {
             _decoder = new Gz2DlzDecoder(input2PossibleMatchBlocksFromTxtMatrixFile);
+            _decoder.LoadMatrixFromTxtFile();
+
+            _decoder.Decode();
+            _decoder.SaveAsTxtFile();
+        }
+
+        [TestMethod]
+        public void DecodeLenaFromTxtFile()
+        {
+            _decoder = new Gz2DlzDecoder(inputLenaFromTxtMatrixFile);
             _decoder.LoadMatrixFromTxtFile();
 
             _decoder.Decode();

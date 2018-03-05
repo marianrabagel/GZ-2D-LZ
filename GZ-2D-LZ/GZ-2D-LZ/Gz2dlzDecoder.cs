@@ -22,15 +22,15 @@ namespace G2_2D_LZ
         private int _height;
         private int _width;
 
-        private readonly IPredictor _predictor = new ABasedPredictor();
+        private readonly AbstractPredictor _abstractPredictor = new ABasedAbstractPredictor();
 
         public Gz2DlzDecoder(string inputFileName) 
         {
             InputFileName = inputFileName;
         }
-        public Gz2DlzDecoder(string inputFileName, IPredictor predictor) : this(inputFileName)
+        public Gz2DlzDecoder(string inputFileName, AbstractPredictor abstractPredictor) : this(inputFileName)
         {
-            _predictor = predictor;
+            _abstractPredictor = abstractPredictor;
         }
 
         public void LoadMatrixFromTxtFile()
@@ -145,7 +145,7 @@ namespace G2_2D_LZ
 
         public void Decode()
         {
-            _predictor.SetOriginalMatrix(WorkImage);
+            _abstractPredictor.SetOriginalMatrix(WorkImage);
 
             DecodeMatchingTables();
             DecodeFirstRow();
@@ -243,7 +243,7 @@ namespace G2_2D_LZ
                 {
                     if (y + i < _height && x + j < _width)
                     {
-                        WorkImage[y + i, x + j] = (byte) (_predictor.GetPredictionValue(x + j, y + i) + PredictionError[y + i, x + j]);
+                        WorkImage[y + i, x + j] = (byte) (_abstractPredictor.GetPredictionValue(x + j, y + i) + PredictionError[y + i, x + j]);
                     }
                 }
             }
@@ -254,7 +254,7 @@ namespace G2_2D_LZ
             for (int i = 0; i < _width; i++)
             {
                 IsPixelEncoded[0, i] = false;
-                WorkImage[0, i] = (byte) (_predictor.GetPredictionValue(i, 0) + PredictionError[0, i]);
+                WorkImage[0, i] = (byte) (_abstractPredictor.GetPredictionValue(i, 0) + PredictionError[0, i]);
             }
         }
 

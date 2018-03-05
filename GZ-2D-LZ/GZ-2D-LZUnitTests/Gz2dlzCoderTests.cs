@@ -1,4 +1,5 @@
-﻿using G2_2D_LZ;
+﻿using System.IO;
+using G2_2D_LZ;
 using G2_2D_LZ.Contracts;
 using G2_2D_LZ.Helpers;
 using G2_2D_LZ.Predictors;
@@ -11,20 +12,20 @@ namespace GZ_2D_LZUnitTests
     public class Gz2dlzCoderTests
     {
         private Gz2DlzEncoder encoder;
-        IPredictor predictor; 
+        AbstractPredictor _abstractPredictor; 
         IReader bmpReader; 
 
         [TestInitialize]
         public void Setup()
         {
-            predictor = new ABasedPredictor();
+            _abstractPredictor = new ABasedAbstractPredictor();
             bmpReader = new BmpReader();
         }
 
         [TestMethod]
         public void ImageIsLoadedIntoMemory()
         {
-            encoder = new Gz2DlzEncoder(Constants.InputTestImagePath, predictor, bmpReader);
+            encoder = new Gz2DlzEncoder(Constants.InputTestImagePath, _abstractPredictor, bmpReader);
             
             byte[,] originalImage = encoder.WorkImage;
 
@@ -37,7 +38,7 @@ namespace GZ_2D_LZUnitTests
         [TestMethod]
         public void EncodesTheFirstRowWithTheExpectedValues()
         {
-            encoder = new Gz2DlzEncoder(Constants.InputTestImagePath, predictor, bmpReader);
+            encoder = new Gz2DlzEncoder(Constants.InputTestImagePath, _abstractPredictor, bmpReader);
             encoder.Encode();
 
             var predictionError = encoder.PredictionError;
@@ -53,7 +54,7 @@ namespace GZ_2D_LZUnitTests
         [TestMethod]
         public void EncodesTheFirstRowIsMarkedAsEncoded()
         {
-            encoder = new Gz2DlzEncoder(Constants.InputTestImagePath, predictor, bmpReader);
+            encoder = new Gz2DlzEncoder(Constants.InputTestImagePath, _abstractPredictor, bmpReader);
 
             encoder.Encode();
 
@@ -69,7 +70,7 @@ namespace GZ_2D_LZUnitTests
         [TestMethod]
         public void EncodeEncodesAllPixelsForA5X6Image()
         {
-            encoder = new Gz2DlzEncoder(Constants.InputTestImagePath, predictor, bmpReader);
+            encoder = new Gz2DlzEncoder(Constants.InputTestImagePath, _abstractPredictor, bmpReader);
 
             encoder.Encode();
 
@@ -86,7 +87,7 @@ namespace GZ_2D_LZUnitTests
         [TestMethod]
         public void EncodeEncodesAllPixelsForAnImageWithAmatchingBlock()
         {
-            encoder = new Gz2DlzEncoder(Constants.InputTestImagePath, predictor, bmpReader);
+            encoder = new Gz2DlzEncoder(Constants.InputTestImagePath, _abstractPredictor, bmpReader);
 
             encoder.Encode();
 
@@ -103,7 +104,7 @@ namespace GZ_2D_LZUnitTests
         [TestMethod]
         public void EncodesHasNoMatchedPoints()
         {
-            encoder = new Gz2DlzEncoder(Constants.InputTestImagePath, predictor, bmpReader);
+            encoder = new Gz2DlzEncoder(Constants.InputTestImagePath, _abstractPredictor, bmpReader);
 
             encoder.Encode();
 
@@ -120,7 +121,7 @@ namespace GZ_2D_LZUnitTests
         [TestMethod]
         public void EncodesHasNoResidualValues()
         {
-            encoder = new Gz2DlzEncoder(Constants.InputTestImagePath, predictor, bmpReader);
+            encoder = new Gz2DlzEncoder(Constants.InputTestImagePath, _abstractPredictor, bmpReader);
 
             encoder.Encode();
 
@@ -137,7 +138,7 @@ namespace GZ_2D_LZUnitTests
         [TestMethod]
         public void EncodesHasNoMatchLocation()
         {
-            encoder = new Gz2DlzEncoder(Constants.InputTestImagePath, predictor, bmpReader);
+            encoder = new Gz2DlzEncoder(Constants.InputTestImagePath, _abstractPredictor, bmpReader);
 
             encoder.Encode();
 
@@ -154,7 +155,7 @@ namespace GZ_2D_LZUnitTests
         [TestMethod]
         public void EncodesHasNoMatchDimensions()
         {
-            encoder = new Gz2DlzEncoder(Constants.InputTestImagePath, predictor, bmpReader);
+            encoder = new Gz2DlzEncoder(Constants.InputTestImagePath, _abstractPredictor, bmpReader);
 
             encoder.Encode();
 
@@ -171,7 +172,7 @@ namespace GZ_2D_LZUnitTests
         [TestMethod]
         public void LocateTheBestAproximateMatchForGivenRootPixelGivesTheExpectedBestMatch()
         {
-            encoder = new Gz2DlzEncoder(Constants.Input4x4MatchBlockPath, predictor, bmpReader);
+            encoder = new Gz2DlzEncoder(Constants.Input4x4MatchBlockPath, _abstractPredictor, bmpReader);
             var originalImage = encoder.WorkImage;
             var width = originalImage.GetLength(0);
 
@@ -214,11 +215,29 @@ namespace GZ_2D_LZUnitTests
                 System.Diagnostics.Debug.WriteLine(" ");
             }
         }
+        private void WritToFile(byte[,] bytes)
+        {
+            using (StreamWriter writer = new StreamWriter("test.txt"))
+            {
+                int height1 = bytes.GetLength(0);
+                int width1 = bytes.GetLength(1);
+                writer.WriteLine(height1 + " " +width1);
+
+                for (int y = 0; y < height1; y++)
+                {
+                    for (int x = 0; x < width1; x++)
+                    {
+                        writer.Write(bytes[y, x] + " ");
+                    }
+
+                }
+            }
+        }
 
         [TestMethod]
         public void EncodeFindsTheExpectedBlockMatch()
         {
-            encoder = new Gz2DlzEncoder(Constants.Input4x4MatchBlockPath, predictor, bmpReader);
+            encoder = new Gz2DlzEncoder(Constants.Input4x4MatchBlockPath, _abstractPredictor, bmpReader);
 
             encoder.Encode();
             
@@ -230,8 +249,8 @@ namespace GZ_2D_LZUnitTests
         [TestMethod]
         public void EncodeFindsTheExpectedBlockMatchIfThereAre2BlockAtTheSameOrigin()
         {
-            encoder = new Gz2DlzEncoder(Constants.Input2PosibleMatchBlocksPath, predictor, bmpReader);
-            DisplayImageToOutputWindow(encoder.WorkImage);
+            encoder = new Gz2DlzEncoder(Constants.Input2PosibleMatchBlocksPath, _abstractPredictor, bmpReader);
+            //DisplayImageToOutputWindow(encoder.WorkImage);
             encoder.Encode();
 
             Assert.IsNotNull(encoder.MatchLocation[1, 0]);
@@ -242,7 +261,7 @@ namespace GZ_2D_LZUnitTests
         [TestMethod]
         public void WriteMatrixesToFileAsTextTestImageNoMatchOnlyPrediction()
         {
-            encoder = new Gz2DlzEncoder(Constants.InputTestImagePath, predictor, bmpReader);
+            encoder = new Gz2DlzEncoder(Constants.InputTestImagePath, _abstractPredictor, bmpReader);
 
             encoder.Encode();
             encoder.WriteMatrixToFileAsText();
@@ -251,7 +270,7 @@ namespace GZ_2D_LZUnitTests
         [TestMethod]
         public void WriteMatrixesToFileAsTextOne4X4MatchBlock()
         {
-            encoder = new Gz2DlzEncoder(Constants.Input4x4MatchBlockPath, predictor, bmpReader);
+            encoder = new Gz2DlzEncoder(Constants.Input4x4MatchBlockPath, _abstractPredictor, bmpReader);
 
             encoder.Encode();
             encoder.WriteMatrixToFileAsText();
@@ -260,7 +279,7 @@ namespace GZ_2D_LZUnitTests
         [TestMethod]
         public void WriteMatrixesToFileAsTextBestMatchOutOfTwo()
         {
-            encoder = new Gz2DlzEncoder(Constants.Input2PosibleMatchBlocksPath, predictor, bmpReader);
+            encoder = new Gz2DlzEncoder(Constants.Input2PosibleMatchBlocksPath, _abstractPredictor, bmpReader);
 
             encoder.Encode();
             encoder.WriteMatrixToFileAsText();
@@ -269,18 +288,28 @@ namespace GZ_2D_LZUnitTests
         [TestMethod]
         public void EncodeAndWriteMatrixesToFileAsTextLena()
         {
-            encoder = new Gz2DlzEncoder(Constants.LenaImagePath, predictor, bmpReader);
-
+            encoder = new Gz2DlzEncoder(Constants.LenaImagePath, _abstractPredictor, bmpReader);
+            WritToFile(encoder.WorkImage);
             encoder.Encode();
             encoder.WriteMatrixToFileAsText();
         }
 
         [TestMethod]
-        public void EncodeAndWriteMatrixesToFileAsTextFromATxtFile()
+        public void EncodeAndWriteMatrixesTolenFileAsTextFromATxtFile()
         {
             IReader txtReader = new TxtReader();
-            encoder = new Gz2DlzEncoder(Constants.Input2PosibleMatchBlocksTxtPath, predictor, txtReader);
+            encoder = new Gz2DlzEncoder(Constants.Input2PosibleMatchBlocksTxtPath, _abstractPredictor, txtReader);
 
+            encoder.Encode();
+            encoder.WriteMatrixToFileAsText();
+        }
+
+
+        [TestMethod]
+        public void EncodeAndWriteMatrixesTolenFileAsTextFromLenaTxtFile()
+        {
+            IReader txtReader = new TxtReader();
+            encoder = new Gz2DlzEncoder(Constants.LenaTxtImagePath, _abstractPredictor, txtReader);
             encoder.Encode();
             encoder.WriteMatrixToFileAsText();
         }
