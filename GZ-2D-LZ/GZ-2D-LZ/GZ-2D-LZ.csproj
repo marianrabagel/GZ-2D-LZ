@@ -56,9 +56,9 @@
     <Compile Include="Gz2dlzDecoder.cs" />
     <Compile Include="Gz2dlzEncoder.cs" />
     <Compile Include="Helpers\PixelLocation.cs" />
-    <Compile Include="Predictors\CalicAbstractPredictor.cs" />
+    <Compile Include="Predictors\CalicPredictor.cs" />
     <Compile Include="Readers\BmpReader.cs" />
-    <Compile Include="Predictors\ABasedAbstractPredictor.cs" />
+    <Compile Include="Predictors\ABasedPredictor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Readers\TxtReader.cs" />

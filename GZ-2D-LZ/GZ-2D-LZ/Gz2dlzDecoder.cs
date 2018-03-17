@@ -22,7 +22,7 @@ namespace G2_2D_LZ
         private int _height;
         private int _width;
 
-        private readonly AbstractPredictor _abstractPredictor = new ABasedAbstractPredictor();
+        private readonly AbstractPredictor _abstractPredictor = new ABasedPredictor();
 
         public Gz2DlzDecoder(string inputFileName) 
         {

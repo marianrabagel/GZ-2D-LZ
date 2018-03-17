@@ -52,6 +52,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Gz2dlzCoderTests.cs" />
     <Compile Include="Gz2dlzDecoderTests.cs" />
+    <Compile Include="Predictors\ABasedPredictorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
