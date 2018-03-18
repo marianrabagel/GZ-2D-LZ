@@ -175,7 +175,8 @@ namespace G2_2D_LZ
                 //if( match was acceptable )
                     // record true in the match flag table
                     // update the match dimension, location, residual tables
-                //if( the match was unacceptable)
+                //if( the match was unacceptable)+		typeof(AbstractPredictor)	{Name = "AbstractPredictor" FullName = "G2_2D_LZ.Contracts.AbstractPredictor"}	System.Type {System.RuntimeType}
+
                     //record false in the match flag table
                     //predict a block of pixels and recod the prediction errors in the prediction error table
                 //next unencoded pixel

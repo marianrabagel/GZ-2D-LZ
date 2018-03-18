@@ -23,6 +23,19 @@ namespace G2_2D_LZ.Predictors
             var ne = Matrix[onePositionUp, onePositionRight];
             var nne = Matrix[twoPositionsUp, onePositionRight];
 
+            if (y == 0)
+            {
+                n = 0;
+                nn = 0;
+                ne = 0;
+                nne = 0;
+            }
+            if (y == 1)
+            {
+                nn = 0;
+                nne = 0;
+            }
+
             var dh = Math.Abs(w - ww) + Math.Abs(n - nw) + Math.Abs(ne - n);
             var dv = Math.Abs(w - nw) + Math.Abs(n - nn) + Math.Abs(ne - nne);
             var dhMinusDv = dh - dv;
