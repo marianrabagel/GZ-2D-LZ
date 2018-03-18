@@ -16,7 +16,7 @@ namespace G2_2D_LZ
         public int[,] PredictionError { get; private set; } // prediction error values
         public byte[,] WorkImage { get; private set; }
 
-        private byte[,] _originalImage;
+        private readonly byte[,] _originalImage;
         private readonly AbstractPredictor _abstractPredictor;
         private IReader _reader;
         private readonly int _height;

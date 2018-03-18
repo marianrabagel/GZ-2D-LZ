@@ -13,7 +13,7 @@ namespace GZ_2D_LZUnitTests
         public static string LenaTxtImagePath = Environment.CurrentDirectory + "\\TestData\\TxtMatrices\\Lenna256an.txt";
         public static string Input2PosibleMatchBlocksTxtPath = Environment.CurrentDirectory + "\\TestData\\TxtMatrices\\2PossibleMatchBlocks.txt";
 
-        public static byte[,] TestImage =
+        public static byte[,] TestBmp =
         {
             {0, 255, 0, 255, 0, 255},
             {0, 255, 0, 255, 0, 0},
