@@ -34,7 +34,7 @@ namespace GZ_2D_LZUnitTests
 
             var predictionError = _encoder.PredictionError;
             int y = 0;
-            double[] firstRow = {0, 0, 0, 0, 0, 0};
+            double[] firstRow = {0, 255, 0, 255, 0, 255};
 
             for (int x = 0; x < predictionError.GetLength(1); x++)
             {

@@ -359,7 +359,7 @@ namespace GZ_2D_LZUnitTests
         }
 
         [TestMethod]
-        public void PredictiveDecodingWorks()
+        public void APredictiveDecodingWorks()
         {
             _decoder = new Gz2DlzDecoder(inputTestMatrixFile, _abstractPredictor);
             _decoder.LoadMatrixFromTxtFile();
@@ -375,6 +375,28 @@ namespace GZ_2D_LZUnitTests
                     for (int x = 0; x < bitmap.Width; x++)
                     {
                         Assert.AreEqual(bitmap.GetPixel(x,y).R, workImage[y,x]);
+                    }
+                }
+            }
+        }
+
+        [TestMethod]
+        public void CalicPredictiveDecodingWorks()
+        {
+            _decoder = new Gz2DlzDecoder(inputTestMatrixFile, new CalicPredictor());
+            _decoder.LoadMatrixFromTxtFile();
+
+            _decoder.Decode();
+
+            var workImage = _decoder.WorkImage;
+
+            using (Bitmap bitmap = new Bitmap(Constants.InputTestImagePath))
+            {
+                for (int y = 0; y < bitmap.Height; y++)
+                {
+                    for (int x = 0; x < bitmap.Width; x++)
+                    {
+                        Assert.AreEqual(bitmap.GetPixel(x, y).R, workImage[y, x]);
                     }
                 }
             }

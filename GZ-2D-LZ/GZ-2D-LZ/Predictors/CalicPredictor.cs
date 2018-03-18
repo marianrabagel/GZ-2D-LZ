@@ -13,7 +13,7 @@ namespace G2_2D_LZ.Predictors
             var onePositionRight = x + 1 > width ? width : x + 1;
             var onePositionUp = y - 1 < 0 ? 0 : y - 1;
             var twoPositionsUp = y - 2 < 0 ? 0 : y - 2;
-            var twoPositionsLeft = x - 2 < 0 ? 0 : x - 1;
+            var twoPositionsLeft = x - 2 < 0 ? 0 : x - 2;
 
             var w = Matrix[y, onePositionLeft];
             var ww = Matrix[y, twoPositionsLeft];
@@ -34,6 +34,21 @@ namespace G2_2D_LZ.Predictors
             {
                 nn = 0;
                 nne = 0;
+            }
+            if (x == 0)
+            {
+                w = 0;
+                ww = 0;
+            }
+            if (x == 1)
+            {
+                ww = 0;
+            }
+
+            if (x == width)
+            {
+                nne = 0;
+                ne = 0;
             }
 
             var dh = Math.Abs(w - ww) + Math.Abs(n - nw) + Math.Abs(ne - n);
