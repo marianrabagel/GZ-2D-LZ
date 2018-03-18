@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using G2_2D_LZ;
+﻿using G2_2D_LZ;
 using G2_2D_LZ.Contracts;
 using G2_2D_LZ.Helpers;
 using G2_2D_LZ.Predictors;
@@ -42,6 +37,7 @@ namespace GZ_2D_LZUnitTests
             }
         }
 
+        //todo pair encode-decode tests
         [TestMethod]
         public void WriteMatrixesToFileAsTextTestImageNoMatchOnlyPrediction()
         {

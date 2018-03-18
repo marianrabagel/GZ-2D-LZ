@@ -3,7 +3,6 @@ using System.Drawing;
 using System.IO;
 using G2_2D_LZ.Contracts;
 using G2_2D_LZ.Helpers;
-using G2_2D_LZ.Predictors;
 
 namespace G2_2D_LZ
 {
