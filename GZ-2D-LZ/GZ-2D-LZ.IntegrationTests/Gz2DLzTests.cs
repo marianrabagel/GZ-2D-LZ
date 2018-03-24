@@ -26,7 +26,7 @@ namespace GZ_2D_LZ.IntegrationTests
         private string _testBmpPath = "test.bmp";
         private string _one4X4MatchBlockBmpPath = "4x4Block.bmp";
         private string _2PossibleMatchBlocksBmpPath = "2PossibleMatchBlocks.bmp";
-        private string _lenna256anBmpFileName = "Lenna256an.bmp";
+        private string _lenna256anBmpPath = "Lenna256an.bmp";
 
         [TestInitialize]
         public void Setup()
@@ -41,7 +41,7 @@ namespace GZ_2D_LZ.IntegrationTests
             _testBmpPath = _basePath + _testBmpPath;
             _one4X4MatchBlockBmpPath = _basePath + _one4X4MatchBlockBmpPath;
             _2PossibleMatchBlocksBmpPath = _basePath + _2PossibleMatchBlocksBmpPath;
-            _lenna256anBmpFileName = _basePath + _lenna256anBmpFileName;
+            _lenna256anBmpPath = _basePath + _lenna256anBmpPath;
         }
         
         [TestMethod]
@@ -66,7 +66,7 @@ namespace GZ_2D_LZ.IntegrationTests
         }
         
         [TestMethod]
-        public void EncodeAndDecodeACustomeTxtLena256AnCreatesAFileIndenticalWithTheOriginal()
+        public void EncodeAndDecodeWithCalicPredictorCustomTxtLena256AnCreatesAFileIndenticalWithTheOriginal()
         {
             IReader txtReader = new TxtReader();
             _encoder = new Gz2DlzEncoder(_lenna256anTxtFileName, _aPredictor, txtReader);
@@ -87,51 +87,6 @@ namespace GZ_2D_LZ.IntegrationTests
         }
 
         [TestMethod]
-        public void EncodeAndDecodeTestBmpResultsTheSamePixels()
-        {
-            _encoder = new Gz2DlzEncoder(_testBmpPath, _aPredictor, _bmpReader);
-            _decoder = new Gz2DlzDecoder($"{_testBmpPath}.mat", _aPredictor);
-
-            _encoder.Encode();
-            _encoder.WriteMatrixToFileAsText();
-            _decoder.LoadMatrixFromTxtFile();
-            _decoder.Decode();
-
-            var workImage = _decoder.WorkImage;
-            CompareValueWithPixelFromBmp(_testBmpPath, workImage);
-        }
-
-        [TestMethod]
-        public void EncodeAndDecode4X4BlockBmpResultsTheSamePixels()
-        {
-            _encoder = new Gz2DlzEncoder(_one4X4MatchBlockBmpPath, _aPredictor, _bmpReader);
-            _decoder = new Gz2DlzDecoder($"{_one4X4MatchBlockBmpPath}.mat", _aPredictor);
-
-            _encoder.Encode();
-            _encoder.WriteMatrixToFileAsText();
-            _decoder.LoadMatrixFromTxtFile();
-            _decoder.Decode();
-
-            var workImage = _decoder.WorkImage;
-            CompareValueWithPixelFromBmp(_one4X4MatchBlockBmpPath, workImage);
-        }
-
-        [TestMethod]
-        public void EncodeAndDecode2PossibleMatchBlockskBmpResultsTheSamePixels()
-        {
-            _encoder = new Gz2DlzEncoder(_2PossibleMatchBlocksBmpPath, _aPredictor, _bmpReader);
-            _decoder = new Gz2DlzDecoder($"{_2PossibleMatchBlocksBmpPath}.mat", _aPredictor);
-
-            _encoder.Encode();
-            _encoder.WriteMatrixToFileAsText();
-            _decoder.LoadMatrixFromTxtFile();
-            _decoder.Decode();
-
-            var workImage = _decoder.WorkImage;
-            CompareValueWithPixelFromBmp(_2PossibleMatchBlocksBmpPath, workImage);
-        }
-
-        [TestMethod]
         public void EncodeAndDecodeWithCalicPredictorCustomTxtMatrixFileCreatesAFileIndenticalWithTheOriginal()
         {
             IReader txtReader = new TxtReader();
@@ -149,15 +104,155 @@ namespace GZ_2D_LZ.IntegrationTests
             var decodedFile = GetContentWithoutNewLines(filename);
 
             Assert.AreEqual(originalFile.Length, decodedFile.Length);
-            //Assert.IsTrue(string.Equals(originalFile, decodedFile));
-            Assert.AreEqual(decodedFile, originalFile);
+            Assert.IsTrue(string.Equals(originalFile, decodedFile));
+        }
+
+        [TestMethod]
+        public void EncodeAndDecodeWithCalicCustomTxtLena256AnCreatesAFileIndenticalWithTheOriginal()
+        {
+            IReader txtReader = new TxtReader();
+            _encoder = new Gz2DlzEncoder(_lenna256anTxtFileName, _calicPredictor, txtReader);
+            _decoder = new Gz2DlzDecoder($"{_lenna256anTxtFileName}.mat", _calicPredictor);
+
+            _encoder.Encode();
+            _encoder.WriteMatrixToFileAsText();
+            _decoder.LoadMatrixFromTxtFile();
+            _decoder.Decode();
+            _decoder.SaveAsTxtFile();
+
+            var filename = $"{_lenna256anTxtFileName}.mat.decoded.txt";
+            var originalFile = GetContentWithoutNewLines(_lenna256anTxtFileName).Replace("256 256 ", "");
+            var decodedFile = GetContentWithoutNewLines(filename);
+
+            Assert.AreEqual(originalFile.Length, decodedFile.Length);
+            Assert.IsTrue(string.Equals(originalFile, decodedFile));
+        }
+
+        [TestMethod]
+        public void EncodeAndDecodeWithAPredictorTestBmpResultsTheSamePixels()
+        {
+            _encoder = new Gz2DlzEncoder(_testBmpPath, _aPredictor, _bmpReader);
+            _decoder = new Gz2DlzDecoder($"{_testBmpPath}.mat", _aPredictor);
+
+            _encoder.Encode();
+            _encoder.WriteMatrixToFileAsText();
+            _decoder.LoadMatrixFromTxtFile();
+            _decoder.Decode();
+
+            var workImage = _decoder.WorkImage;
+            CompareValueWithPixelFromBmp(_testBmpPath, workImage);
+        }
+
+        [TestMethod]
+        public void EncodeAndDecodeWithAPredictor4X4BlockBmpResultsTheSamePixels()
+        {
+            _encoder = new Gz2DlzEncoder(_one4X4MatchBlockBmpPath, _aPredictor, _bmpReader);
+            _decoder = new Gz2DlzDecoder($"{_one4X4MatchBlockBmpPath}.mat", _aPredictor);
+
+            _encoder.Encode();
+            _encoder.WriteMatrixToFileAsText();
+            _decoder.LoadMatrixFromTxtFile();
+            _decoder.Decode();
+
+            var workImage = _decoder.WorkImage;
+            CompareValueWithPixelFromBmp(_one4X4MatchBlockBmpPath, workImage);
+        }
+
+        [TestMethod]
+        public void EncodeAndDecodeWithAPredictor2PossibleMatchBlockskBmpResultsTheSamePixels()
+        {
+            _encoder = new Gz2DlzEncoder(_2PossibleMatchBlocksBmpPath, _aPredictor, _bmpReader);
+            _decoder = new Gz2DlzDecoder($"{_2PossibleMatchBlocksBmpPath}.mat", _aPredictor);
+
+            _encoder.Encode();
+            _encoder.WriteMatrixToFileAsText();
+            _decoder.LoadMatrixFromTxtFile();
+            _decoder.Decode();
+
+            var workImage = _decoder.WorkImage;
+            CompareValueWithPixelFromBmp(_2PossibleMatchBlocksBmpPath, workImage);
+        }
+
+        [TestMethod]
+        public void EncodeAndDecodeWithAPredictorLenaBmpResultsTheSamePixels()
+        {
+            _encoder = new Gz2DlzEncoder(_lenna256anBmpPath, _aPredictor, _bmpReader);
+            _decoder = new Gz2DlzDecoder($"{_lenna256anBmpPath}.mat", _aPredictor);
+
+            _encoder.Encode();
+            _encoder.WriteMatrixToFileAsText();
+            _decoder.LoadMatrixFromTxtFile();
+            _decoder.Decode();
+
+            var workImage = _decoder.WorkImage;
+            CompareValueWithPixelFromBmp(_lenna256anBmpPath, workImage);
+        }
+
+        [TestMethod]
+        public void EncodeAndDecodeWithCalicPredictorTestBmpResultsTheSamePixels()
+        {
+            _encoder = new Gz2DlzEncoder(_testBmpPath, _calicPredictor, _bmpReader);
+            _decoder = new Gz2DlzDecoder($"{_testBmpPath}.mat", _calicPredictor);
+
+            _encoder.Encode();
+            _encoder.WriteMatrixToFileAsText();
+            _decoder.LoadMatrixFromTxtFile();
+            _decoder.Decode();
+
+            var workImage = _decoder.WorkImage;
+            CompareValueWithPixelFromBmp(_testBmpPath, workImage);
+        }
+
+        [TestMethod]
+        public void EncodeAndDecodeWithCalic4X4BlockBmpResultsTheSamePixels()
+        {
+            _encoder = new Gz2DlzEncoder(_one4X4MatchBlockBmpPath, _calicPredictor, _bmpReader);
+            _decoder = new Gz2DlzDecoder($"{_one4X4MatchBlockBmpPath}.mat", _calicPredictor);
+
+            _encoder.Encode();
+            _encoder.WriteMatrixToFileAsText();
+            _decoder.LoadMatrixFromTxtFile();
+            _decoder.Decode();
+
+            var workImage = _decoder.WorkImage;
+            CompareValueWithPixelFromBmp(_one4X4MatchBlockBmpPath, workImage);
+        }
+
+        [TestMethod]
+        public void EncodeAndDecodeWithCalic2PossibleMatchBlockskBmpResultsTheSamePixels()
+        {
+            _encoder = new Gz2DlzEncoder(_2PossibleMatchBlocksBmpPath, _calicPredictor, _bmpReader);
+            _decoder = new Gz2DlzDecoder($"{_2PossibleMatchBlocksBmpPath}.mat", _calicPredictor);
+
+            _encoder.Encode();
+            _encoder.WriteMatrixToFileAsText();
+            _decoder.LoadMatrixFromTxtFile();
+            _decoder.Decode();
+
+            var workImage = _decoder.WorkImage;
+            CompareValueWithPixelFromBmp(_2PossibleMatchBlocksBmpPath, workImage);
+        }
+
+        [TestMethod]
+        public void EncodeAndDecodeWithCalicPredictorLenaBmpResultsTheSamePixels()
+        {
+            _encoder = new Gz2DlzEncoder(_lenna256anBmpPath, _calicPredictor, _bmpReader);
+            _decoder = new Gz2DlzDecoder($"{_lenna256anBmpPath}.mat", _calicPredictor);
+
+            _encoder.Encode();
+            _encoder.WriteMatrixToFileAsText();
+            _decoder.LoadMatrixFromTxtFile();
+            _decoder.Decode();
+
+            var workImage = _decoder.WorkImage;
+            CompareValueWithPixelFromBmp(_lenna256anBmpPath, workImage);
         }
 
         [TestMethod]
         public void EncodeAndDecodeBmpLenaCreatesTheOriginalImage()
         {
-            _encoder = new Gz2DlzEncoder(_lenna256anBmpFileName, _aPredictor, _bmpReader);
-            _decoder = new Gz2DlzDecoder($"{_lenna256anBmpFileName}.mat", _aPredictor);
+            _encoder = new Gz2DlzEncoder(_lenna256anBmpPath, _aPredictor, _bmpReader);
+            _decoder = new Gz2DlzDecoder($"{_lenna256anBmpPath}.mat", _aPredictor);
 
             _encoder.Encode();
             _encoder.WriteMatrixToFileAsText();

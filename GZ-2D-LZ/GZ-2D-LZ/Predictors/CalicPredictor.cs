@@ -7,6 +7,11 @@ namespace G2_2D_LZ.Predictors
     {
         public override int GetPredictionValue(int x, int y)
         {
+            if (x == 0 && y == 0)
+            {
+                return 128;
+            }
+
             var width = Matrix.GetLength(1) - 1;
 
             var onePositionLeft = x - 1 < 0 ? 0 : x-1;
