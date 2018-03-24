@@ -1,12 +1,12 @@
 ﻿using System.IO;
 using G2_2D_LZ;
 using G2_2D_LZ.Contracts;
-using G2_2D_LZ.Helpers;
 using G2_2D_LZ.Predictors;
 using G2_2D_LZ.Readers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Constants = GZ_2D_LZ.UnitTests.Common.Constants;
 
-namespace GZ_2D_LZUnitTests
+namespace GZ_2D_LZ.UnitTests
 {
     [TestClass]
     public class Gz2DlzCoderWithAPredictorTests
@@ -25,7 +25,7 @@ namespace GZ_2D_LZUnitTests
         [TestMethod]
         public void WriteMatrixesToFileAsTextTestImageNoMatchOnlyPrediction()
         {
-            _encoder = new Gz2DlzEncoder(Constants.InputTestImagePath, _predictor, _bmpReader);
+            _encoder = new Gz2DlzEncoder(Constants.TestBmpPath, _predictor, _bmpReader);
 
             _encoder.Encode();
             _encoder.WriteMatrixToFileAsText();
@@ -34,7 +34,7 @@ namespace GZ_2D_LZUnitTests
         [TestMethod]
         public void WriteMatrixesToFileAsTextOne4X4MatchBlock()
         {
-            _encoder = new Gz2DlzEncoder(Constants.Input4x4MatchBlockPath, _predictor, _bmpReader);
+            _encoder = new Gz2DlzEncoder(Constants.One4X4MatchBlockBmpPath, _predictor, _bmpReader);
 
             _encoder.Encode();
             _encoder.WriteMatrixToFileAsText();
@@ -43,7 +43,7 @@ namespace GZ_2D_LZUnitTests
         [TestMethod]
         public void WriteMatrixesToFileAsTextBestMatchOutOfTwo()
         {
-            _encoder = new Gz2DlzEncoder(Constants.Input2PosibleMatchBlocksPath, _predictor, _bmpReader);
+            _encoder = new Gz2DlzEncoder(Constants.TwoPossibleMatchBlocksBmpPath, _predictor, _bmpReader);
 
             _encoder.Encode();
             _encoder.WriteMatrixToFileAsText();
@@ -57,25 +57,7 @@ namespace GZ_2D_LZUnitTests
             _encoder.Encode();
             _encoder.WriteMatrixToFileAsText();
         }
-
-        [TestMethod]
-        public void EncodeAndWriteMatrixesTolenFileAsTextFromATxtFile()
-        {
-            IReader txtReader = new TxtReader();
-            _encoder = new Gz2DlzEncoder(Constants.Input2PosibleMatchBlocksTxtPath, _predictor, txtReader);
-
-            _encoder.Encode();
-            _encoder.WriteMatrixToFileAsText();
-        }
-
-        [TestMethod]
-        public void EncodeAndWriteMatrixesToLenaFileAsTextFromLenaTxtFile()
-        {
-            IReader txtReader = new TxtReader();
-            _encoder = new Gz2DlzEncoder(Constants.LenaTxtImagePath, _predictor, txtReader);
-            _encoder.Encode();
-            _encoder.WriteMatrixToFileAsText();
-        }
+        
 
         private void AssertEachValue<T>(T[,] expectedValues, T[,] actualValues)
         {

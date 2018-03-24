@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B8294DF0-00E3-40C4-AF1A-4FB4BA65C30C}</ProjectGuid>
+    <ProjectGuid>{E3C2A452-FFB2-4A8F-B35E-87CD88601154}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GZ_2D_LZUnitTests</RootNamespace>
-    <AssemblyName>GZ-2D-LZUnitTests</AssemblyName>
+    <RootNamespace>GZ_2D_LZ.IntegrationTests</RootNamespace>
+    <AssemblyName>GZ-2D-LZ.IntegrationTests</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -49,43 +49,26 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Gz2DlzCoderWithCalicPredictorTests.cs" />
-    <Compile Include="Constants.cs" />
-    <Compile Include="Gz2DlzCoderWithAPredictorTests.cs" />
-    <Compile Include="Gz2dlzDecoderTests.cs" />
-    <Compile Include="Gz2dlzEncoderTests.cs" />
-    <Compile Include="Predictors\ABasedPredictorTests.cs" />
-    <Compile Include="Predictors\CalicPredictorTests.cs" />
+    <Compile Include="Gz2DLzTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GZ-2D-LZ.UnitTests.Common\GZ-2D-LZ.UnitTests.Common.csproj">
+      <Project>{1e7227df-32d9-4e26-a5a6-40b3c0b7fc77}</Project>
+      <Name>GZ-2D-LZ.UnitTests.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GZ-2D-LZ\GZ-2D-LZ.csproj">
       <Project>{98E447CE-ABE6-4C14-853A-D7D7A58F5E46}</Project>
       <Name>GZ-2D-LZ</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="TestData\2PossibleMatchBlocks.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\4x4Block.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\Lenna256an.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\test.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\test200.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\testChess.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="TestData\TxtMatrices\2PossibleMatchBlocks.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -93,7 +76,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

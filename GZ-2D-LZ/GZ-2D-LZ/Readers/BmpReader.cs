@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using G2_2D_LZ.Contracts;
 
-namespace G2_2D_LZ.Helpers
+namespace G2_2D_LZ.Readers
 {
     public class BmpReader : IReader
     {

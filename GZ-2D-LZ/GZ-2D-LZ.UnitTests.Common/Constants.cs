@@ -1,17 +1,16 @@
 ﻿using System;
 
-namespace GZ_2D_LZUnitTests
+namespace GZ_2D_LZ.UnitTests.Common
 {
     public class Constants
     {
-        public static string InputTestImagePath = Environment.CurrentDirectory + "\\TestData\\test.bmp";
-        public static string InputImage512x512Path = Environment.CurrentDirectory + "\\TestData\\test200.bmp";
-        public static string Input4x4MatchBlockPath = Environment.CurrentDirectory + "\\TestData\\4x4Block.bmp";
-        public static string InputChessPath = Environment.CurrentDirectory + "\\TestData\\testChess.bmp";
-        public static string Input2PosibleMatchBlocksPath = Environment.CurrentDirectory + "\\TestData\\2PossibleMatchBlocks.bmp";
-        public static string LenaImagePath = Environment.CurrentDirectory + "\\TestData\\Lenna256an.bmp";
-        public static string LenaTxtImagePath = Environment.CurrentDirectory + "\\TestData\\TxtMatrices\\Lenna256an.txt";
-        public static string Input2PosibleMatchBlocksTxtPath = Environment.CurrentDirectory + "\\TestData\\TxtMatrices\\2PossibleMatchBlocks.txt";
+        private static readonly string basePath = "\\TestData\\Encoder\\";
+        public static string TestBmpPath = Environment.CurrentDirectory + $"{basePath}test.bmp";
+        public static string One4X4MatchBlockBmpPath = Environment.CurrentDirectory + $"{basePath}4x4Block.bmp";
+        public static string TwoPossibleMatchBlocksBmpPath = Environment.CurrentDirectory + $"{basePath}2PossibleMatchBlocks.bmp";
+        public static string LenaImagePath = Environment.CurrentDirectory + $"{basePath}Lenna256an.bmp";
+        public static string LenaTxtImagePath = Environment.CurrentDirectory + $"{basePath}TxtMatrices\\Lenna256an.txt";
+        public static string Input2PosibleMatchBlocksTxtPath = Environment.CurrentDirectory + $"{basePath}TxtMatrices\\2PossibleMatchBlocks.txt";
 
         public static byte[,] TestBmp =
         {
@@ -22,7 +21,7 @@ namespace GZ_2D_LZUnitTests
             {255, 0, 255, 255, 0, 0}
         };
 
-        public static byte[,] Image4x4Block =
+        public static byte[,] Image4X4Block =
         {
             {192, 192, 192, 192, 192, 192, 192, 192, 192, 192},
             {96, 0, 0, 0, 0, 192, 96, 192, 96, 0},
