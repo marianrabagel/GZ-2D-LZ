@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GZ_2D_LZ.UnitTests.Common
+﻿namespace GZ_2D_LZ.UnitTests.Common
 {
     public class Constants
     {

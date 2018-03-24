@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using G2_2D_LZ;
 using G2_2D_LZ.Contracts;
 using G2_2D_LZ.Predictors;
