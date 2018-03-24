@@ -49,21 +49,19 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Gz2DlzCoderWithAPredictorTests.cs" />
-    <Compile Include="Gz2DlzCoderWithCalicPredictorTests.cs" />
     <Compile Include="Gz2dlzDecoderTests.cs" />
     <Compile Include="Gz2dlzEncoderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="TestData\Decoder\2PossibleMatchBlocks.bmp.mat">
+    <None Include="TestData\Decoder\2PossibleMatchBlocks_a.bmp.mat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TestData\Decoder\4x4Block.bmp.mat">
+    <None Include="TestData\Decoder\4x4Block_a.bmp.mat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TestData\Decoder\test.bmp.mat">
+    <None Include="TestData\Decoder\test_a.bmp.mat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

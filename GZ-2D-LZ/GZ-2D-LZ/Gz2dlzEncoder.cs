@@ -18,15 +18,14 @@ namespace G2_2D_LZ
 
         private readonly byte[,] _originalImage;
         private readonly AbstractPredictor _abstractPredictor;
-        private IReader _reader;
         private readonly int _height;
         private readonly int _width;
 
         protected Gz2DlzEncoder(string inputFileName, IReader reader)
         {
+            //todo guard conditions
             InputFileName = inputFileName;
-            _reader = reader;
-            _originalImage = _reader.LoadImageInMemory(inputFileName);
+            _originalImage = reader.LoadImageInMemory(inputFileName);
             _height = _originalImage.GetLength(0);
             _width = _originalImage.GetLength(1);
 

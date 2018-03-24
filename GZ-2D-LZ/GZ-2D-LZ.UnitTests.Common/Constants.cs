@@ -4,14 +4,6 @@ namespace GZ_2D_LZ.UnitTests.Common
 {
     public class Constants
     {
-        private static readonly string basePath = "\\TestData\\Encoder\\";
-        public static string TestBmpPath = Environment.CurrentDirectory + $"{basePath}test.bmp";
-        public static string One4X4MatchBlockBmpPath = Environment.CurrentDirectory + $"{basePath}4x4Block.bmp";
-        public static string TwoPossibleMatchBlocksBmpPath = Environment.CurrentDirectory + $"{basePath}2PossibleMatchBlocks.bmp";
-        public static string LenaImagePath = Environment.CurrentDirectory + $"{basePath}Lenna256an.bmp";
-        public static string LenaTxtImagePath = Environment.CurrentDirectory + $"{basePath}TxtMatrices\\Lenna256an.txt";
-        public static string Input2PosibleMatchBlocksTxtPath = Environment.CurrentDirectory + $"{basePath}TxtMatrices\\2PossibleMatchBlocks.txt";
-
         public static byte[,] TestBmp =
         {
             {0, 255, 0, 255, 0, 255},
@@ -35,7 +27,7 @@ namespace GZ_2D_LZ.UnitTests.Common
             {0, 96, 192, 64, 255, 64, 255, 64, 255, 192}
         };
 
-        public static byte[,] Image2posibleBlocks =
+        private static byte[,] _image2PossibleBlocks =
         {
             {192, 192, 192, 192, 192, 192, 192, 192, 192, 192},
             {192, 192, 192, 192, 192, 192, 128, 192, 128, 0},

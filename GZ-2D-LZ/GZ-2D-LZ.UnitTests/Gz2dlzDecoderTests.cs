@@ -9,20 +9,20 @@ using Constants = GZ_2D_LZ.UnitTests.Common.Constants;
 namespace GZ_2D_LZ.UnitTests
 {
     [TestClass]
-    public class Gz2dlzDecoderTests
+    public class Gz2DlzDecoderTests
     {
         private readonly string basePath = "\\TestData\\Decoder\\";
-        private string _testBmpMatFileName = "test.bmp.mat";
-        private string _one4X4BlockBmpMatFileName = "4x4Block.bmp.mat";
-        private string _2PossibleMatchBlocksBmpMatFileName = "2PossibleMatchBlocks.bmp.mat";
+        private string _testBmpMatFileName = "test_a.bmp.mat";
+        private string _one4X4BlockBmpMatFileName = "4x4Block_a.bmp.mat";
+        private string _2PossibleMatchBlocksBmpMatFileName = "2PossibleMatchBlocks_a.bmp.mat";
 
         private Gz2DlzDecoder _decoder;
-        private AbstractPredictor _abstractPredictor;
+        private AbstractPredictor _aPredictor;
 
         [TestInitialize]
         public void Setup()
         {
-            _abstractPredictor = new ABasedPredictor();
+            _aPredictor = new ABasedPredictor();
             _testBmpMatFileName = GetFullPath(_testBmpMatFileName);
             _one4X4BlockBmpMatFileName = GetFullPath(_one4X4BlockBmpMatFileName);
             _2PossibleMatchBlocksBmpMatFileName = GetFullPath(_2PossibleMatchBlocksBmpMatFileName);
@@ -36,7 +36,7 @@ namespace GZ_2D_LZ.UnitTests
         [TestMethod]
         public void LoadMatrixFromTxtFileReadsMatchFlagCorrectly()
         {
-            _decoder = new Gz2DlzDecoder(_testBmpMatFileName, _abstractPredictor);
+            _decoder = new Gz2DlzDecoder(_testBmpMatFileName, _aPredictor);
 
             _decoder.LoadMatrixFromTxtFile();
 
@@ -57,7 +57,7 @@ namespace GZ_2D_LZ.UnitTests
         [TestMethod]
         public void LoadMatrixFromTxtFileReadsMatchLocationCorrectly()
         {
-            _decoder = new Gz2DlzDecoder(_testBmpMatFileName, _abstractPredictor);
+            _decoder = new Gz2DlzDecoder(_testBmpMatFileName, _aPredictor);
 
             _decoder.LoadMatrixFromTxtFile();
             var matchLocation = _decoder.MatchLocation;
@@ -81,7 +81,7 @@ namespace GZ_2D_LZ.UnitTests
         [TestMethod]
         public void LoadMatrixFromTxtFileReadsMatchDimensionsCorrectly()
         {
-            _decoder = new Gz2DlzDecoder(_testBmpMatFileName, _abstractPredictor);
+            _decoder = new Gz2DlzDecoder(_testBmpMatFileName, _aPredictor);
 
             _decoder.LoadMatrixFromTxtFile();
             var matchDimensions = _decoder.MatchDimensions;
@@ -105,7 +105,7 @@ namespace GZ_2D_LZ.UnitTests
         [TestMethod]
         public void LoadMatrixFromTxtFileReadsResidualCorrectly()
         {
-            _decoder = new Gz2DlzDecoder(_testBmpMatFileName, _abstractPredictor);
+            _decoder = new Gz2DlzDecoder(_testBmpMatFileName, _aPredictor);
 
             _decoder.LoadMatrixFromTxtFile();
             var residual = _decoder.Residual;
@@ -128,7 +128,7 @@ namespace GZ_2D_LZ.UnitTests
         [TestMethod]
         public void LoadMatrixFromTxtFileReadsPredictionErrorCorrectly()
         {
-            _decoder = new Gz2DlzDecoder(_testBmpMatFileName, _abstractPredictor);
+            _decoder = new Gz2DlzDecoder(_testBmpMatFileName, _aPredictor);
             int[,] expectedValues = new int[,]
             {
                 {-128, 255, -255, 255, -255, 255},
@@ -166,7 +166,7 @@ namespace GZ_2D_LZ.UnitTests
                 {false, false, false, false, false, false, false, false, false, false},
                 {false, false, false, false, false, false, false, false, false, false}
             };
-            _decoder = new Gz2DlzDecoder(_one4X4BlockBmpMatFileName, _abstractPredictor);
+            _decoder = new Gz2DlzDecoder(_one4X4BlockBmpMatFileName, _aPredictor);
 
             _decoder.LoadMatrixFromTxtFile();
 
@@ -192,7 +192,7 @@ namespace GZ_2D_LZ.UnitTests
               0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
               0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 }*/
 
-            _decoder = new Gz2DlzDecoder(_one4X4BlockBmpMatFileName, _abstractPredictor);
+            _decoder = new Gz2DlzDecoder(_one4X4BlockBmpMatFileName, _aPredictor);
 
             _decoder.LoadMatrixFromTxtFile();
             var matchLocation = _decoder.MatchLocation;
@@ -240,7 +240,7 @@ namespace GZ_2D_LZ.UnitTests
               0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
               */
 
-            _decoder = new Gz2DlzDecoder(_one4X4BlockBmpMatFileName, _abstractPredictor);
+            _decoder = new Gz2DlzDecoder(_one4X4BlockBmpMatFileName, _aPredictor);
 
             _decoder.LoadMatrixFromTxtFile();
             var matchDimensions = _decoder.MatchDimensions;
@@ -276,7 +276,7 @@ namespace GZ_2D_LZ.UnitTests
         [TestMethod]
         public void LoadMatrixFromTxtFileReadsResidualCorrectly4X4Block()
         {
-            _decoder = new Gz2DlzDecoder(_one4X4BlockBmpMatFileName, _abstractPredictor);
+            _decoder = new Gz2DlzDecoder(_one4X4BlockBmpMatFileName, _aPredictor);
 
             _decoder.LoadMatrixFromTxtFile();
             var residual = _decoder.Residual;
@@ -299,7 +299,7 @@ namespace GZ_2D_LZ.UnitTests
         [TestMethod]
         public void LoadMatrixFromTxtFileReadsPredictionErrorCorrectly2PossibleMatchBlocks()
         {
-            _decoder = new Gz2DlzDecoder(_2PossibleMatchBlocksBmpMatFileName, _abstractPredictor);
+            _decoder = new Gz2DlzDecoder(_2PossibleMatchBlocksBmpMatFileName, _aPredictor);
             int[,] expectedValues = new int[,]
             {
                 {64, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -328,7 +328,7 @@ namespace GZ_2D_LZ.UnitTests
         [TestMethod]
         public void LoadMatrixFromTxtFileReadsPredictionErrorCorrectly4X4Block()
         {
-            _decoder = new Gz2DlzDecoder(_one4X4BlockBmpMatFileName, _abstractPredictor);
+            _decoder = new Gz2DlzDecoder(_one4X4BlockBmpMatFileName, _aPredictor);
             int[,] expectedValues = new int[,]
             {
                 {64, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -354,61 +354,17 @@ namespace GZ_2D_LZ.UnitTests
             AssertEachValue(expectedValues, predictionError);
         }
 
-        [TestMethod]
-        public void APredictiveDecodingWorks()
-        {
-            _decoder = new Gz2DlzDecoder(_testBmpMatFileName, _abstractPredictor);
-            _decoder.LoadMatrixFromTxtFile();
-
-            _decoder.Decode();
-
-            var workImage = _decoder.WorkImage;
-
-            using (Bitmap bitmap = new Bitmap(Constants.TestBmpPath))
-            {
-                for (int y = 0; y < bitmap.Height; y++)
-                {
-                    for (int x = 0; x < bitmap.Width; x++)
-                    {
-                        Assert.AreEqual(bitmap.GetPixel(x, y).R, workImage[y, x]);
-                    }
-                }
-            }
-        }
-
-        [TestMethod]
-        public void CalicPredictiveDecodingWorks()
-        {
-            _decoder = new Gz2DlzDecoder(_testBmpMatFileName, new CalicPredictor());
-            _decoder.LoadMatrixFromTxtFile();
-
-            _decoder.Decode();
-
-            var workImage = _decoder.WorkImage;
-
-            using (Bitmap bitmap = new Bitmap(Constants.TestBmpPath))
-            {
-                for (int y = 0; y < bitmap.Height; y++)
-                {
-                    for (int x = 0; x < bitmap.Width; x++)
-                    {
-                        Assert.AreEqual(bitmap.GetPixel(x, y).R, workImage[y, x]);
-                    }
-                }
-            }
-        }
-
+        
         [TestMethod]
         public void DecodeFor1MatchBlock()
         {
-            _decoder = new Gz2DlzDecoder(_one4X4BlockBmpMatFileName, _abstractPredictor);
+            _decoder = new Gz2DlzDecoder(_one4X4BlockBmpMatFileName, _aPredictor);
             _decoder.LoadMatrixFromTxtFile();
 
             _decoder.Decode();
 
             var workImage = _decoder.WorkImage;
 
-            DisplayImageToOutputWindow(workImage);
             AssertEachValue(Constants.Image4X4Block, workImage);
         }
         
