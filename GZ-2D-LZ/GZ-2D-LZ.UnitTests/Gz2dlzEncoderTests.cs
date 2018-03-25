@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using G2_2D_LZ;
 using G2_2D_LZ.Contracts;
 using G2_2D_LZ.Helpers;
@@ -10,6 +11,7 @@ using Constants = GZ_2D_LZ.UnitTests.Common.Constants;
 namespace GZ_2D_LZ.UnitTests
 {
     [TestClass]
+    [ExcludeFromCodeCoverage]
     public class Gz2DlzEncoderTests
     {
         private Gz2DlzEncoder _encoder;

@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BitOperations.IntegrationTests
 {
     [TestClass]
+    [ExcludeFromCodeCoverage]
     public class BitReaderWriterTests
     {
         private readonly string _basePath = Environment.CurrentDirectory + "\\TestData\\";
@@ -31,8 +33,8 @@ namespace BitOperations.IntegrationTests
                         Random random = new Random();
                         int randomNb = random.Next(1, 33);
 
-                        uint readNBit = reader.ReadNBit(randomNb);
-                        writer.WriteNBiti(readNBit, randomNb);
+                        uint readNBit = reader.ReadNBits(randomNb);
+                        writer.WriteNBits(readNBit, randomNb);
 
                         nrb -= randomNb;
 
@@ -63,8 +65,8 @@ namespace BitOperations.IntegrationTests
                         Random random = new Random();
                         int randomNb = random.Next(1, 33);
 
-                        uint readNBit = reader.ReadNBit(randomNb);
-                        writer.WriteNBiti(readNBit, randomNb);
+                        uint readNBit = reader.ReadNBits(randomNb);
+                        writer.WriteNBits(readNBit, randomNb);
 
                         nrb -= randomNb;
 
@@ -95,8 +97,8 @@ namespace BitOperations.IntegrationTests
                         Random random = new Random();
                         int randomNb = random.Next(1, 33);
 
-                        uint readNBit = reader.ReadNBit(randomNb);
-                        writer.WriteNBiti(readNBit, randomNb);
+                        uint readNBit = reader.ReadNBits(randomNb);
+                        writer.WriteNBits(readNBit, randomNb);
 
                         nrb -= randomNb;
 

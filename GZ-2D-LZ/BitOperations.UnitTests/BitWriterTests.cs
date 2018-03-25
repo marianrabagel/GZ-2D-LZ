@@ -42,7 +42,7 @@ namespace BitOperations.UnitTests
 
             using (BitWriter bitWriter = new BitWriter(fileName))
             {
-                bitWriter.WriteNBiti(0x41, 8);
+                bitWriter.WriteNBits(0x41, 8);
             }
 
             using (FileStream reader = new FileStream(fileName, FileMode.OpenOrCreate))
@@ -112,7 +112,7 @@ namespace BitOperations.UnitTests
 
             using (BitWriter bitWriter = new BitWriter(fileName))
             {
-                bitWriter.WriteNBiti(0xFF, 8);
+                bitWriter.WriteNBits(0xFF, 8);
             }
 
             using (FileStream reader = new FileStream(fileName, FileMode.OpenOrCreate))

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using G2_2D_LZ;
@@ -10,6 +11,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace GZ_2D_LZ.IntegrationTests
 {
     [TestClass]
+    [ExcludeFromCodeCoverage]
     public class Gz2DLzTests
     {
         private Gz2DlzEncoder _encoder;

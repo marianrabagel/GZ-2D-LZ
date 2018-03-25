@@ -7,30 +7,34 @@ namespace BitOperations
     {
         public int ReadCounter;
         private byte _buffer;
-        private string filename;
-        private readonly FileStream reader;
+        private string _filePath;
+        private readonly FileStream _reader;
         public long Length;
 
         public BitReader()
         {
-            filename = "";
+            _filePath = "";
             ReadCounter = 0;
         }
 
-        public BitReader(string filename)
+        public BitReader(string filePath)
         {
-            this.filename = filename;
+            _filePath = filePath;
             ReadCounter = 0;
-            reader = new FileStream(filename, FileMode.Open, FileAccess.Read);
-            Length = reader.Length;
+            _reader = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            Length = _reader.Length;
         }
 
         public byte ReadBit()
         {
-            if (reader.Length == 0)
+            if (_reader.Length == 0)
+            {
                 throw new Exception("Empty file");
+            }
             if (ReadCounter % 8 == 0)
-                _buffer = (byte) reader.ReadByte();
+            {
+                _buffer = (byte) _reader.ReadByte();
+            }
 
             byte value = (byte) ((_buffer >> (7 - (ReadCounter % 8))) & 0x01);
             ReadCounter++;
@@ -38,7 +42,7 @@ namespace BitOperations
             return value;
         }
 
-        public uint ReadNBit(int numberOfBits)
+        public uint ReadNBits(int numberOfBits)
         {
             uint value = 0;
 
@@ -53,7 +57,7 @@ namespace BitOperations
 
         public void Dispose()
         {
-            reader.Dispose();
+            _reader.Dispose();
         }
     }
 }

@@ -63,7 +63,7 @@ namespace BitOperations.UnitTests
             WriteValueToFile(0xE0, fileName);
             BitReader reader = new BitReader(fileName);
 
-            var solution = reader.ReadNBit(3);
+            var solution = reader.ReadNBits(3);
 
             Assert.AreEqual((uint) 0x07, solution);
         }
@@ -76,7 +76,7 @@ namespace BitOperations.UnitTests
             WriteValueToFile(0xAA, fileName);
             BitReader reader = new BitReader(fileName);
 
-            uint solution = reader.ReadNBit(4);
+            uint solution = reader.ReadNBits(4);
 
             Assert.AreEqual((uint) 0xA, solution);
         }
@@ -96,7 +96,7 @@ namespace BitOperations.UnitTests
             }
 
             BitReader reader = new BitReader(fileName);
-            uint solution = reader.ReadNBit(32);
+            uint solution = reader.ReadNBits(32);
 
             Assert.AreEqual(0xAAAAAAAA, solution);
         }
@@ -114,7 +114,7 @@ namespace BitOperations.UnitTests
             }
 
             BitReader reader = new BitReader(fileName);
-            uint solution = reader.ReadNBit(9);
+            uint solution = reader.ReadNBits(9);
 
             Assert.AreEqual((uint) 0x155, solution);
         }
@@ -133,7 +133,7 @@ namespace BitOperations.UnitTests
             }
 
             BitReader reader = new BitReader(fileName);
-            uint solution = reader.ReadNBit(17);
+            uint solution = reader.ReadNBits(17);
 
             Assert.AreEqual((uint) 0x1579B, solution);
         }
@@ -153,7 +153,7 @@ namespace BitOperations.UnitTests
             }
 
             BitReader reader = new BitReader(fileName);
-            uint solution = reader.ReadNBit(25);
+            uint solution = reader.ReadNBits(25);
 
             Assert.AreEqual((uint) 0x1579BDE, solution);
         }
@@ -167,7 +167,7 @@ namespace BitOperations.UnitTests
             WriteValueToFile(expectedValue, fileName);
             BitReader reader = new BitReader(fileName);
 
-            byte solution = (byte) reader.ReadNBit(8);
+            byte solution = (byte) reader.ReadNBits(8);
 
             Assert.AreEqual(expectedValue, solution);
         }

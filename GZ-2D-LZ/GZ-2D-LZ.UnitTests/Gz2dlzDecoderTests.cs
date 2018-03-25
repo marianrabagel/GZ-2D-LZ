@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using G2_2D_LZ;
 using G2_2D_LZ.Contracts;
 using G2_2D_LZ.Predictors;
@@ -8,6 +9,7 @@ using Constants = GZ_2D_LZ.UnitTests.Common.Constants;
 namespace GZ_2D_LZ.UnitTests
 {
     [TestClass]
+    [ExcludeFromCodeCoverage]
     public class Gz2DlzDecoderTests
     {
         private readonly string basePath = "\\TestData\\Decoder\\";

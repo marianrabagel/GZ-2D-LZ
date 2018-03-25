@@ -5,42 +5,46 @@ namespace BitOperations
 {
     public class BitWriter : IDisposable
     {
-        private string fileName;
-        private byte buffer;
-        private int writeCounter;
-        private FileStream writer;
+        private string _filePath;
+        private byte _buffer;
+        private int _writeCounter;
+        private readonly FileStream _writer;
 
-        public BitWriter(string fileName)
+        public BitWriter(string filePath)
         {
-            writeCounter = 0;
-            this.fileName = fileName;
-            writer = new FileStream(fileName, FileMode.OpenOrCreate);
+            _writeCounter = 0;
+            _filePath = filePath;
+            _writer = new FileStream(filePath, FileMode.OpenOrCreate);
         }
 
         public void WriteBit(int bit)
         {
-            buffer = (byte) (buffer | (bit << (7 - writeCounter % 8)));
-            writeCounter++;
+            _buffer = (byte) (_buffer | (bit << (7 - _writeCounter % 8)));
+            _writeCounter++;
 
-            if (writeCounter % 8 == 0)
+            if (_writeCounter % 8 == 0)
             {
-                writer.WriteByte(buffer);
-                buffer = 0;
+                _writer.WriteByte(_buffer);
+                _buffer = 0;
             }
         }
 
-        public void WriteNBiti(uint biti, int n)
+        public void WriteNBits(uint bits, int n)
         {
             if (n > 32 || n == 0)
+            {
                 return;
+            }
 
             for (int i = n; i > 0; i--)
-                WriteBit((int) (biti >> i - 1));
+            {
+                WriteBit((int) (bits >> i - 1));
+            }
         }
 
         public void Dispose()
         {
-            writer.Dispose();
+            _writer.Dispose();
         }
     }
 }
