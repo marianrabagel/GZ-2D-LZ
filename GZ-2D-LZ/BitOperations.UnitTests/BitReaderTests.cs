@@ -24,7 +24,6 @@ namespace BitOperations.UnitTests
         public void EmptyFile()
         {
             string fileName = $"{_basePath}empty.txt";
-
             BitReader reader = new BitReader(fileName);
 
             reader.ReadBit();
@@ -34,40 +33,24 @@ namespace BitOperations.UnitTests
         public void ReadBitValue1()
         {
             string fileName = $"{_basePath}Value128.txt";
-
-            if (File.Exists(fileName))
-            {
-                File.Delete(fileName);
-            }
-
-            using (FileStream writer = new FileStream(fileName, FileMode.OpenOrCreate))
-            {
-                writer.WriteByte(0x80);
-            }
-
+            DeleteFile(fileName);
+            WriteValueToFile(0x80, fileName);
             BitReader reader = new BitReader(fileName);
-            int solution = reader.ReadBit();
+
+            var solution = reader.ReadBit();
 
             Assert.AreEqual(1, solution);
         }
-
+        
         [TestMethod]
         public void ReadBitValue0()
         {
             string fileName = $"{_basePath}Value0.txt";
-
-            if (File.Exists(fileName))
-            {
-                File.Delete(fileName);
-            }
-
-            using (FileStream writer = new FileStream(fileName, FileMode.OpenOrCreate))
-            {
-                writer.WriteByte(1);
-            }
-
+            DeleteFile(fileName);
+            WriteValueToFile(1, fileName);
             BitReader reader = new BitReader(fileName);
-            int solution = reader.ReadBit();
+
+            var solution = reader.ReadBit();
 
             Assert.AreEqual(0, solution);
         }
@@ -76,19 +59,11 @@ namespace BitOperations.UnitTests
         public void Read3BitsOf1()
         {
             string fileName = $"{_basePath}Value0xE0.txt";
-
-            if (File.Exists(fileName))
-            {
-                File.Delete(fileName);
-            }
-
-            using (FileStream writer = new FileStream(fileName, FileMode.OpenOrCreate))
-            {
-                writer.WriteByte(0xE0);
-            }
-
+            DeleteFile(fileName);
+            WriteValueToFile(0xE0, fileName);
             BitReader reader = new BitReader(fileName);
-            uint solution = reader.ReadNBit(3);
+
+            var solution = reader.ReadNBit(3);
 
             Assert.AreEqual((uint) 0x07, solution);
         }
@@ -97,18 +72,10 @@ namespace BitOperations.UnitTests
         public void Read4BitsAlternative()
         {
             string fileName = $"{_basePath}Value0xAA.txt";
-
-            if (File.Exists(fileName))
-            {
-                File.Delete(fileName);
-            }
-
-            using (FileStream writer = new FileStream(fileName, FileMode.OpenOrCreate))
-            {
-                writer.WriteByte(0xAA);
-            }
-
+            DeleteFile(fileName);
+            WriteValueToFile(0xAA, fileName);
             BitReader reader = new BitReader(fileName);
+
             uint solution = reader.ReadNBit(4);
 
             Assert.AreEqual((uint) 0xA, solution);
@@ -118,11 +85,7 @@ namespace BitOperations.UnitTests
         public void Read32BitsAlternative()
         {
             string fileName = $"{_basePath}Value0xAAAAAAAA.txt";
-
-            if (File.Exists(fileName))
-            {
-                File.Delete(fileName);
-            }
+            DeleteFile(fileName);
 
             using (FileStream writer = new FileStream(fileName, FileMode.OpenOrCreate))
             {
@@ -142,11 +105,7 @@ namespace BitOperations.UnitTests
         public void Read9BitsAlternative()
         {
             string fileName = $"{_basePath}Value0xAAF.txt";
-
-            if (File.Exists(fileName))
-            {
-                File.Delete(fileName);
-            }
+            DeleteFile(fileName);
 
             using (FileStream writer = new FileStream(fileName, FileMode.OpenOrCreate))
             {
@@ -164,11 +123,7 @@ namespace BitOperations.UnitTests
         public void Read17BitsAlternative()
         {
             string fileName = $"{_basePath}Value0xABCDE.txt";
-
-            if (File.Exists(fileName))
-            {
-                File.Delete(fileName);
-            }
+            DeleteFile(fileName);
 
             using (FileStream writer = new FileStream(fileName, FileMode.OpenOrCreate))
             {
@@ -187,9 +142,7 @@ namespace BitOperations.UnitTests
         public void Read25BitsAlternative()
         {
             string fileName = $"{_basePath}Value0xABCDEF0.txt";
-
-            if (File.Exists(fileName))
-                File.Delete(fileName);
+            DeleteFile(fileName);
 
             using (FileStream writer = new FileStream(fileName, FileMode.OpenOrCreate))
             {
@@ -209,19 +162,30 @@ namespace BitOperations.UnitTests
         public void Read1Byte()
         {
             string fileName = $"{_basePath}Value157.txt";
-
-            if (File.Exists(fileName))
-                File.Delete(fileName);
-
-            using (FileStream writer = new FileStream(fileName, FileMode.OpenOrCreate))
-            {
-                writer.WriteByte(0x9D);
-            }
-
+            byte expectedValue = 0x9D;
+            DeleteFile(fileName);
+            WriteValueToFile(expectedValue, fileName);
             BitReader reader = new BitReader(fileName);
+
             byte solution = (byte) reader.ReadNBit(8);
 
-            Assert.AreEqual(0x9D, solution);
+            Assert.AreEqual(expectedValue, solution);
+        }
+
+        private static void WriteValueToFile(byte valueToBeWritten, string filenamePath)
+        {
+            using (FileStream writer = new FileStream(filenamePath, FileMode.OpenOrCreate))
+            {
+                writer.WriteByte(valueToBeWritten);
+            }
+        }
+
+        private void DeleteFile(string fileName)
+        {
+            if (File.Exists(fileName))
+            {
+                File.Delete(fileName);
+            }
         }
     }
 }

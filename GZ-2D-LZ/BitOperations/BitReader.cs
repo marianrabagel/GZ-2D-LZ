@@ -5,35 +5,35 @@ namespace BitOperations
 {
     public class BitReader : IDisposable
     {
-        public int readCounter;
-        private byte buffer;
+        public int ReadCounter;
+        private byte _buffer;
         private string filename;
-        private FileStream reader;
-        public long length;
+        private readonly FileStream reader;
+        public long Length;
 
         public BitReader()
         {
-            this.filename = "";
-            readCounter = 0;
+            filename = "";
+            ReadCounter = 0;
         }
 
         public BitReader(string filename)
         {
             this.filename = filename;
-            readCounter = 0;
+            ReadCounter = 0;
             reader = new FileStream(filename, FileMode.Open, FileAccess.Read);
-            length = reader.Length;
+            Length = reader.Length;
         }
 
         public byte ReadBit()
         {
             if (reader.Length == 0)
                 throw new Exception("Empty file");
-            if (readCounter % 8 == 0)
-                buffer = (byte) reader.ReadByte();
+            if (ReadCounter % 8 == 0)
+                _buffer = (byte) reader.ReadByte();
 
-            byte value = (byte) ((buffer >> (7 - (readCounter % 8))) & 0x01);
-            readCounter++;
+            byte value = (byte) ((_buffer >> (7 - (ReadCounter % 8))) & 0x01);
+            ReadCounter++;
 
             return value;
         }

@@ -15,11 +15,7 @@ namespace BitOperations.UnitTests
         public void Write1ByteOf1_WriteBit()
         {
             string fileName = $"{_basePath}Value0xFF_bitWriter.txt";
-
-            if (File.Exists(fileName))
-            {
-                File.Delete(fileName);
-            }
+            DeleteFile(fileName);
 
             using (BitWriter bitWriter = new BitWriter(fileName))
             {
@@ -42,11 +38,7 @@ namespace BitOperations.UnitTests
         public void WriteA()
         {
             string fileName = $"{_basePath}ValueA_bitWriter.txt";
-
-            if (File.Exists(fileName))
-            {
-                File.Delete(fileName);
-            }
+            DeleteFile(fileName);
 
             using (BitWriter bitWriter = new BitWriter(fileName))
             {
@@ -66,11 +58,7 @@ namespace BitOperations.UnitTests
         public void Write1ByteOf0_WriteBit()
         {
             string fileName = $"{_basePath}Value0x00_bitWriter.txt";
-
-            if (File.Exists(fileName))
-            {
-                File.Delete(fileName);
-            }
+            DeleteFile(fileName);
 
             using (BitWriter bitWriter = new BitWriter(fileName))
             {
@@ -93,11 +81,7 @@ namespace BitOperations.UnitTests
         public void Write0x5A_WriteBit()
         {
             string fileName = $"{_basePath}Value0x5A_bitWriter.txt";
-
-            if (File.Exists(fileName))
-            {
-                File.Delete(fileName);
-            }
+            DeleteFile(fileName);
 
             using (BitWriter bitWriter = new BitWriter(fileName))
             {
@@ -124,10 +108,7 @@ namespace BitOperations.UnitTests
         public void Write1ByteOf1_WriteNBiti()
         {
             string fileName = $"{_basePath}Value0xFF_WriteNBiti.txt";
-            if (File.Exists(fileName))
-            {
-                File.Delete(fileName);
-            }
+            DeleteFile(fileName);
 
             using (BitWriter bitWriter = new BitWriter(fileName))
             {
@@ -143,100 +124,11 @@ namespace BitOperations.UnitTests
             }
         }
 
-        [TestMethod]
-        public void ReadAndWriteATxtfile()
+        private void DeleteFile(string fileName)
         {
-            string inputFile = $"{_basePath}test.txt";
-            string outputFile = $"{_basePath}test_copy.txt";
-
-            if (File.Exists(outputFile))
+            if (File.Exists(fileName))
             {
-                File.Delete(outputFile);
-            }
-
-            using (BitReader reader = new BitReader(inputFile))
-            {
-                using (BitWriter writer = new BitWriter(outputFile))
-                {
-                    long nrb = 8 * reader.length;
-
-                    do
-                    {
-                        Random random = new Random();
-                        int randomNb = random.Next(1, 33);
-
-                        uint readNBit = reader.ReadNBit(randomNb);
-                        writer.WriteNBiti(readNBit, randomNb);
-
-                        nrb -= randomNb;
-
-                    } while (nrb > 0);
-                }
-            }
-        }
-
-        [TestMethod]
-        public void ReadAndWriteAJpegfile()
-        {
-            string inputFile = $"{_basePath}cover.jpg";
-            string outputFile = $"{_basePath}cover_copy.jpg";
-
-            if (File.Exists(outputFile))
-            {
-                File.Delete(outputFile);
-            }
-
-            using (BitReader reader = new BitReader(inputFile))
-            {
-                using (BitWriter writer = new BitWriter(outputFile))
-                {
-                    long nrb = 8 * reader.length;
-
-                    do
-                    {
-                        Random random = new Random();
-                        int randomNb = random.Next(1, 33);
-
-                        uint readNBit = reader.ReadNBit(randomNb);
-                        writer.WriteNBiti(readNBit, randomNb);
-
-                        nrb -= randomNb;
-
-                    } while (nrb > 0);
-                }
-            }
-        }
-
-        [Ignore]
-        [TestMethod]
-        public void ReadAndWriteAPdffile()
-        {
-            string inputFile = $"{_basePath}brin-page-98.pdf";
-            string outputFile = $"{_basePath}brin-page-98_copy.pdf";
-
-            if (File.Exists(outputFile))
-            {
-                File.Delete(outputFile);
-            }
-
-            using (BitReader reader = new BitReader(inputFile))
-            {
-                using (BitWriter writer = new BitWriter(outputFile))
-                {
-                    long nrb = 8 * reader.length;
-
-                    do
-                    {
-                        Random random = new Random();
-                        int randomNb = random.Next(1, 33);
-
-                        uint readNBit = reader.ReadNBit(randomNb);
-                        writer.WriteNBiti(readNBit, randomNb);
-
-                        nrb -= randomNb;
-
-                    } while (nrb > 0);
-                }
+                File.Delete(fileName);
             }
         }
     }
