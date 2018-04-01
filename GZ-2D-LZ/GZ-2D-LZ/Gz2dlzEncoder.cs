@@ -55,8 +55,8 @@ namespace G2_2D_LZ
         {
             TxtWriter txtWriter = new TxtWriter(_inputFilePath + Constants.IntermediaryFileExtension); ;
 
-            txtWriter.Write(WorkImage.GetLength(1) + separator.ToString());
-            txtWriter.Write(WorkImage.GetLength(0) + separator.ToString());
+            txtWriter.Write(WorkImage.GetLength(1) + Constants.Separator.ToString());
+            txtWriter.Write(WorkImage.GetLength(0) + Constants.Separator.ToString());
             txtWriter.Write(Environment.NewLine);
 
             txtWriter.WriteMatchFlagToFile(IsMatchFound);

@@ -23,13 +23,9 @@ namespace G2_2D_LZ
 
         private readonly AbstractPredictor _abstractPredictor;
 
-        protected Gz2DlzDecoder(string inputFileName) 
+        public Gz2DlzDecoder(string inputFileName, AbstractPredictor abstractPredictor)
         {
             _inputFileName = inputFileName;
-        }
-
-        public Gz2DlzDecoder(string inputFileName, AbstractPredictor abstractPredictor) : this(inputFileName)
-        {
             _abstractPredictor = abstractPredictor;
         }
 
@@ -72,7 +68,6 @@ namespace G2_2D_LZ
         {
             _abstractPredictor.SetOriginalMatrix(WorkImage);
 
-            DecodeMatchingTables();
             DecodeFirstRow();
 
             for (int y = 1; y < _height; y++)
@@ -89,27 +84,12 @@ namespace G2_2D_LZ
                         }
                         else
                         {
-                            PredictNoMatchBlock(y, x);
+                            ReconstructWithPredictonNoMatchBlock(y, x);
                             x += Constants.NoMatchBlockWidth - 1;
                         }
                     }
                 }
             }
-
-            
-
-            //decode the matching tables
-            //predict one row of pixels and correct each prediction error using the prediction error table
-            //advance the decoder to the next undecoded pixel
-            //while ( more pixels to be decoded)
-            //read a value from the match flag table
-            //if (match flag is true)
-            //reproduce a block of pixels using the match dimension, location and residual tables
-            //if (match flag is false)
-            //predict a block of pixels and correct the prediction errors using the prediction error table
-            //get the next unencoded pixel
-            //end while
-            //output the reconstructed image
         }
 
         public void SaveAsBitmap()
@@ -138,7 +118,7 @@ namespace G2_2D_LZ
                     {
                         byte value = WorkImage[y, x];
                         writer.Write(value);
-                        writer.Write(" ");
+                        writer.Write(Constants.Separator.ToString());
                     }
                     writer.WriteLine();
                 }
@@ -149,6 +129,7 @@ namespace G2_2D_LZ
         {
             var matchLocation = MatchLocation[y, x];
             var matchDimension = MatchDimension[y, x];
+
             for (int i = 0; i < matchDimension.Height; i++)
             {
                 for (int j = 0; j < matchDimension.Width; j++)
@@ -160,7 +141,7 @@ namespace G2_2D_LZ
             }
         }
 
-        private void PredictNoMatchBlock(int y, int x)
+        private void ReconstructWithPredictonNoMatchBlock(int y, int x)
         {
             for (int i = 0; i < Constants.NoMatchBlockHeight; i++)
             {
@@ -181,11 +162,6 @@ namespace G2_2D_LZ
                 IsPixelEncoded[0, i] = false;
                 WorkImage[0, i] = (byte) (_abstractPredictor.GetPredictionValue(i, 0) + _abstractPredictor.PredictionError[0, i]);
             }
-        }
-
-        private void DecodeMatchingTables()
-        {
-            
         }
     }
 }

@@ -31,7 +31,7 @@ namespace G2_2D_LZ.Writers
                     for (int x = 0; x < width; x++)
                     {
                         var value = matrix[y, x] ? 1 : 0;
-                        streamWriter.Write(value + " ");
+                        streamWriter.Write(value + Constants.Separator.ToString());
                     }
 
                     streamWriter.WriteLine();
@@ -48,8 +48,8 @@ namespace G2_2D_LZ.Writers
                     for (int x = 0; x < matrix.GetLength(1); x++)
                     {
                         var value = matrix[y, x] ?? new PixelLocation(0, 0);
-                        streamWriter.Write(value.X + " ");
-                        streamWriter.Write(value.Y + " ");
+                        streamWriter.Write(value.X + Constants.Separator.ToString());
+                        streamWriter.Write(value.Y + Constants.Separator.ToString());
                     }
 
                     streamWriter.WriteLine();
@@ -67,8 +67,8 @@ namespace G2_2D_LZ.Writers
                     {
                         var value = matrix[y, x] ?? new Dimension(0, 0);
 
-                        streamWriter.Write(value.Width + " ");
-                        streamWriter.Write(value.Height + " ");
+                        streamWriter.Write(value.Width + Constants.Separator.ToString());
+                        streamWriter.Write(value.Height + Constants.Separator.ToString());
                     }
 
                     streamWriter.WriteLine();
@@ -84,7 +84,7 @@ namespace G2_2D_LZ.Writers
                 {
                     for (int x = 0; x < matrix.GetLength(1); x++)
                     {
-                        var format = matrix[y, x] + " ";
+                        var format = matrix[y, x] + Constants.Separator.ToString();
                         streamWriter.Write(format);
                     }
 
