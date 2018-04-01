@@ -15,7 +15,6 @@ namespace G2_2D_LZ
         public PixelLocation[,] MatchLocation { get; private set; } //position of the match relative to the block being encoded
         public Dimension[,] MatchDimension { get; private set; } //width and heigth of the block being encoded
         public int[,] Residual { get; private set; } //difference between the pixel in the actual block and the matching block
-        public int[,] PredictionError { get; private set; } // prediction error values
         public byte[,] WorkImage { get; private set; }
 
         private int _height;
@@ -66,7 +65,7 @@ namespace G2_2D_LZ
                     for (int x = 0; x < _width; x++)
                     {
                         var value = Convert.ToInt32(values[j++]);
-                        PredictionError[y, x] = value;
+                        _abstractPredictor.PredictionError[y, x] = value;
                     }
                 }
             }
@@ -79,7 +78,7 @@ namespace G2_2D_LZ
             MatchLocation = new PixelLocation[_height, _width];
             MatchDimension = new Dimension[_height, _width];
             Residual = new int[_height, _width];
-            PredictionError = new int[_height, _width];
+            _abstractPredictor.InitializePredictionError(_height, _width);
         }
 
         private void SetIsPixelEncodedToTrue()
@@ -243,7 +242,7 @@ namespace G2_2D_LZ
                 {
                     if (y + i < _height && x + j < _width)
                     {
-                        WorkImage[y + i, x + j] = (byte) (_abstractPredictor.GetPredictionValue(x + j, y + i) + PredictionError[y + i, x + j]);
+                        WorkImage[y + i, x + j] = (byte) (_abstractPredictor.GetPredictionValue(x + j, y + i) + _abstractPredictor.PredictionError[y + i, x + j]);
                     }
                 }
             }
@@ -254,7 +253,7 @@ namespace G2_2D_LZ
             for (int i = 0; i < _width; i++)
             {
                 IsPixelEncoded[0, i] = false;
-                WorkImage[0, i] = (byte) (_abstractPredictor.GetPredictionValue(i, 0) + PredictionError[0, i]);
+                WorkImage[0, i] = (byte) (_abstractPredictor.GetPredictionValue(i, 0) + _abstractPredictor.PredictionError[0, i]);
             }
         }
 

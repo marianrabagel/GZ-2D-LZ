@@ -127,7 +127,8 @@ namespace GZ_2D_LZ.UnitTests
         [TestMethod]
         public void LoadMatrixFromTxtFileReadsPredictionErrorCorrectly()
         {
-            _decoder = new Gz2DlzDecoder(_testBmpMatFileName, new ABasedPredictor());
+            var aBasedPredictor = new ABasedPredictor();
+            _decoder = new Gz2DlzDecoder(_testBmpMatFileName, aBasedPredictor);
             int[,] expectedValues = new int[,]
             {
                 {-128, 255, -255, 255, -255, 255},
@@ -138,7 +139,7 @@ namespace GZ_2D_LZ.UnitTests
             };
 
             _decoder.LoadMatrixFromTxtFile();
-            var predictionError = _decoder.PredictionError;
+            var predictionError = aBasedPredictor.PredictionError;
 
             var height = predictionError.GetLength(0);
             var width = predictionError.GetLength(1);
@@ -298,7 +299,8 @@ namespace GZ_2D_LZ.UnitTests
         [TestMethod]
         public void LoadMatrixFromTxtFileReadsPredictionErrorCorrectly2PossibleMatchBlocks()
         {
-            _decoder = new Gz2DlzDecoder(_2PossibleMatchBlocksBmpMatFileName, new ABasedPredictor());
+            var aBasedPredictor = new ABasedPredictor();
+            _decoder = new Gz2DlzDecoder(_2PossibleMatchBlocksBmpMatFileName, aBasedPredictor);
             int[,] expectedValues = new int[,]
             {
                 {64, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -314,7 +316,7 @@ namespace GZ_2D_LZ.UnitTests
             };
 
             _decoder.LoadMatrixFromTxtFile();
-            var predictionError = _decoder.PredictionError;
+            var predictionError = aBasedPredictor.PredictionError;
 
             var height = predictionError.GetLength(0);
             var width = predictionError.GetLength(1);
@@ -327,7 +329,8 @@ namespace GZ_2D_LZ.UnitTests
         [TestMethod]
         public void LoadMatrixFromTxtFileReadsPredictionErrorCorrectly4X4Block()
         {
-            _decoder = new Gz2DlzDecoder(_one4X4BlockBmpMatFileName, new ABasedPredictor());
+            var aBasedPredictor = new ABasedPredictor();
+            _decoder = new Gz2DlzDecoder(_one4X4BlockBmpMatFileName, aBasedPredictor);
             int[,] expectedValues = new int[,]
             {
                 {64, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -343,7 +346,7 @@ namespace GZ_2D_LZ.UnitTests
             };
 
             _decoder.LoadMatrixFromTxtFile();
-            var predictionError = _decoder.PredictionError;
+            var predictionError = aBasedPredictor.PredictionError;
 
             var height = predictionError.GetLength(0);
             var width = predictionError.GetLength(1);

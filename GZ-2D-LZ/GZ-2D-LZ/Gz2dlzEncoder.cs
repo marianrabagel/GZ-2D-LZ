@@ -48,6 +48,7 @@ namespace G2_2D_LZ
         public void Encode()
         {
             _abstractPredictor.SetOriginalMatrix(WorkImage);
+            _abstractPredictor.InitializePredictionError((int) _height, (int)_width);
 
             PredictFirstRow();
             EncodeWorkImage();

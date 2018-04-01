@@ -7,11 +7,15 @@ namespace G2_2D_LZ.Contracts
         public int[,] PredictionError { get; set; }
 
         public abstract int GetPredictionValue(int x, int y);
-        
+
+        public void InitializePredictionError(int height, int width)
+        {
+            PredictionError = new int[height, width];
+        }
+
         public void SetOriginalMatrix(byte[,] matrix)
         {
             Matrix = matrix;
-            PredictionError = new int[matrix.GetLength(0), matrix.GetLength(1)];
         }
     }
 }
