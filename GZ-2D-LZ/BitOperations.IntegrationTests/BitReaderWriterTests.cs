@@ -11,6 +11,23 @@ namespace BitOperations.IntegrationTests
     {
         private readonly string _basePath = Environment.CurrentDirectory + "\\TestData\\";
 
+
+        [TestMethod]
+        public void WriteBitValue1ReadsBitValue1()
+        {
+            var filename = $"{_basePath}Value0x01.txt";
+            using (BitWriter bitWriter = new BitWriter(filename))
+            {
+                bitWriter.WriteBit(0x01);
+            }
+
+            using (BitReader reader = new BitReader(filename))
+            {
+                var readBit = reader.ReadBit();
+                Assert.AreEqual(0x01, readBit);
+            }
+        }
+
         [TestMethod]
         public void ReadAndWriteATxtfile()
         {

@@ -123,7 +123,7 @@ namespace BitOperations.UnitTests
                 Assert.AreEqual(0xFF, solution);
             }
         }
-
+        
         private void DeleteFile(string fileName)
         {
             if (File.Exists(fileName))

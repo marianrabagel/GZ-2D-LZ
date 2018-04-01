@@ -87,5 +87,11 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BitOperations\BitOperations.csproj">
+      <Project>{3dc0b673-7c65-4dd8-9dc5-1244eb9dc717}</Project>
+      <Name>BitOperations</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

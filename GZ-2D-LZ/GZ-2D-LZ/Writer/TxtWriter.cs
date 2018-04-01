@@ -40,15 +40,11 @@ namespace G2_2D_LZ.Writer
 
         public void WriteMatchLocationToFile(PixelLocation[,] matrix)
         {
-            var height = matrix.GetLength(0);
-            var width = matrix.GetLength(1);
-
             using (StreamWriter streamWriter = new StreamWriter(_inputFileName, true))
             {
-                for (int y = 0; y < height; y++)
+                for (int y = 0; y < matrix.GetLength(0); y++)
                 {
-
-                    for (int x = 0; x < width; x++)
+                    for (int x = 0; x < matrix.GetLength(1); x++)
                     {
                         var value = matrix[y, x] ?? new PixelLocation(0, 0);
                         streamWriter.Write(value.X + " ");
@@ -62,13 +58,11 @@ namespace G2_2D_LZ.Writer
 
         public void WriteMatchDimensionsToFile(Dimensions[,] matrix)
         {
-            var heigth = matrix.GetLength(0);
-            var width = matrix.GetLength(1);
             using (StreamWriter streamWriter = new StreamWriter(_inputFileName, true))
             {
-                for (int y = 0; y < heigth; y++)
+                for (int y = 0; y < matrix.GetLength(0); y++)
                 {
-                    for (int x = 0; x < width; x++)
+                    for (int x = 0; x < matrix.GetLength(1); x++)
                     {
                         var value = matrix[y, x] ?? new Dimensions(0, 0);
 

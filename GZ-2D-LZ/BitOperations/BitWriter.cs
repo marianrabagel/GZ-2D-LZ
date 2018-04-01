@@ -42,9 +42,11 @@ namespace BitOperations
                 WriteBit((int) (bits >> i - 1));
             }
         }
-
+        
         public void Dispose()
         {
+            WriteNBits(0, 7);
+
             _writer.Dispose();
         }
     }

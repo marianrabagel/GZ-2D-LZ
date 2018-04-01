@@ -1,4 +1,7 @@
 ﻿using System;
+using System.IO;
+using BitOperations;
+using BitOperations.Contracts;
 using G2_2D_LZ.Contracts;
 using G2_2D_LZ.Helpers;
 using G2_2D_LZ.Writer;
@@ -7,7 +10,8 @@ namespace G2_2D_LZ
 {
     public class Gz2DlzEncoder
     {
-        public string InputFileName;
+        private readonly string _inputFilePath;
+        private const string IntermediaryFileExtension = ".mat";
 
         private readonly byte[,] _originalImage;
         private readonly int _height;
@@ -22,11 +26,11 @@ namespace G2_2D_LZ
 
         private readonly AbstractPredictor _abstractPredictor;
 
-        public Gz2DlzEncoder(string inputFileName, AbstractPredictor abstractPredictor, IReader reader)
+        public Gz2DlzEncoder(string inputFilePath, AbstractPredictor abstractPredictor, IReader reader)
         {
             //todo guard conditions
-            InputFileName = inputFileName;
-            _originalImage = reader.GetImageFromFile(inputFileName);
+            _inputFilePath = inputFilePath;
+            _originalImage = reader.GetImageFromFile(inputFilePath);
 
             _height = _originalImage.GetLength(0);
             _width = _originalImage.GetLength(1);
@@ -39,7 +43,7 @@ namespace G2_2D_LZ
 
         public void WriteMatrixToFileAsText()
         {
-            TxtWriter txtWriter = new TxtWriter(InputFileName + ".mat");;
+            TxtWriter txtWriter = new TxtWriter(_inputFilePath + IntermediaryFileExtension);;
 
             txtWriter.Write(WorkImage.GetLength(1) + " ");
             txtWriter.Write(WorkImage.GetLength(0) + " ");
@@ -57,7 +61,32 @@ namespace G2_2D_LZ
             _abstractPredictor.SetOriginalMatrix(WorkImage);
 
             PredictFirstRow();
+            EncodeWorkImage();
+            WriteResultingMatricesToIndividualFiles();
+        }
 
+        private void WriteResultingMatricesToIndividualFiles()
+        {
+            var fileName = Path.GetFileName(_inputFilePath);
+            Directory.CreateDirectory(_inputFilePath + ".folder");
+            var outputFileName = _inputFilePath + ".folder\\" + fileName + "." + nameof(IsPixelEncoded) + IntermediaryFileExtension;
+
+            using (IBitWriter bitWriter = new BitWriter(outputFileName))
+            {
+                for (int y = 0; y < IsPixelEncoded.GetLength(0); y++)
+                {
+                    for (int x = 0; x < IsPixelEncoded.GetLength(1); x++)
+                    {
+                        var bit = IsPixelEncoded[y,x] ? 0X01 : 0X00;
+
+                        bitWriter.WriteBit(bit);
+                    }
+                }
+            }
+        }
+
+        private void EncodeWorkImage()
+        {
             for (int y = 1; y < _height; y++)
             {
                 for (int x = 0; x < _width; x++)
@@ -79,28 +108,12 @@ namespace G2_2D_LZ
                         else
                         {
                             IsMatchFound[y, x] = false;
-                            PredictNoMatchBlock(x, y); 
+                            PredictNoMatchBlock(x, y);
                             x += Constants.NoMatchBlockWidth - 1;
                         }
                     }
                 }
             }
-
-            //predict one row of pixels and record each prediction error in the prediction error table
-            //advance the encoder to the next unencoded pixel
-            //while (more pixels to be encoded)
-                //locate the best match in search region
-                //if( match was acceptable )
-                    // record true in the match flag table
-                    // update the match dimension, location, residual tables
-                //if( the match was unacceptable)+		typeof(AbstractPredictor)	{Name = "AbstractPredictor" FullName = "G2_2D_LZ.Contracts.AbstractPredictor"}	System.Type {System.RuntimeType}
-
-                    //record false in the match flag table
-                    //predict a block of pixels and recod the prediction errors in the prediction error table
-                //next unencoded pixel
-            // end while
-            // statistically encode the matching tables
-            //output the encoded image
         }
 
         public BestMatch LocateTheBestAproximateMatchForGivenRootPixel(PixelLocation encoderPoint, PixelLocation rootPoint)
@@ -182,6 +195,15 @@ namespace G2_2D_LZ
             }
         }
 
+        private void PredictFirstRow()
+        {
+            for (int i = 0; i < _width; i++)
+            {
+                IsPixelEncoded[0, i] = true;
+                _abstractPredictor.PredictionError[0, i] = WorkImage[0, i] - _abstractPredictor.GetPredictionValue(i, 0);
+            }
+        }
+
         private void SetResidualAndIsPixelEncoded(int encoderX, int encoderY)
         {
             var matchDimension = MatchDimensions[encoderY, encoderX];
@@ -240,15 +262,6 @@ namespace G2_2D_LZ
             }
 
             return sum / blockDimensions.Height * blockDimensions.Width;
-        }
-
-        private void PredictFirstRow()
-        {
-            for (int i = 0; i < _width; i++)
-            {
-                IsPixelEncoded[0, i] = true;
-                _abstractPredictor.PredictionError[0, i] = WorkImage[0, i] - _abstractPredictor.GetPredictionValue(i, 0);
-            }
         }
 
         private void InstatiateTables()
