@@ -251,6 +251,22 @@ namespace GZ_2D_LZ.IntegrationTests
         }
 
         [TestMethod]
+        [Ignore]
+        public void EncodeAndDecodeWithAPredictorAndBitOperationsTestBmpResultsTheSamePixels()
+        {
+            _encoder = new Gz2DlzEncoder(_testBmpPath, _aPredictor, _bmpReader);
+            _decoder = new Gz2DlzDecoder($"{_testBmpPath}.mat", _aPredictor);
+
+            _encoder.Encode();
+            _encoder.WriteResultingMatricesToIndividualFiles();
+            _decoder.LoadMatrixFromTxtFile();
+            _decoder.Decode();
+
+            var workImage = _decoder.WorkImage;
+            CompareValueWithPixelFromBmp(_testBmpPath, workImage);
+        }
+
+        [TestMethod]
         public void EncodeAndDecodeBmpLenaCreatesTheOriginalImage()
         {
             _encoder = new Gz2DlzEncoder(_lenna256anBmpPath, _aPredictor, _bmpReader);

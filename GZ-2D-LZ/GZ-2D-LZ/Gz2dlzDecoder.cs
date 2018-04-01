@@ -8,7 +8,7 @@ namespace G2_2D_LZ
 {
     public class Gz2DlzDecoder
     {
-        private readonly string InputFileName;
+        private readonly string _inputFileName;
 
         public bool[,] IsMatchFound { get; private set; } //has true when a suitable match for a block is found
         public bool[,] IsPixelEncoded { get; private set; } //has true when a pixel has been encoded
@@ -25,7 +25,7 @@ namespace G2_2D_LZ
 
         protected Gz2DlzDecoder(string inputFileName) 
         {
-            InputFileName = inputFileName;
+            _inputFileName = inputFileName;
         }
 
         public Gz2DlzDecoder(string inputFileName, AbstractPredictor abstractPredictor) : this(inputFileName)
@@ -35,7 +35,7 @@ namespace G2_2D_LZ
 
         public void LoadMatrixFromTxtFile()
         {
-            using (StreamReader reader = new StreamReader(InputFileName))
+            using (StreamReader reader = new StreamReader(_inputFileName))
             {
                 var fileContent = reader.ReadToEnd();
                 string[] values = fileContent.Split(' ');
@@ -121,8 +121,8 @@ namespace G2_2D_LZ
             {
                 for (int x = 0; x < width; x++)
                 {
-                    var valueX = Convert.ToInt32(values[i++]);
-                    var valueY = Convert.ToInt32(values[i++]);
+                    var valueX = Convert.ToUInt32(values[i++]);
+                    var valueY = Convert.ToUInt32(values[i++]);
 
                     MatchLocation[y, x] = new PixelLocation(valueX, valueY);
                 }
@@ -200,12 +200,12 @@ namespace G2_2D_LZ
                 }
             }
 
-            bitmap.Save(InputFileName + ".decoded.bmp");
+            bitmap.Save(_inputFileName + ".decoded.bmp");
         }
 
         public void SaveAsTxtFile()
         {
-            using (StreamWriter writer = new StreamWriter(InputFileName + ".decoded.txt"))
+            using (StreamWriter writer = new StreamWriter(_inputFileName + ".decoded.txt"))
             {
                 for (int y = 0; y < _height; y++)
                 {

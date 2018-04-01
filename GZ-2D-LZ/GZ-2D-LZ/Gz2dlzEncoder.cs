@@ -13,10 +13,13 @@ namespace G2_2D_LZ
         private readonly string _inputFilePath;
         private const string IntermediaryFileExtension = ".mat";
         private const string Folder = ".matrices";
+        private const int NumberOfBitsForSize = 10;
+        private const int NumberOfBitsForX = 10;
+        private const int NumberOfBitsForPredictionError = 9;
 
         private readonly byte[,] _originalImage;
-        private readonly int _height;
-        private readonly int _width;
+        private readonly uint _height;
+        private readonly uint _width;
 
         public bool[,] IsMatchFound { get; private set; } //has true when a suitable match for a block is found
         public bool[,] IsPixelEncoded { get; private set; } //has true when a pixel has been encoded
@@ -33,18 +36,27 @@ namespace G2_2D_LZ
             _inputFilePath = inputFilePath;
             _originalImage = reader.GetImageFromFile(inputFilePath);
 
-            _height = _originalImage.GetLength(0);
-            _width = _originalImage.GetLength(1);
+            _height = Convert.ToUInt32(_originalImage.GetLength(0));
+            _width = Convert.ToUInt32(_originalImage.GetLength(1));
 
             InstatiateTables();
 
             CopyOriginalImageWorkImage();
             _abstractPredictor = abstractPredictor;
         }
+        
+        public void Encode()
+        {
+            _abstractPredictor.SetOriginalMatrix(WorkImage);
+
+            PredictFirstRow();
+            EncodeWorkImage();
+            WriteResultingMatricesToIndividualFiles();
+        }
 
         public void WriteMatrixToFileAsText()
         {
-            TxtWriter txtWriter = new TxtWriter(_inputFilePath + IntermediaryFileExtension);;
+            TxtWriter txtWriter = new TxtWriter(_inputFilePath + IntermediaryFileExtension); ;
 
             txtWriter.Write(WorkImage.GetLength(1) + " ");
             txtWriter.Write(WorkImage.GetLength(0) + " ");
@@ -57,29 +69,86 @@ namespace G2_2D_LZ
             txtWriter.WriteMatrixToFile(_abstractPredictor.PredictionError);
         }
 
-        public void Encode()
-        {
-            _abstractPredictor.SetOriginalMatrix(WorkImage);
-
-            PredictFirstRow();
-            EncodeWorkImage();
-            WriteResultingMatricesToIndividualFiles();
-        }
-
-        private void WriteResultingMatricesToIndividualFiles()
+        public void WriteResultingMatricesToIndividualFiles()
         {
             var fileName = Path.GetFileName(_inputFilePath);
             Directory.CreateDirectory(_inputFilePath + Folder);
-            SaveIsMatchFoundToFile(fileName, nameof(IsMatchFound));
+            SaveIsMatchFoundToFile(fileName, nameof(IsMatchFound), IsMatchFound);
+            SaveMatchLocationToFile(fileName, nameof(MatchLocation), MatchLocation);
+            SaveMatchDimensionsToFile(fileName, nameof(MatchDimension), MatchDimension);
+            SaveResidualToFile(fileName, nameof(Residual), Residual);
+            SaveResidualToFile(fileName, nameof(_abstractPredictor.PredictionError), _abstractPredictor.PredictionError);
         }
 
-        private void SaveIsMatchFoundToFile(string fileName, string matrixName)
+        private void SaveResidualToFile(string fileName, string matrixName, int[,] matrix)
         {
             var outputFileName = GetOutputFileName(fileName, matrixName);
-            var matrix = IsPixelEncoded;
 
             using (IBitWriter bitWriter = new BitWriter(outputFileName))
             {
+                WriteWithdAndHeightToFile(bitWriter);
+
+                for (int y = 0; y < matrix.GetLength(0); y++)
+                {
+                    for (int x = 0; x < matrix.GetLength(1); x++)
+                    {
+                        uint bits = Convert.ToUInt32(matrix[y, x] + 255);
+                        bitWriter.WriteNBits(bits, NumberOfBitsForPredictionError);
+                    }
+                }
+            }
+        }
+
+        private void SaveMatchDimensionsToFile(string fileName, string matrixName, Dimension[,] matrix)
+        {
+            var outputFileName = GetOutputFileName(fileName, matrixName);
+
+            using (IBitWriter bitWriter = new BitWriter(outputFileName))
+            {
+                WriteWithdAndHeightToFile(bitWriter);
+
+                for (int y = 0; y < matrix.GetLength(0); y++)
+                {
+                    for (int x = 0; x < matrix.GetLength(1); x++)
+                    {
+                        var dimension = matrix[y, x] ?? new Dimension(0,0);
+
+                        bitWriter.WriteNBits(dimension.Width, NumberOfBitsForSize);
+                        bitWriter.WriteNBits(dimension.Height, NumberOfBitsForSize);
+                    }
+                }
+            }
+        }
+
+        private void SaveMatchLocationToFile(string fileName, string matrixName, PixelLocation[,] matrix)
+        {
+            var outputFileName = GetOutputFileName(fileName, matrixName);
+
+            using (IBitWriter bitWriter = new BitWriter(outputFileName))
+            {
+                WriteWithdAndHeightToFile(bitWriter);
+
+                for (int y = 0; y < matrix.GetLength(0); y++)
+                {
+                    for (int x = 0; x < matrix.GetLength(1); x++)
+                    {
+                        var pixelLocation = matrix[y, x] ?? new PixelLocation(0, 0);
+
+                        bitWriter.WriteNBits(pixelLocation.X, NumberOfBitsForX);
+                        bitWriter.WriteNBits(pixelLocation.Y, NumberOfBitsForX);
+                    }
+                }
+            }
+        }
+
+        private void SaveIsMatchFoundToFile(string fileName, string matrixName, bool[,] matrix)
+        {
+            var outputFileName = GetOutputFileName(fileName, matrixName);
+
+            using (IBitWriter bitWriter = new BitWriter(outputFileName))
+            {
+                WriteWithdAndHeightToFile(bitWriter);
+
                 for (int y = 0; y < matrix.GetLength(0); y++)
                 {
                     for (int x = 0; x < matrix.GetLength(1); x++)
@@ -90,6 +159,12 @@ namespace G2_2D_LZ
                     }
                 }
             }
+        }
+
+        private void WriteWithdAndHeightToFile(IBitWriter bitWriter)
+        {
+            bitWriter.WriteNBits(_width, NumberOfBitsForSize);
+            bitWriter.WriteNBits(_height, NumberOfBitsForSize);
         }
 
         private string GetOutputFileName(string fileName, string matrixName)
@@ -131,12 +206,12 @@ namespace G2_2D_LZ
         public BestMatch LocateTheBestAproximateMatchForGivenRootPixel(PixelLocation encoderPoint, PixelLocation rootPoint)
         {
             BestMatch bestMatch = new BestMatch();
-            var rowOffset = 0;
-            var widthOfTheMatchInThePreviousRow = _width - 1 - encoderPoint.X;
+            uint rowOffset = 0;
+            var widthOfTheMatchInThePreviousRow = Convert.ToUInt32(_width - 1 - encoderPoint.X);
 
             do
             {
-                var colOffset = 0;
+                uint colOffset = 0;
                 var nextRootPoint = new PixelLocation(rootPoint.X + colOffset, rootPoint.Y + rowOffset);
 
                 if (IsPixelEncoded[nextRootPoint.Y, nextRootPoint.X] ||
@@ -177,7 +252,7 @@ namespace G2_2D_LZ
                 widthOfTheMatchInThePreviousRow = colOffset;
                 rowOffset++;
 
-                var matchSize = widthOfTheMatchInThePreviousRow * rowOffset;
+                uint matchSize = widthOfTheMatchInThePreviousRow * rowOffset;
                 var blockDimensions = new Dimension(widthOfTheMatchInThePreviousRow, rowOffset);
                 var matchMse = GetMse(encoderPoint, rootPoint, blockDimensions);
 
@@ -256,9 +331,9 @@ namespace G2_2D_LZ
             return rootX;
         }
 
-        private int GetMse(PixelLocation encoderPoint, PixelLocation matchedPoint, Dimension blockDimension)
+        private uint GetMse(PixelLocation encoderPoint, PixelLocation matchedPoint, Dimension blockDimension)
         {
-            var sum = 0;
+            uint sum = 0;
 
             for (int i = 0; i < blockDimension.Height; i++)
             {
@@ -267,8 +342,8 @@ namespace G2_2D_LZ
                     var nextX = encoderPoint.X + j;
                     if (nextX < _width)
                     {
-                        sum += (int) Math.Pow(WorkImage[encoderPoint.Y + i, nextX] -
-                                              WorkImage[matchedPoint.Y + i, matchedPoint.X + j], 2);
+                        sum += Convert.ToUInt32(Math.Pow(WorkImage[encoderPoint.Y + i, nextX] -
+                                                         WorkImage[matchedPoint.Y + i, matchedPoint.X + j], 2));
                     }
                 }
             }

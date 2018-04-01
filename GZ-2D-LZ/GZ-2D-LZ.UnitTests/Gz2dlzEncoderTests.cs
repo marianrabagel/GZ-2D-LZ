@@ -201,9 +201,9 @@ namespace GZ_2D_LZ.UnitTests
             var rootPosition = new PixelLocation(1, 1);
             BestMatch bestMatch = _encoder.LocateTheBestAproximateMatchForGivenRootPixel(encoderPosition, rootPosition);
 
-            Assert.AreEqual(4, bestMatch.Height);
-            Assert.AreEqual(4, bestMatch.Width);
-            Assert.AreEqual(16, bestMatch.Size);
+            Assert.AreEqual((uint) 4, bestMatch.Height);
+            Assert.AreEqual((uint) 4, bestMatch.Width);
+            Assert.AreEqual((uint) 16, bestMatch.Size);
         }
 
         [TestMethod]
@@ -214,8 +214,8 @@ namespace GZ_2D_LZ.UnitTests
             _encoder.Encode();
 
             Assert.IsNotNull(_encoder.MatchLocation[6, 5]);
-            Assert.AreEqual(1, _encoder.MatchLocation[6, 5].X);
-            Assert.AreEqual(2, _encoder.MatchLocation[6, 5].Y);
+            Assert.AreEqual((uint) 1, _encoder.MatchLocation[6, 5].X);
+            Assert.AreEqual((uint) 2, _encoder.MatchLocation[6, 5].Y);
         }
 
         [TestMethod]
@@ -225,8 +225,8 @@ namespace GZ_2D_LZ.UnitTests
             _encoder.Encode();
 
             Assert.IsNotNull(_encoder.MatchLocation[1, 0]);
-            Assert.AreEqual(0, _encoder.MatchLocation[1, 0].X);
-            Assert.AreEqual(0, _encoder.MatchLocation[1, 0].Y);
+            Assert.AreEqual((uint) 0, _encoder.MatchLocation[1, 0].X);
+            Assert.AreEqual((uint) 0, _encoder.MatchLocation[1, 0].Y);
         }
 
         private void AssertEachValue<T>(T[,] expectedValues, T[,] actualValues)
