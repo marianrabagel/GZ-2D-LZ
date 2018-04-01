@@ -1,4 +1,6 @@
-﻿namespace G2_2D_LZ.Helpers
+﻿using System.IO;
+
+namespace G2_2D_LZ.Helpers
 {
     public class Constants
     {
@@ -15,7 +17,11 @@
         public static int NumberOfBitsForPredictionError = 9;
 
         public static string IntermediaryFileExtension = ".mat";
+        public static string Folder = ".matrices";
 
         public static char Separator = ' ';
+
+        //todo move into another class
+        
     }
 }

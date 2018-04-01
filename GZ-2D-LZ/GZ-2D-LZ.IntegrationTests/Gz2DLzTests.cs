@@ -53,7 +53,7 @@ namespace GZ_2D_LZ.IntegrationTests
             _encoder.WriteMatrixToFileAsText();
             _decoder.LoadMatrixFromTxtFile();
             _decoder.Decode();
-            _decoder.SaveAsTxtFile();
+            _decoder.SaveOriginalImageAsTxtFile();
 
             var filename = $"{_2PosibleMatchBlocksTxtFileName}.mat.decoded.txt";
             var originalFile = GetContentWithoutNewLines(_2PosibleMatchBlocksTxtFileName).Replace("10 10 ", "");
@@ -74,7 +74,7 @@ namespace GZ_2D_LZ.IntegrationTests
             _encoder.WriteMatrixToFileAsText();
             _decoder.LoadMatrixFromTxtFile();
             _decoder.Decode();
-            _decoder.SaveAsTxtFile();
+            _decoder.SaveOriginalImageAsTxtFile();
 
             var filename = $"{_lenna256anTxtFileName}.mat.decoded.txt";
             var originalFile = GetContentWithoutNewLines(_lenna256anTxtFileName).Replace("256 256 ", "");
@@ -95,7 +95,7 @@ namespace GZ_2D_LZ.IntegrationTests
             _encoder.WriteMatrixToFileAsText();
             _decoder.LoadMatrixFromTxtFile();
             _decoder.Decode();
-            _decoder.SaveAsTxtFile();
+            _decoder.SaveOriginalImageAsTxtFile();
 
             var filename = $"{_2PosibleMatchBlocksTxtFileName}.mat.decoded.txt";
             var originalFile = GetContentWithoutNewLines(_2PosibleMatchBlocksTxtFileName).Replace("10 10 ", "");
@@ -116,7 +116,7 @@ namespace GZ_2D_LZ.IntegrationTests
             _encoder.WriteMatrixToFileAsText();
             _decoder.LoadMatrixFromTxtFile();
             _decoder.Decode();
-            _decoder.SaveAsTxtFile();
+            _decoder.SaveOriginalImageAsTxtFile();
 
             var filename = $"{_lenna256anTxtFileName}.mat.decoded.txt";
             var originalFile = GetContentWithoutNewLines(_lenna256anTxtFileName).Replace("256 256 ", "");
@@ -247,7 +247,6 @@ namespace GZ_2D_LZ.IntegrationTests
         }
 
         [TestMethod]
-        [Ignore]
         public void EncodeAndDecodeWithAPredictorAndBitOperationsTestBmpResultsTheSamePixels()
         {
             _encoder = new Gz2DlzEncoder(_testBmpPath, new ABasedPredictor(), _bmpImageReader);
@@ -255,13 +254,53 @@ namespace GZ_2D_LZ.IntegrationTests
 
             _encoder.Encode();
             _encoder.WriteResultingMatricesToIndividualFiles();
-            //_decoder.LoadMatrixFromTxtFile();
             _decoder.Decode();
 
             var workImage = _decoder.WorkImage;
             CompareValueWithPixelFromBmp(_testBmpPath, workImage);
         }
-        
+        [TestMethod]
+        public void EncodeAndDecodeWithAPredictorAndBitOperations4X4BlockBmpResultsTheSamePixels()
+        {
+            _encoder = new Gz2DlzEncoder(_one4X4MatchBlockBmpPath, new ABasedPredictor(), _bmpImageReader);
+            _decoder = new Gz2DlzDecoder($"{_one4X4MatchBlockBmpPath}.mat", new ABasedPredictor());
+
+            _encoder.Encode();
+            _encoder.WriteMatrixToFileAsText();
+            _decoder.Decode();
+
+            var workImage = _decoder.WorkImage;
+            CompareValueWithPixelFromBmp(_one4X4MatchBlockBmpPath, workImage);
+        }
+
+        [TestMethod]
+        public void EncodeAndDecodeWithAPredictorAndBitOperations2PossibleMatchBlockskBmpResultsTheSamePixels()
+        {
+            _encoder = new Gz2DlzEncoder(_2PossibleMatchBlocksBmpPath, new ABasedPredictor(), _bmpImageReader);
+            _decoder = new Gz2DlzDecoder($"{_2PossibleMatchBlocksBmpPath}.mat", new ABasedPredictor());
+
+            _encoder.Encode();
+            _encoder.WriteMatrixToFileAsText();
+            _decoder.Decode();
+
+            var workImage = _decoder.WorkImage;
+            CompareValueWithPixelFromBmp(_2PossibleMatchBlocksBmpPath, workImage);
+        }
+
+        [TestMethod]
+        public void EncodeAndDecodeWithAPredictorAndBitOperationsLenaBmpResultsTheSamePixels()
+        {
+            _encoder = new Gz2DlzEncoder(_lenna256anBmpPath, new ABasedPredictor(), _bmpImageReader);
+            _decoder = new Gz2DlzDecoder($"{_lenna256anBmpPath}.mat", new ABasedPredictor());
+
+            _encoder.Encode();
+            _encoder.WriteMatrixToFileAsText();
+            _decoder.Decode();
+
+            var workImage = _decoder.WorkImage;
+            CompareValueWithPixelFromBmp(_lenna256anBmpPath, workImage);
+        }
+
         private static string GetContentWithoutNewLines(string filename)
         {
             using (StreamReader reader = new StreamReader(filename))

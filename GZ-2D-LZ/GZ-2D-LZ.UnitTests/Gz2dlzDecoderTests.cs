@@ -356,20 +356,6 @@ namespace GZ_2D_LZ.UnitTests
             AssertEachValue(expectedValues, predictionError);
         }
 
-        
-        [TestMethod]
-        public void DecodeFor1MatchBlock()
-        {
-            _decoder = new Gz2DlzDecoder(_one4X4BlockBmpMatFileName, new ABasedPredictor());
-            _decoder.LoadMatrixFromTxtFile();
-
-            _decoder.Decode();
-
-            var workImage = _decoder.WorkImage;
-
-            AssertEachValue(Constants.Image4X4Block, workImage);
-        }
-        
         private void DisplayImageToOutputWindow<T>(T[,] bytes)
         {
             int height1 = bytes.GetLength(0);

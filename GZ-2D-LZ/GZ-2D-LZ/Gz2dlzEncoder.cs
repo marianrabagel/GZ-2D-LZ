@@ -11,8 +11,7 @@ namespace G2_2D_LZ
     public class Gz2DlzEncoder
     {
         private readonly string _inputFilePath;
-        private const string Folder = ".matrices";
-        
+
         private readonly byte[,] _originalImage;
         private readonly uint _height;
         private readonly uint _width;
@@ -68,19 +67,18 @@ namespace G2_2D_LZ
 
         public void WriteResultingMatricesToIndividualFiles()
         {
-            var fileName = Path.GetFileName(_inputFilePath);
-            Directory.CreateDirectory(_inputFilePath + Folder);
+            Directory.CreateDirectory(_inputFilePath + Constants.Folder);
             //todo move this into its own class
-            SaveIsMatchFoundToFile(fileName, nameof(IsMatchFound), IsMatchFound);
-            SaveMatchLocationToFile(fileName, nameof(MatchLocation), MatchLocation);
-            SaveMatchDimensionsToFile(fileName, nameof(MatchDimension), MatchDimension);
-            SaveResidualToFile(fileName, nameof(Residual), Residual);
-            SaveResidualToFile(fileName, nameof(_abstractPredictor.PredictionError), _abstractPredictor.PredictionError);
+            SaveIsMatchFoundToFile(_inputFilePath, nameof(IsMatchFound), IsMatchFound);
+            SaveMatchLocationToFile(_inputFilePath, nameof(MatchLocation), MatchLocation);
+            SaveMatchDimensionsToFile(_inputFilePath, nameof(MatchDimension), MatchDimension);
+            SaveResidualToFile(_inputFilePath, nameof(Residual), Residual);
+            SaveResidualToFile(_inputFilePath, nameof(_abstractPredictor.PredictionError), _abstractPredictor.PredictionError);
         }
 
-        private void SaveResidualToFile(string fileName, string matrixName, int[,] matrix)
+        private void SaveResidualToFile(string filePath, string matrixName, int[,] matrix)
         {
-            var outputFileName = GetOutputFileName(fileName, matrixName);
+            var outputFileName = GetOutputFileName(filePath, matrixName);
 
             using (IBitWriter bitWriter = new BitWriter(outputFileName))
             {
@@ -97,9 +95,9 @@ namespace G2_2D_LZ
             }
         }
 
-        private void SaveMatchDimensionsToFile(string fileName, string matrixName, Dimension[,] matrix)
+        private void SaveMatchDimensionsToFile(string filePath, string matrixName, Dimension[,] matrix)
         {
-            var outputFileName = GetOutputFileName(fileName, matrixName);
+            var outputFileName = GetOutputFileName(filePath, matrixName);
 
             using (IBitWriter bitWriter = new BitWriter(outputFileName))
             {
@@ -118,9 +116,9 @@ namespace G2_2D_LZ
             }
         }
 
-        private void SaveMatchLocationToFile(string fileName, string matrixName, PixelLocation[,] matrix)
+        private void SaveMatchLocationToFile(string filePath, string matrixName, PixelLocation[,] matrix)
         {
-            var outputFileName = GetOutputFileName(fileName, matrixName);
+            var outputFileName = GetOutputFileName(filePath, matrixName);
 
             using (IBitWriter bitWriter = new BitWriter(outputFileName))
             {
@@ -139,9 +137,9 @@ namespace G2_2D_LZ
             }
         }
 
-        private void SaveIsMatchFoundToFile(string fileName, string matrixName, bool[,] matrix)
+        private void SaveIsMatchFoundToFile(string filePath, string matrixName, bool[,] matrix)
         {
-            var outputFileName = GetOutputFileName(fileName, matrixName);
+            var outputFileName = GetOutputFileName(filePath, matrixName);
 
             using (IBitWriter bitWriter = new BitWriter(outputFileName))
             {
@@ -159,17 +157,19 @@ namespace G2_2D_LZ
             }
         }
 
+        private string GetOutputFileName(string filePath, string matrixName)
+        {
+            string fileName = Path.GetFileName(filePath);
+
+            return filePath + $"{Constants.Folder}\\" + fileName + "." + matrixName + Constants.IntermediaryFileExtension;
+        }
+
         private void WriteWithdAndHeightToFile(IBitWriter bitWriter)
         {
             bitWriter.WriteNBits(_width, Constants.NumberOfBitsForSize);
             bitWriter.WriteNBits(_height, Constants.NumberOfBitsForSize);
         }
-
-        private string GetOutputFileName(string fileName, string matrixName)
-        {
-            return _inputFilePath + $"{Folder}\\" + fileName + "." + matrixName + Constants.IntermediaryFileExtension;
-        }
-
+        
         private void EncodeWorkImage()
         {
             for (int y = 1; y < _height; y++)
