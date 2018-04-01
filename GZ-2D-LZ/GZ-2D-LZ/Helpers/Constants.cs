@@ -9,5 +9,13 @@
         public static int MinMatchSize = 10; // 16 why on the paper this is bigger than search width * height?
         public static int NoMatchBlockWidth = 5;
         public static int NoMatchBlockHeight = 5;
+
+        public static int NumberOfBitsForSize = 10;
+        public static int NumberOfBitsForX = 10;
+        public static int NumberOfBitsForPredictionError = 9;
+
+        public static string IntermediaryFileExtension = ".mat";
+
+        public static char Separator = ' ';
     }
 }

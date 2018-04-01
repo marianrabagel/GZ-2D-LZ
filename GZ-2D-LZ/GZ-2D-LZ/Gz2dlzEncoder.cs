@@ -4,19 +4,15 @@ using BitOperations;
 using BitOperations.Contracts;
 using G2_2D_LZ.Contracts;
 using G2_2D_LZ.Helpers;
-using G2_2D_LZ.Writer;
+using G2_2D_LZ.Writers;
 
 namespace G2_2D_LZ
 {
     public class Gz2DlzEncoder
     {
         private readonly string _inputFilePath;
-        private const string IntermediaryFileExtension = ".mat";
         private const string Folder = ".matrices";
-        private const int NumberOfBitsForSize = 10;
-        private const int NumberOfBitsForX = 10;
-        private const int NumberOfBitsForPredictionError = 9;
-
+        
         private readonly byte[,] _originalImage;
         private readonly uint _height;
         private readonly uint _width;
@@ -30,11 +26,11 @@ namespace G2_2D_LZ
 
         private readonly AbstractPredictor _abstractPredictor;
 
-        public Gz2DlzEncoder(string inputFilePath, AbstractPredictor abstractPredictor, IReader reader)
+        public Gz2DlzEncoder(string inputFilePath, AbstractPredictor abstractPredictor, IImageReader imageReader)
         {
             //todo guard conditions
             _inputFilePath = inputFilePath;
-            _originalImage = reader.GetImageFromFile(inputFilePath);
+            _originalImage = imageReader.GetImageFromFile(inputFilePath);
 
             _height = Convert.ToUInt32(_originalImage.GetLength(0));
             _width = Convert.ToUInt32(_originalImage.GetLength(1));
@@ -57,10 +53,10 @@ namespace G2_2D_LZ
 
         public void WriteMatrixToFileAsText()
         {
-            TxtWriter txtWriter = new TxtWriter(_inputFilePath + IntermediaryFileExtension); ;
+            TxtWriter txtWriter = new TxtWriter(_inputFilePath + Constants.IntermediaryFileExtension); ;
 
-            txtWriter.Write(WorkImage.GetLength(1) + " ");
-            txtWriter.Write(WorkImage.GetLength(0) + " ");
+            txtWriter.Write(WorkImage.GetLength(1) + separator.ToString());
+            txtWriter.Write(WorkImage.GetLength(0) + separator.ToString());
             txtWriter.Write(Environment.NewLine);
 
             txtWriter.WriteMatchFlagToFile(IsMatchFound);
@@ -74,6 +70,7 @@ namespace G2_2D_LZ
         {
             var fileName = Path.GetFileName(_inputFilePath);
             Directory.CreateDirectory(_inputFilePath + Folder);
+            //todo move this into its own class
             SaveIsMatchFoundToFile(fileName, nameof(IsMatchFound), IsMatchFound);
             SaveMatchLocationToFile(fileName, nameof(MatchLocation), MatchLocation);
             SaveMatchDimensionsToFile(fileName, nameof(MatchDimension), MatchDimension);
@@ -94,7 +91,7 @@ namespace G2_2D_LZ
                     for (int x = 0; x < matrix.GetLength(1); x++)
                     {
                         uint bits = Convert.ToUInt32(matrix[y, x] + 255);
-                        bitWriter.WriteNBits(bits, NumberOfBitsForPredictionError);
+                        bitWriter.WriteNBits(bits, Constants.NumberOfBitsForPredictionError);
                     }
                 }
             }
@@ -114,8 +111,8 @@ namespace G2_2D_LZ
                     {
                         var dimension = matrix[y, x] ?? new Dimension(0,0);
 
-                        bitWriter.WriteNBits(dimension.Width, NumberOfBitsForSize);
-                        bitWriter.WriteNBits(dimension.Height, NumberOfBitsForSize);
+                        bitWriter.WriteNBits(dimension.Width, Constants.NumberOfBitsForSize);
+                        bitWriter.WriteNBits(dimension.Height, Constants.NumberOfBitsForSize);
                     }
                 }
             }
@@ -135,8 +132,8 @@ namespace G2_2D_LZ
                     {
                         var pixelLocation = matrix[y, x] ?? new PixelLocation(0, 0);
 
-                        bitWriter.WriteNBits(pixelLocation.X, NumberOfBitsForX);
-                        bitWriter.WriteNBits(pixelLocation.Y, NumberOfBitsForX);
+                        bitWriter.WriteNBits(pixelLocation.X, Constants.NumberOfBitsForX);
+                        bitWriter.WriteNBits(pixelLocation.Y, Constants.NumberOfBitsForX);
                     }
                 }
             }
@@ -164,13 +161,13 @@ namespace G2_2D_LZ
 
         private void WriteWithdAndHeightToFile(IBitWriter bitWriter)
         {
-            bitWriter.WriteNBits(_width, NumberOfBitsForSize);
-            bitWriter.WriteNBits(_height, NumberOfBitsForSize);
+            bitWriter.WriteNBits(_width, Constants.NumberOfBitsForSize);
+            bitWriter.WriteNBits(_height, Constants.NumberOfBitsForSize);
         }
 
         private string GetOutputFileName(string fileName, string matrixName)
         {
-            return _inputFilePath + $"{Folder}\\" + fileName + "." + matrixName + IntermediaryFileExtension;
+            return _inputFilePath + $"{Folder}\\" + fileName + "." + matrixName + Constants.IntermediaryFileExtension;
         }
 
         private void EncodeWorkImage()

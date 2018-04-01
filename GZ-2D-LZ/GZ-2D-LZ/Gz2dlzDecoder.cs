@@ -3,6 +3,7 @@ using System.Drawing;
 using System.IO;
 using G2_2D_LZ.Contracts;
 using G2_2D_LZ.Helpers;
+using G2_2D_LZ.Readers;
 
 namespace G2_2D_LZ
 {
@@ -37,107 +38,32 @@ namespace G2_2D_LZ
             using (StreamReader reader = new StreamReader(_inputFileName))
             {
                 var fileContent = reader.ReadToEnd();
-                string[] values = fileContent.Split(' ');
+                string[] values = fileContent.Split(Constants.Separator);
                 _height = Convert.ToInt32(values[1]);
                 _width = Convert.ToInt32(values[0]);
 
-                InitializeTables();
+                TxtReader txtReader = new TxtReader(new Dimension(_width, _height));
+
                 WorkImage = new byte[_height, _width];
                 SetIsPixelEncodedToTrue();
 
-                LoadMatchFlagFromFile(values);
-                LoadMatchLocationFromFile(values);
-                LoadMatchDimensionsFromFile(values);
-
-                int i = 2 + 5 * _height * _width;
-                for (int y = 0; y < _height; y++)
-                {
-                    for (int x = 0; x < _width; x++)
-                    {
-                        var value = Convert.ToInt32(values[i++]);
-                        Residual[y, x] = value;
-                    }
-                }
-
-                int j = 2 + 6 * _height * _width;
-                for (int y = 0; y < _height; y++)
-                {
-                    for (int x = 0; x < _width; x++)
-                    {
-                        var value = Convert.ToInt32(values[j++]);
-                        _abstractPredictor.PredictionError[y, x] = value;
-                    }
-                }
+                IsMatchFound = txtReader.GetMatchFlagFromString(values);
+                MatchLocation = txtReader.GetMatchLocationFromString(values);
+                MatchDimension = txtReader.GetMatchDimensionsFromString(values);
+                Residual = txtReader.ReadResidualFromTxtFile(values);
+                _abstractPredictor.PredictionError = txtReader.ReadPredicionErrorFromTxtFile(values);
             }
-        }
-
-        protected void InitializeTables()
-        {
-            IsMatchFound = new bool[_height, _width];
-            IsPixelEncoded = new bool[_height, _width];
-            MatchLocation = new PixelLocation[_height, _width];
-            MatchDimension = new Dimension[_height, _width];
-            Residual = new int[_height, _width];
-            _abstractPredictor.InitializePredictionError(_height, _width);
         }
 
         private void SetIsPixelEncodedToTrue()
         {
+            IsPixelEncoded = new bool[_height, _width];
+
             for (int y = 0; y < _height; y++)
             {
                 for (int x = 0; x < _width; x++)
                 {
                     IsPixelEncoded[y, x] = true;
-                }
-            }
-        }
-
-        private void LoadMatchDimensionsFromFile(string[] values)
-        {
-            var height = MatchDimension.GetLength(0);
-            var width = MatchDimension.GetLength(1);
-            int i = 2 + 3 * height * width;
-            
-            for (int y = 0; y < height; y++)
-            {
-                for (int x = 0; x < width; x++)
-                {
-                    var valueWidth = Convert.ToInt32(values[i++]);
-                    var valueHeight = Convert.ToInt32(values[i++]);
-
-                    MatchDimension[y, x] = new Dimension(valueWidth, valueHeight);
-                }
-            }
-        }
-
-        private void LoadMatchLocationFromFile(string[] values)
-        {
-            var height = MatchLocation.GetLength(0);
-            var width = MatchLocation.GetLength(1);
-            int i = 2 + height * width;
-            
-            for (int y = 0; y < height; y++)
-            {
-                for (int x = 0; x < width; x++)
-                {
-                    var valueX = Convert.ToUInt32(values[i++]);
-                    var valueY = Convert.ToUInt32(values[i++]);
-
-                    MatchLocation[y, x] = new PixelLocation(valueX, valueY);
-                }
-            }
-        }
-
-        private void LoadMatchFlagFromFile(string[] values)
-        {
-            int i = 2;
-
-            for (int y = 0; y < IsMatchFound.GetLength(0); y++)
-            {
-                for (int x = 0; x < IsMatchFound.GetLength(1); x++)
-                {
-                    var value = Convert.ToInt32(values[i++]);
-                    IsMatchFound[y, x] = value != 0;
                 }
             }
         }

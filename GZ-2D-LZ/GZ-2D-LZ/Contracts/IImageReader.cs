@@ -1,6 +1,6 @@
 ﻿namespace G2_2D_LZ.Contracts
 {
-    public interface IReader
+    public interface IImageReader
     {
         byte[,] GetImageFromFile(string inputFileName);
     }

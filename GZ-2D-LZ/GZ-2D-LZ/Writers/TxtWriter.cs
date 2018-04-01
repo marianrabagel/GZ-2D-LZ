@@ -1,8 +1,9 @@
 ﻿using System.IO;
 using G2_2D_LZ.Helpers;
 
-namespace G2_2D_LZ.Writer
+namespace G2_2D_LZ.Writers
 {
+    //todo maybe create an Interface?
     public class TxtWriter
     {
         private readonly string _inputFileName;

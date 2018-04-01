@@ -15,7 +15,7 @@ namespace GZ_2D_LZ.UnitTests
     public class Gz2DlzEncoderTests
     {
         private Gz2DlzEncoder _encoder;
-        IReader _bmpReader;
+        IImageReader _bmpReader;
 
         private static readonly string basePath = "\\TestData\\Encoder\\";
         public string TwoPossibleMatchBlocksBmpPath = Environment.CurrentDirectory + $"{basePath}2PossibleMatchBlocks.bmp";
@@ -25,7 +25,7 @@ namespace GZ_2D_LZ.UnitTests
         [TestInitialize]
         public void Setup()
         {
-            _bmpReader = new BmpReader();
+            _bmpReader = new BmpImageReader();
         }
 
         [TestMethod]

@@ -3,7 +3,7 @@ using G2_2D_LZ.Contracts;
 
 namespace G2_2D_LZ.Readers
 {
-    public class BmpReader : IReader
+    public class BmpImageReader : IImageReader
     {
         public byte[,] GetImageFromFile(string inputFileName)
         {
