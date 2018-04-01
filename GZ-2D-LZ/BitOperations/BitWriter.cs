@@ -1,9 +1,10 @@
 ﻿using System;
 using System.IO;
+using BitOperations.Contracts;
 
 namespace BitOperations
 {
-    public class BitWriter : IDisposable
+    public class BitWriter : IBitWriter
     {
         private string _filePath;
         private byte _buffer;

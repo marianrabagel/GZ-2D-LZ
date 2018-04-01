@@ -3,7 +3,7 @@ using G2_2D_LZ.Contracts;
 
 namespace G2_2D_LZ.Predictors
 {
-    public class ABasedPredictor: AbstractPredictor
+    public class ABasedPredictor : AbstractPredictor
     {
         public override int GetPredictionValue(int x, int y)
         {

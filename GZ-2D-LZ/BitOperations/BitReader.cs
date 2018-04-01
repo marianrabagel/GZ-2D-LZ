@@ -1,9 +1,10 @@
 ﻿using System;
 using System.IO;
+using BitOperations.Contracts;
 
 namespace BitOperations
 {
-    public class BitReader : IDisposable
+    public class BitReader : IBitReader
     {
         public int ReadCounter;
         private byte _buffer;

@@ -14,22 +14,22 @@ namespace BitOperations.UnitTests
         [TestMethod]
         public void Write1ByteOf1_WriteBit()
         {
-            string fileName = $"{_basePath}Value0xFF_bitWriter.txt";
+            var fileName = $"{_basePath}Value0xFF_bitWriter.txt";
             DeleteFile(fileName);
 
-            using (BitWriter bitWriter = new BitWriter(fileName))
+            using (var bitWriter = new BitWriter(fileName))
             {
-                for (int i = 0; i < 8; i++)
+                for (var i = 0; i < 8; i++)
                 {
                     bitWriter.WriteBit(0x01);
                 }
             }
 
-            using (FileStream reader = new FileStream(fileName, FileMode.OpenOrCreate))
+            using (var reader = new FileStream(fileName, FileMode.OpenOrCreate))
             {
                 Assert.AreEqual(1, reader.Length);
 
-                byte solution = (byte)reader.ReadByte();
+                var solution = (byte)reader.ReadByte();
                 Assert.AreEqual(0xFF, solution);
             }
         }
@@ -37,19 +37,19 @@ namespace BitOperations.UnitTests
         [TestMethod]
         public void WriteA()
         {
-            string fileName = $"{_basePath}ValueA_bitWriter.txt";
+            var fileName = $"{_basePath}ValueA_bitWriter.txt";
             DeleteFile(fileName);
 
-            using (BitWriter bitWriter = new BitWriter(fileName))
+            using (var bitWriter = new BitWriter(fileName))
             {
                 bitWriter.WriteNBits(0x41, 8);
             }
 
-            using (FileStream reader = new FileStream(fileName, FileMode.OpenOrCreate))
+            using (var reader = new FileStream(fileName, FileMode.OpenOrCreate))
             {
                 Assert.AreEqual(1, reader.Length);
 
-                byte solution = (byte)reader.ReadByte();
+                var solution = (byte)reader.ReadByte();
                 Assert.AreEqual(0x41, solution);
             }
         }
@@ -57,22 +57,22 @@ namespace BitOperations.UnitTests
         [TestMethod]
         public void Write1ByteOf0_WriteBit()
         {
-            string fileName = $"{_basePath}Value0x00_bitWriter.txt";
+            var fileName = $"{_basePath}Value0x00_bitWriter.txt";
             DeleteFile(fileName);
 
-            using (BitWriter bitWriter = new BitWriter(fileName))
+            using (var bitWriter = new BitWriter(fileName))
             {
-                for (int i = 0; i < 8; i++)
+                for (var i = 0; i < 8; i++)
                 {
                     bitWriter.WriteBit(0x00);
                 }
             }
 
-            using (FileStream reader = new FileStream(fileName, FileMode.OpenOrCreate))
+            using (var reader = new FileStream(fileName, FileMode.OpenOrCreate))
             {
                 Assert.AreEqual(1, reader.Length);
 
-                byte solution = (byte)reader.ReadByte();
+                var solution = (byte)reader.ReadByte();
                 Assert.AreEqual(0x00, solution);
             }
         }
@@ -80,10 +80,10 @@ namespace BitOperations.UnitTests
         [TestMethod]
         public void Write0x5A_WriteBit()
         {
-            string fileName = $"{_basePath}Value0x5A_bitWriter.txt";
+            var fileName = $"{_basePath}Value0x5A_bitWriter.txt";
             DeleteFile(fileName);
 
-            using (BitWriter bitWriter = new BitWriter(fileName))
+            using (var bitWriter = new BitWriter(fileName))
             {
                 bitWriter.WriteBit(0x00);
                 bitWriter.WriteBit(0x01);
@@ -95,11 +95,11 @@ namespace BitOperations.UnitTests
                 bitWriter.WriteBit(0x00);
             }
 
-            using (FileStream reader = new FileStream(fileName, FileMode.OpenOrCreate))
+            using (var reader = new FileStream(fileName, FileMode.OpenOrCreate))
             {
                 Assert.AreEqual(1, reader.Length);
 
-                byte solution = (byte)reader.ReadByte();
+                var solution = (byte)reader.ReadByte();
                 Assert.AreEqual(0x5A, solution);
             }
         }
@@ -107,19 +107,19 @@ namespace BitOperations.UnitTests
         [TestMethod]
         public void Write1ByteOf1_WriteNBiti()
         {
-            string fileName = $"{_basePath}Value0xFF_WriteNBiti.txt";
+            var fileName = $"{_basePath}Value0xFF_WriteNBiti.txt";
             DeleteFile(fileName);
 
-            using (BitWriter bitWriter = new BitWriter(fileName))
+            using (var bitWriter = new BitWriter(fileName))
             {
                 bitWriter.WriteNBits(0xFF, 8);
             }
 
-            using (FileStream reader = new FileStream(fileName, FileMode.OpenOrCreate))
+            using (var reader = new FileStream(fileName, FileMode.OpenOrCreate))
             {
                 Assert.AreEqual(1, reader.Length);
 
-                byte solution = (byte) reader.ReadByte();
+                var solution = (byte) reader.ReadByte();
                 Assert.AreEqual(0xFF, solution);
             }
         }

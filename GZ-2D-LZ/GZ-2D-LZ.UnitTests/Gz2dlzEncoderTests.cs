@@ -42,7 +42,7 @@ namespace GZ_2D_LZ.UnitTests
 
             AssertEachValue(Constants.TestBmp, originalImage);
         }
-
+/*
         [TestMethod]
         public void EncodesTheFirstRowWithTheExpectedValues()
         {
@@ -57,7 +57,7 @@ namespace GZ_2D_LZ.UnitTests
             {
                 Assert.AreEqual(firstRow[x], predictionError[y, x]);
             }
-        }
+        }*/
 
         [TestMethod]
         public void EncodesTheFirstRowIsMarkedAsEncoded()

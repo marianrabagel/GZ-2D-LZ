@@ -15,7 +15,7 @@ namespace BitOperations.UnitTests
         [ExpectedException(typeof(NullReferenceException))]
         public void InexistentFile()
         {
-            BitReader reader = new BitReader();
+            var reader = new BitReader();
             reader.ReadBit();
         }
 
@@ -23,8 +23,8 @@ namespace BitOperations.UnitTests
         [ExpectedException(typeof(Exception), "Empty file")]
         public void EmptyFile()
         {
-            string fileName = $"{_basePath}empty.txt";
-            BitReader reader = new BitReader(fileName);
+            var fileName = $"{_basePath}empty.txt";
+            var reader = new BitReader(fileName);
 
             reader.ReadBit();
         }
@@ -32,10 +32,10 @@ namespace BitOperations.UnitTests
         [TestMethod]
         public void ReadBitValue1()
         {
-            string fileName = $"{_basePath}Value128.txt";
+            var fileName = $"{_basePath}Value128.txt";
             DeleteFile(fileName);
             WriteValueToFile(0x80, fileName);
-            BitReader reader = new BitReader(fileName);
+            var reader = new BitReader(fileName);
 
             var solution = reader.ReadBit();
 
@@ -45,10 +45,10 @@ namespace BitOperations.UnitTests
         [TestMethod]
         public void ReadBitValue0()
         {
-            string fileName = $"{_basePath}Value0.txt";
+            var fileName = $"{_basePath}Value0.txt";
             DeleteFile(fileName);
             WriteValueToFile(1, fileName);
-            BitReader reader = new BitReader(fileName);
+            var reader = new BitReader(fileName);
 
             var solution = reader.ReadBit();
 
@@ -58,10 +58,10 @@ namespace BitOperations.UnitTests
         [TestMethod]
         public void Read3BitsOf1()
         {
-            string fileName = $"{_basePath}Value0xE0.txt";
+            var fileName = $"{_basePath}Value0xE0.txt";
             DeleteFile(fileName);
             WriteValueToFile(0xE0, fileName);
-            BitReader reader = new BitReader(fileName);
+            var reader = new BitReader(fileName);
 
             var solution = reader.ReadNBits(3);
 
@@ -71,12 +71,12 @@ namespace BitOperations.UnitTests
         [TestMethod]
         public void Read4BitsAlternative()
         {
-            string fileName = $"{_basePath}Value0xAA.txt";
+            var fileName = $"{_basePath}Value0xAA.txt";
             DeleteFile(fileName);
             WriteValueToFile(0xAA, fileName);
-            BitReader reader = new BitReader(fileName);
+            var reader = new BitReader(fileName);
 
-            uint solution = reader.ReadNBits(4);
+            var solution = reader.ReadNBits(4);
 
             Assert.AreEqual((uint) 0xA, solution);
         }
@@ -84,10 +84,10 @@ namespace BitOperations.UnitTests
         [TestMethod]
         public void Read32BitsAlternative()
         {
-            string fileName = $"{_basePath}Value0xAAAAAAAA.txt";
+            var fileName = $"{_basePath}Value0xAAAAAAAA.txt";
             DeleteFile(fileName);
 
-            using (FileStream writer = new FileStream(fileName, FileMode.OpenOrCreate))
+            using (var writer = new FileStream(fileName, FileMode.OpenOrCreate))
             {
                 writer.WriteByte(0xAA);
                 writer.WriteByte(0xAA);
@@ -95,8 +95,8 @@ namespace BitOperations.UnitTests
                 writer.WriteByte(0xAA);
             }
 
-            BitReader reader = new BitReader(fileName);
-            uint solution = reader.ReadNBits(32);
+            var reader = new BitReader(fileName);
+            var solution = reader.ReadNBits(32);
 
             Assert.AreEqual(0xAAAAAAAA, solution);
         }
@@ -104,17 +104,17 @@ namespace BitOperations.UnitTests
         [TestMethod]
         public void Read9BitsAlternative()
         {
-            string fileName = $"{_basePath}Value0xAAF.txt";
+            var fileName = $"{_basePath}Value0xAAF.txt";
             DeleteFile(fileName);
 
-            using (FileStream writer = new FileStream(fileName, FileMode.OpenOrCreate))
+            using (var writer = new FileStream(fileName, FileMode.OpenOrCreate))
             {
                 writer.WriteByte(0xAA);
                 writer.WriteByte(0xF0);
             }
 
-            BitReader reader = new BitReader(fileName);
-            uint solution = reader.ReadNBits(9);
+            var reader = new BitReader(fileName);
+            var solution = reader.ReadNBits(9);
 
             Assert.AreEqual((uint) 0x155, solution);
         }
@@ -122,18 +122,18 @@ namespace BitOperations.UnitTests
         [TestMethod]
         public void Read17BitsAlternative()
         {
-            string fileName = $"{_basePath}Value0xABCDE.txt";
+            var fileName = $"{_basePath}Value0xABCDE.txt";
             DeleteFile(fileName);
 
-            using (FileStream writer = new FileStream(fileName, FileMode.OpenOrCreate))
+            using (var writer = new FileStream(fileName, FileMode.OpenOrCreate))
             {
                 writer.WriteByte(0xAB);
                 writer.WriteByte(0xCD);
                 writer.WriteByte(0xE0);
             }
 
-            BitReader reader = new BitReader(fileName);
-            uint solution = reader.ReadNBits(17);
+            var reader = new BitReader(fileName);
+            var solution = reader.ReadNBits(17);
 
             Assert.AreEqual((uint) 0x1579B, solution);
         }
@@ -141,10 +141,10 @@ namespace BitOperations.UnitTests
         [TestMethod]
         public void Read25BitsAlternative()
         {
-            string fileName = $"{_basePath}Value0xABCDEF0.txt";
+            var fileName = $"{_basePath}Value0xABCDEF0.txt";
             DeleteFile(fileName);
 
-            using (FileStream writer = new FileStream(fileName, FileMode.OpenOrCreate))
+            using (var writer = new FileStream(fileName, FileMode.OpenOrCreate))
             {
                 writer.WriteByte(0xAB);
                 writer.WriteByte(0xCD);
@@ -152,8 +152,8 @@ namespace BitOperations.UnitTests
                 writer.WriteByte(0x00);
             }
 
-            BitReader reader = new BitReader(fileName);
-            uint solution = reader.ReadNBits(25);
+            var reader = new BitReader(fileName);
+            var solution = reader.ReadNBits(25);
 
             Assert.AreEqual((uint) 0x1579BDE, solution);
         }
@@ -161,20 +161,20 @@ namespace BitOperations.UnitTests
         [TestMethod]
         public void Read1Byte()
         {
-            string fileName = $"{_basePath}Value157.txt";
+            var fileName = $"{_basePath}Value157.txt";
             byte expectedValue = 0x9D;
             DeleteFile(fileName);
             WriteValueToFile(expectedValue, fileName);
-            BitReader reader = new BitReader(fileName);
+            var reader = new BitReader(fileName);
 
-            byte solution = (byte) reader.ReadNBits(8);
+            var solution = (byte) reader.ReadNBits(8);
 
             Assert.AreEqual(expectedValue, solution);
         }
 
         private static void WriteValueToFile(byte valueToBeWritten, string filenamePath)
         {
-            using (FileStream writer = new FileStream(filenamePath, FileMode.OpenOrCreate))
+            using (var writer = new FileStream(filenamePath, FileMode.OpenOrCreate))
             {
                 writer.WriteByte(valueToBeWritten);
             }
