@@ -29,41 +29,6 @@ namespace G2_2D_LZ
             _abstractPredictor = abstractPredictor;
         }
 
-        public void LoadMatrixFromTxtFile()
-        {
-            using (StreamReader reader = new StreamReader(_inputFileName))
-            {
-                var fileContent = reader.ReadToEnd();
-                string[] values = fileContent.Split(Constants.Separator);
-                _height = Convert.ToInt32(values[1]);
-                _width = Convert.ToInt32(values[0]);
-
-                TxtReader txtReader = new TxtReader(new Dimension(_width, _height));
-
-                WorkImage = new byte[_height, _width];
-                SetIsPixelEncodedToTrue();
-
-                IsMatchFound = txtReader.GetMatchFlagFromString(values);
-                MatchLocation = txtReader.GetMatchLocationFromString(values);
-                MatchDimension = txtReader.GetMatchDimensionsFromString(values);
-                Residual = txtReader.ReadResidualFromTxtFile(values);
-                _abstractPredictor.PredictionError = txtReader.ReadPredicionErrorFromTxtFile(values);
-            }
-        }
-
-        private void SetIsPixelEncodedToTrue()
-        {
-            IsPixelEncoded = new bool[_height, _width];
-
-            for (int y = 0; y < _height; y++)
-            {
-                for (int x = 0; x < _width; x++)
-                {
-                    IsPixelEncoded[y, x] = true;
-                }
-            }
-        }
-
         public void Decode()
         {
             _abstractPredictor.SetOriginalMatrix(WorkImage);
@@ -92,20 +57,26 @@ namespace G2_2D_LZ
             }
         }
 
-        public void SaveAsBitmap()
+        public void LoadMatrixFromTxtFile()
         {
-            Bitmap bitmap = new Bitmap(_width, _height);
-
-            for (int y = 0; y < _height; y++)
+            using (StreamReader reader = new StreamReader(_inputFileName))
             {
-                for (int x = 0; x < _width; x++)
-                {
-                    var color = WorkImage[y, x];
-                    bitmap.SetPixel(x, y, Color.FromArgb(color, color, color));
-                }
-            }
+                var fileContent = reader.ReadToEnd();
+                string[] values = fileContent.Split(Constants.Separator);
+                _height = Convert.ToInt32(values[1]);
+                _width = Convert.ToInt32(values[0]);
 
-            bitmap.Save(_inputFileName + ".decoded.bmp");
+                TxtReader txtReader = new TxtReader(new Dimension(_width, _height));
+
+                WorkImage = new byte[_height, _width];
+                SetIsPixelEncodedToTrue();
+
+                IsMatchFound = txtReader.GetMatchFlagFromString(values);
+                MatchLocation = txtReader.GetMatchLocationFromString(values);
+                MatchDimension = txtReader.GetMatchDimensionsFromString(values);
+                Residual = txtReader.ReadResidualFromTxtFile(values);
+                _abstractPredictor.PredictionError = txtReader.ReadPredicionErrorFromTxtFile(values);
+            }
         }
 
         public void SaveAsTxtFile()
@@ -121,6 +92,20 @@ namespace G2_2D_LZ
                         writer.Write(Constants.Separator.ToString());
                     }
                     writer.WriteLine();
+                }
+            }
+        }
+
+
+        private void SetIsPixelEncodedToTrue()
+        {
+            IsPixelEncoded = new bool[_height, _width];
+
+            for (int y = 0; y < _height; y++)
+            {
+                for (int x = 0; x < _width; x++)
+                {
+                    IsPixelEncoded[y, x] = true;
                 }
             }
         }

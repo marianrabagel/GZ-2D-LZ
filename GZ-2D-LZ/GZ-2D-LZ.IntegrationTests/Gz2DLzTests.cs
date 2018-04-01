@@ -261,22 +261,7 @@ namespace GZ_2D_LZ.IntegrationTests
             var workImage = _decoder.WorkImage;
             CompareValueWithPixelFromBmp(_testBmpPath, workImage);
         }
-
-        [TestMethod]
-        public void EncodeAndDecodeBmpLenaCreatesTheOriginalImage()
-        {
-            _encoder = new Gz2DlzEncoder(_lenna256anBmpPath, new ABasedPredictor(), _bmpImageReader);
-            _decoder = new Gz2DlzDecoder($"{_lenna256anBmpPath}.mat", new ABasedPredictor());
-
-            _encoder.Encode();
-            _encoder.WriteMatrixToFileAsText();
-            _decoder.LoadMatrixFromTxtFile();
-            _decoder.Decode();
-            _decoder.SaveAsBitmap();
-
-            Assert.Fail("format problems: original png, decode bmp");
-        }
-
+        
         private static string GetContentWithoutNewLines(string filename)
         {
             using (StreamReader reader = new StreamReader(filename))
