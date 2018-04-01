@@ -41,7 +41,7 @@ namespace GZ_2D_LZ.UnitTests
 
             _decoder.LoadMatrixFromTxtFile();
 
-            var matchFlag = _decoder.MatchFlag;
+            var matchFlag = _decoder.IsMatchFound;
 
             Assert.AreEqual(5, matchFlag.GetLength(0));
             Assert.AreEqual(6, matchFlag.GetLength(1));
@@ -85,7 +85,7 @@ namespace GZ_2D_LZ.UnitTests
             _decoder = new Gz2DlzDecoder(_testBmpMatFileName, _aPredictor);
 
             _decoder.LoadMatrixFromTxtFile();
-            var matchDimensions = _decoder.MatchDimensions;
+            var matchDimensions = _decoder.MatchDimension;
 
             var height = matchDimensions.GetLength(0);
             var width = matchDimensions.GetLength(1);
@@ -171,7 +171,7 @@ namespace GZ_2D_LZ.UnitTests
 
             _decoder.LoadMatrixFromTxtFile();
 
-            var matchFlag = _decoder.MatchFlag;
+            var matchFlag = _decoder.IsMatchFound;
 
             Assert.AreEqual(10, matchFlag.GetLength(0));
             Assert.AreEqual(10, matchFlag.GetLength(1));
@@ -244,7 +244,7 @@ namespace GZ_2D_LZ.UnitTests
             _decoder = new Gz2DlzDecoder(_one4X4BlockBmpMatFileName, _aPredictor);
 
             _decoder.LoadMatrixFromTxtFile();
-            var matchDimensions = _decoder.MatchDimensions;
+            var matchDimensions = _decoder.MatchDimension;
 
             var height = matchDimensions.GetLength(0);
             var width = matchDimensions.GetLength(1);

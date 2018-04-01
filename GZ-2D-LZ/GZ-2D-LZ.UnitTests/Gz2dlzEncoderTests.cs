@@ -167,7 +167,7 @@ namespace GZ_2D_LZ.UnitTests
 
             _encoder.Encode();
 
-            var matchDimensions = _encoder.MatchDimensions;
+            var matchDimensions = _encoder.MatchDimension;
             for (int y = 0; y < matchDimensions.GetLength(0); y++)
             {
                 for (int x = 0; x < matchDimensions.GetLength(1); x++)

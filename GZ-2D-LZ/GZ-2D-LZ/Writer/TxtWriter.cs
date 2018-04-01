@@ -56,7 +56,7 @@ namespace G2_2D_LZ.Writer
             }
         }
 
-        public void WriteMatchDimensionsToFile(Dimensions[,] matrix)
+        public void WriteMatchDimensionsToFile(Dimension[,] matrix)
         {
             using (StreamWriter streamWriter = new StreamWriter(_inputFileName, true))
             {
@@ -64,7 +64,7 @@ namespace G2_2D_LZ.Writer
                 {
                     for (int x = 0; x < matrix.GetLength(1); x++)
                     {
-                        var value = matrix[y, x] ?? new Dimensions(0, 0);
+                        var value = matrix[y, x] ?? new Dimension(0, 0);
 
                         streamWriter.Write(value.Width + " ");
                         streamWriter.Write(value.Height + " ");

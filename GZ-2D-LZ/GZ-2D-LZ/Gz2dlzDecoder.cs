@@ -10,10 +10,10 @@ namespace G2_2D_LZ
     {
         private readonly string InputFileName;
 
-        public bool[,] MatchFlag { get; private set; } //has true when a suitable match for a block is found
+        public bool[,] IsMatchFound { get; private set; } //has true when a suitable match for a block is found
         public bool[,] IsPixelEncoded { get; private set; } //has true when a pixel has been encoded
         public PixelLocation[,] MatchLocation { get; private set; } //position of the match relative to the block being encoded
-        public Dimensions[,] MatchDimensions { get; private set; } //width and heigth of the block being encoded
+        public Dimension[,] MatchDimension { get; private set; } //width and heigth of the block being encoded
         public int[,] Residual { get; private set; } //difference between the pixel in the actual block and the matching block
         public int[,] PredictionError { get; private set; } // prediction error values
         public byte[,] WorkImage { get; private set; }
@@ -74,10 +74,10 @@ namespace G2_2D_LZ
 
         protected void InitializeTables()
         {
-            MatchFlag = new bool[_height, _width];
+            IsMatchFound = new bool[_height, _width];
             IsPixelEncoded = new bool[_height, _width];
             MatchLocation = new PixelLocation[_height, _width];
-            MatchDimensions = new Dimensions[_height, _width];
+            MatchDimension = new Dimension[_height, _width];
             Residual = new int[_height, _width];
             PredictionError = new int[_height, _width];
         }
@@ -95,8 +95,8 @@ namespace G2_2D_LZ
 
         private void LoadMatchDimensionsFromFile(string[] values)
         {
-            var height = MatchDimensions.GetLength(0);
-            var width = MatchDimensions.GetLength(1);
+            var height = MatchDimension.GetLength(0);
+            var width = MatchDimension.GetLength(1);
             int i = 2 + 3 * height * width;
             
             for (int y = 0; y < height; y++)
@@ -106,7 +106,7 @@ namespace G2_2D_LZ
                     var valueWidth = Convert.ToInt32(values[i++]);
                     var valueHeight = Convert.ToInt32(values[i++]);
 
-                    MatchDimensions[y, x] = new Dimensions(valueWidth, valueHeight);
+                    MatchDimension[y, x] = new Dimension(valueWidth, valueHeight);
                 }
             }
         }
@@ -133,12 +133,12 @@ namespace G2_2D_LZ
         {
             int i = 2;
 
-            for (int y = 0; y < MatchFlag.GetLength(0); y++)
+            for (int y = 0; y < IsMatchFound.GetLength(0); y++)
             {
-                for (int x = 0; x < MatchFlag.GetLength(1); x++)
+                for (int x = 0; x < IsMatchFound.GetLength(1); x++)
                 {
                     var value = Convert.ToInt32(values[i++]);
-                    MatchFlag[y, x] = value != 0;
+                    IsMatchFound[y, x] = value != 0;
                 }
             }
         }
@@ -156,7 +156,7 @@ namespace G2_2D_LZ
                 {
                     if (IsPixelEncoded[y, x])
                     {
-                        var hasMatch = MatchFlag[y, x];
+                        var hasMatch = IsMatchFound[y, x];
 
                         if (hasMatch)
                         {
@@ -223,7 +223,7 @@ namespace G2_2D_LZ
         private void ReproduceImage(int y, int x)
         {
             var matchLocation = MatchLocation[y, x];
-            var matchDimension = MatchDimensions[y, x];
+            var matchDimension = MatchDimension[y, x];
             for (int i = 0; i < matchDimension.Height; i++)
             {
                 for (int j = 0; j < matchDimension.Width; j++)

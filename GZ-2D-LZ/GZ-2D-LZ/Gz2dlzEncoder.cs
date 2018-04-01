@@ -12,6 +12,7 @@ namespace G2_2D_LZ
     {
         private readonly string _inputFilePath;
         private const string IntermediaryFileExtension = ".mat";
+        private const string Folder = ".matrices";
 
         private readonly byte[,] _originalImage;
         private readonly int _height;
@@ -20,7 +21,7 @@ namespace G2_2D_LZ
         public bool[,] IsMatchFound { get; private set; } //has true when a suitable match for a block is found
         public bool[,] IsPixelEncoded { get; private set; } //has true when a pixel has been encoded
         public PixelLocation[,] MatchLocation { get; private set; } //position of the match relative to the block being encoded
-        public Dimensions[,] MatchDimensions { get; private set; } //width and heigth of the block being encoded
+        public Dimension[,] MatchDimension { get; private set; } //width and heigth of the block being encoded
         public int[,] Residual { get; private set; } //difference between the pixel in the actual block and the matching block
         public byte[,] WorkImage { get; private set; }
 
@@ -51,7 +52,7 @@ namespace G2_2D_LZ
 
             txtWriter.WriteMatchFlagToFile(IsMatchFound);
             txtWriter.WriteMatchLocationToFile(MatchLocation);
-            txtWriter.WriteMatchDimensionsToFile(MatchDimensions);
+            txtWriter.WriteMatchDimensionsToFile(MatchDimension);
             txtWriter.WriteMatrixToFile(Residual);
             txtWriter.WriteMatrixToFile(_abstractPredictor.PredictionError);
         }
@@ -68,21 +69,32 @@ namespace G2_2D_LZ
         private void WriteResultingMatricesToIndividualFiles()
         {
             var fileName = Path.GetFileName(_inputFilePath);
-            Directory.CreateDirectory(_inputFilePath + ".folder");
-            var outputFileName = _inputFilePath + ".folder\\" + fileName + "." + nameof(IsPixelEncoded) + IntermediaryFileExtension;
+            Directory.CreateDirectory(_inputFilePath + Folder);
+            SaveIsMatchFoundToFile(fileName, nameof(IsMatchFound));
+        }
+
+        private void SaveIsMatchFoundToFile(string fileName, string matrixName)
+        {
+            var outputFileName = GetOutputFileName(fileName, matrixName);
+            var matrix = IsPixelEncoded;
 
             using (IBitWriter bitWriter = new BitWriter(outputFileName))
             {
-                for (int y = 0; y < IsPixelEncoded.GetLength(0); y++)
+                for (int y = 0; y < matrix.GetLength(0); y++)
                 {
-                    for (int x = 0; x < IsPixelEncoded.GetLength(1); x++)
+                    for (int x = 0; x < matrix.GetLength(1); x++)
                     {
-                        var bit = IsPixelEncoded[y,x] ? 0X01 : 0X00;
+                        var bit = matrix[y, x] ? 0X01 : 0X00;
 
                         bitWriter.WriteBit(bit);
                     }
                 }
             }
+        }
+
+        private string GetOutputFileName(string fileName, string matrixName)
+        {
+            return _inputFilePath + $"{Folder}\\" + fileName + "." + matrixName + IntermediaryFileExtension;
         }
 
         private void EncodeWorkImage()
@@ -101,7 +113,7 @@ namespace G2_2D_LZ
                         if (bestMatch.Size > Constants.MinMatchSize)
                         {
                             IsMatchFound[y, x] = true;
-                            MatchDimensions[y, x] = new Dimensions(bestMatch.Width, bestMatch.Height);
+                            MatchDimension[y, x] = new Dimension(bestMatch.Width, bestMatch.Height);
                             MatchLocation[y, x] = rootPoint;
                             SetResidualAndIsPixelEncoded(x, y);
                         }
@@ -166,7 +178,7 @@ namespace G2_2D_LZ
                 rowOffset++;
 
                 var matchSize = widthOfTheMatchInThePreviousRow * rowOffset;
-                var blockDimensions = new Dimensions(widthOfTheMatchInThePreviousRow, rowOffset);
+                var blockDimensions = new Dimension(widthOfTheMatchInThePreviousRow, rowOffset);
                 var matchMse = GetMse(encoderPoint, rootPoint, blockDimensions);
 
                 if (matchSize >= bestMatch.Size && matchMse <= Constants.MaxMse)
@@ -206,7 +218,7 @@ namespace G2_2D_LZ
 
         private void SetResidualAndIsPixelEncoded(int encoderX, int encoderY)
         {
-            var matchDimension = MatchDimensions[encoderY, encoderX];
+            var matchDimension = MatchDimension[encoderY, encoderX];
             var matchLocation = MatchLocation[encoderY, encoderX];
 
             for (int i = 0; i < matchDimension.Height; i++)
@@ -244,13 +256,13 @@ namespace G2_2D_LZ
             return rootX;
         }
 
-        private int GetMse(PixelLocation encoderPoint, PixelLocation matchedPoint, Dimensions blockDimensions)
+        private int GetMse(PixelLocation encoderPoint, PixelLocation matchedPoint, Dimension blockDimension)
         {
             var sum = 0;
 
-            for (int i = 0; i < blockDimensions.Height; i++)
+            for (int i = 0; i < blockDimension.Height; i++)
             {
-                for (int j = 0; j < blockDimensions.Width; j++)
+                for (int j = 0; j < blockDimension.Width; j++)
                 {
                     var nextX = encoderPoint.X + j;
                     if (nextX < _width)
@@ -261,7 +273,7 @@ namespace G2_2D_LZ
                 }
             }
 
-            return sum / blockDimensions.Height * blockDimensions.Width;
+            return sum / blockDimension.Height * blockDimension.Width;
         }
 
         private void InstatiateTables()
@@ -269,7 +281,7 @@ namespace G2_2D_LZ
             IsMatchFound = new bool[_height, _width];
             IsPixelEncoded = new bool[_height, _width];
             MatchLocation = new PixelLocation[_height, _width];
-            MatchDimensions = new Dimensions[_height, _width];
+            MatchDimension = new Dimension[_height, _width];
             Residual = new int[_height, _width];
             WorkImage = new byte[_height, _width];
         }
