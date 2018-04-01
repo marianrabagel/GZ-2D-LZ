@@ -93,6 +93,7 @@ namespace BitOperations.IntegrationTests
         }
 
         [TestMethod]
+        [Ignore]
         public void ReadAndWriteAPdffile()
         {
             string inputFile = $"{_basePath}brin-page-98.pdf";

@@ -15,8 +15,6 @@ namespace GZ_2D_LZ.IntegrationTests
     public class Gz2DLzTests
     {
         private Gz2DlzEncoder _encoder;
-        private AbstractPredictor _calicPredictor;
-        private AbstractPredictor _aPredictor;
         IReader _bmpReader;
 
         private Gz2DlzDecoder _decoder;
@@ -33,8 +31,6 @@ namespace GZ_2D_LZ.IntegrationTests
         [TestInitialize]
         public void Setup()
         {
-            _calicPredictor = new CalicPredictor();
-            _aPredictor = new ABasedPredictor();
             _bmpReader = new BmpReader();
 
             _2PosibleMatchBlocksTxtFileName = _basePath + "TxtMatrices\\"+ _2PosibleMatchBlocksTxtFileName;
@@ -50,8 +46,8 @@ namespace GZ_2D_LZ.IntegrationTests
         public void EncodeAndDecodeWithAPredictorCustomTxtMatrixFileCreatesAFileIndenticalWithTheOriginal()
         {
             IReader txtReader = new TxtReader();
-            _encoder = new Gz2DlzEncoder(_2PosibleMatchBlocksTxtFileName, _aPredictor, txtReader);
-            _decoder = new Gz2DlzDecoder($"{_2PosibleMatchBlocksTxtFileName}.mat", _aPredictor);
+            _encoder = new Gz2DlzEncoder(_2PosibleMatchBlocksTxtFileName, new ABasedPredictor(), txtReader);
+            _decoder = new Gz2DlzDecoder($"{_2PosibleMatchBlocksTxtFileName}.mat", new ABasedPredictor());
 
             _encoder.Encode();
             _encoder.WriteMatrixToFileAsText();
@@ -71,8 +67,8 @@ namespace GZ_2D_LZ.IntegrationTests
         public void EncodeAndDecodeWithCalicPredictorCustomTxtLena256AnCreatesAFileIndenticalWithTheOriginal()
         {
             IReader txtReader = new TxtReader();
-            _encoder = new Gz2DlzEncoder(_lenna256anTxtFileName, _aPredictor, txtReader);
-            _decoder = new Gz2DlzDecoder($"{_lenna256anTxtFileName}.mat", _aPredictor);
+            _encoder = new Gz2DlzEncoder(_lenna256anTxtFileName, new ABasedPredictor(), txtReader);
+            _decoder = new Gz2DlzDecoder($"{_lenna256anTxtFileName}.mat", new ABasedPredictor());
 
             _encoder.Encode();
             _encoder.WriteMatrixToFileAsText();
@@ -92,8 +88,8 @@ namespace GZ_2D_LZ.IntegrationTests
         public void EncodeAndDecodeWithCalicPredictorCustomTxtMatrixFileCreatesAFileIndenticalWithTheOriginal()
         {
             IReader txtReader = new TxtReader();
-            _encoder = new Gz2DlzEncoder(_2PosibleMatchBlocksTxtFileName, _calicPredictor, txtReader);
-            _decoder = new Gz2DlzDecoder($"{_2PosibleMatchBlocksTxtFileName}.mat", _calicPredictor);
+            _encoder = new Gz2DlzEncoder(_2PosibleMatchBlocksTxtFileName, new CalicPredictor(), txtReader);
+            _decoder = new Gz2DlzDecoder($"{_2PosibleMatchBlocksTxtFileName}.mat", new CalicPredictor());
 
             _encoder.Encode();
             _encoder.WriteMatrixToFileAsText();
@@ -113,8 +109,8 @@ namespace GZ_2D_LZ.IntegrationTests
         public void EncodeAndDecodeWithCalicCustomTxtLena256AnCreatesAFileIndenticalWithTheOriginal()
         {
             IReader txtReader = new TxtReader();
-            _encoder = new Gz2DlzEncoder(_lenna256anTxtFileName, _calicPredictor, txtReader);
-            _decoder = new Gz2DlzDecoder($"{_lenna256anTxtFileName}.mat", _calicPredictor);
+            _encoder = new Gz2DlzEncoder(_lenna256anTxtFileName, new CalicPredictor(), txtReader);
+            _decoder = new Gz2DlzDecoder($"{_lenna256anTxtFileName}.mat", new CalicPredictor());
 
             _encoder.Encode();
             _encoder.WriteMatrixToFileAsText();
@@ -133,8 +129,8 @@ namespace GZ_2D_LZ.IntegrationTests
         [TestMethod]
         public void EncodeAndDecodeWithAPredictorTestBmpResultsTheSamePixels()
         {
-            _encoder = new Gz2DlzEncoder(_testBmpPath, _aPredictor, _bmpReader);
-            _decoder = new Gz2DlzDecoder($"{_testBmpPath}.mat", _aPredictor);
+            _encoder = new Gz2DlzEncoder(_testBmpPath, new ABasedPredictor(), _bmpReader);
+            _decoder = new Gz2DlzDecoder($"{_testBmpPath}.mat", new ABasedPredictor());
 
             _encoder.Encode();
             _encoder.WriteMatrixToFileAsText();
@@ -148,8 +144,8 @@ namespace GZ_2D_LZ.IntegrationTests
         [TestMethod]
         public void EncodeAndDecodeWithAPredictor4X4BlockBmpResultsTheSamePixels()
         {
-            _encoder = new Gz2DlzEncoder(_one4X4MatchBlockBmpPath, _aPredictor, _bmpReader);
-            _decoder = new Gz2DlzDecoder($"{_one4X4MatchBlockBmpPath}.mat", _aPredictor);
+            _encoder = new Gz2DlzEncoder(_one4X4MatchBlockBmpPath, new ABasedPredictor(), _bmpReader);
+            _decoder = new Gz2DlzDecoder($"{_one4X4MatchBlockBmpPath}.mat", new ABasedPredictor());
 
             _encoder.Encode();
             _encoder.WriteMatrixToFileAsText();
@@ -163,8 +159,8 @@ namespace GZ_2D_LZ.IntegrationTests
         [TestMethod]
         public void EncodeAndDecodeWithAPredictor2PossibleMatchBlockskBmpResultsTheSamePixels()
         {
-            _encoder = new Gz2DlzEncoder(_2PossibleMatchBlocksBmpPath, _aPredictor, _bmpReader);
-            _decoder = new Gz2DlzDecoder($"{_2PossibleMatchBlocksBmpPath}.mat", _aPredictor);
+            _encoder = new Gz2DlzEncoder(_2PossibleMatchBlocksBmpPath, new ABasedPredictor(), _bmpReader);
+            _decoder = new Gz2DlzDecoder($"{_2PossibleMatchBlocksBmpPath}.mat", new ABasedPredictor());
 
             _encoder.Encode();
             _encoder.WriteMatrixToFileAsText();
@@ -178,8 +174,8 @@ namespace GZ_2D_LZ.IntegrationTests
         [TestMethod]
         public void EncodeAndDecodeWithAPredictorLenaBmpResultsTheSamePixels()
         {
-            _encoder = new Gz2DlzEncoder(_lenna256anBmpPath, _aPredictor, _bmpReader);
-            _decoder = new Gz2DlzDecoder($"{_lenna256anBmpPath}.mat", _aPredictor);
+            _encoder = new Gz2DlzEncoder(_lenna256anBmpPath, new ABasedPredictor(), _bmpReader);
+            _decoder = new Gz2DlzDecoder($"{_lenna256anBmpPath}.mat", new ABasedPredictor());
 
             _encoder.Encode();
             _encoder.WriteMatrixToFileAsText();
@@ -193,8 +189,8 @@ namespace GZ_2D_LZ.IntegrationTests
         [TestMethod]
         public void EncodeAndDecodeWithCalicPredictorTestBmpResultsTheSamePixels()
         {
-            _encoder = new Gz2DlzEncoder(_testBmpPath, _calicPredictor, _bmpReader);
-            _decoder = new Gz2DlzDecoder($"{_testBmpPath}.mat", _calicPredictor);
+            _encoder = new Gz2DlzEncoder(_testBmpPath, new CalicPredictor(), _bmpReader);
+            _decoder = new Gz2DlzDecoder($"{_testBmpPath}.mat", new CalicPredictor());
 
             _encoder.Encode();
             _encoder.WriteMatrixToFileAsText();
@@ -208,8 +204,8 @@ namespace GZ_2D_LZ.IntegrationTests
         [TestMethod]
         public void EncodeAndDecodeWithCalic4X4BlockBmpResultsTheSamePixels()
         {
-            _encoder = new Gz2DlzEncoder(_one4X4MatchBlockBmpPath, _calicPredictor, _bmpReader);
-            _decoder = new Gz2DlzDecoder($"{_one4X4MatchBlockBmpPath}.mat", _calicPredictor);
+            _encoder = new Gz2DlzEncoder(_one4X4MatchBlockBmpPath, new CalicPredictor(), _bmpReader);
+            _decoder = new Gz2DlzDecoder($"{_one4X4MatchBlockBmpPath}.mat", new CalicPredictor());
 
             _encoder.Encode();
             _encoder.WriteMatrixToFileAsText();
@@ -223,8 +219,8 @@ namespace GZ_2D_LZ.IntegrationTests
         [TestMethod]
         public void EncodeAndDecodeWithCalic2PossibleMatchBlockskBmpResultsTheSamePixels()
         {
-            _encoder = new Gz2DlzEncoder(_2PossibleMatchBlocksBmpPath, _calicPredictor, _bmpReader);
-            _decoder = new Gz2DlzDecoder($"{_2PossibleMatchBlocksBmpPath}.mat", _calicPredictor);
+            _encoder = new Gz2DlzEncoder(_2PossibleMatchBlocksBmpPath, new CalicPredictor(), _bmpReader);
+            _decoder = new Gz2DlzDecoder($"{_2PossibleMatchBlocksBmpPath}.mat", new CalicPredictor());
 
             _encoder.Encode();
             _encoder.WriteMatrixToFileAsText();
@@ -238,8 +234,8 @@ namespace GZ_2D_LZ.IntegrationTests
         [TestMethod]
         public void EncodeAndDecodeWithCalicPredictorLenaBmpResultsTheSamePixels()
         {
-            _encoder = new Gz2DlzEncoder(_lenna256anBmpPath, _calicPredictor, _bmpReader);
-            _decoder = new Gz2DlzDecoder($"{_lenna256anBmpPath}.mat", _calicPredictor);
+            _encoder = new Gz2DlzEncoder(_lenna256anBmpPath, new CalicPredictor(), _bmpReader);
+            _decoder = new Gz2DlzDecoder($"{_lenna256anBmpPath}.mat", new CalicPredictor());
 
             _encoder.Encode();
             _encoder.WriteMatrixToFileAsText();
@@ -254,8 +250,8 @@ namespace GZ_2D_LZ.IntegrationTests
         [Ignore]
         public void EncodeAndDecodeWithAPredictorAndBitOperationsTestBmpResultsTheSamePixels()
         {
-            _encoder = new Gz2DlzEncoder(_testBmpPath, _aPredictor, _bmpReader);
-            _decoder = new Gz2DlzDecoder($"{_testBmpPath}.mat", _aPredictor);
+            _encoder = new Gz2DlzEncoder(_testBmpPath, new ABasedPredictor(), _bmpReader);
+            _decoder = new Gz2DlzDecoder($"{_testBmpPath}.mat", new ABasedPredictor());
 
             _encoder.Encode();
             _encoder.WriteResultingMatricesToIndividualFiles();
@@ -269,8 +265,8 @@ namespace GZ_2D_LZ.IntegrationTests
         [TestMethod]
         public void EncodeAndDecodeBmpLenaCreatesTheOriginalImage()
         {
-            _encoder = new Gz2DlzEncoder(_lenna256anBmpPath, _aPredictor, _bmpReader);
-            _decoder = new Gz2DlzDecoder($"{_lenna256anBmpPath}.mat", _aPredictor);
+            _encoder = new Gz2DlzEncoder(_lenna256anBmpPath, new ABasedPredictor(), _bmpReader);
+            _decoder = new Gz2DlzDecoder($"{_lenna256anBmpPath}.mat", new ABasedPredictor());
 
             _encoder.Encode();
             _encoder.WriteMatrixToFileAsText();

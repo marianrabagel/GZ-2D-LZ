@@ -15,7 +15,6 @@ namespace GZ_2D_LZ.UnitTests
     public class Gz2DlzEncoderTests
     {
         private Gz2DlzEncoder _encoder;
-        ABasedPredictor _aPredictor;
         IReader _bmpReader;
 
         private static readonly string basePath = "\\TestData\\Encoder\\";
@@ -26,14 +25,13 @@ namespace GZ_2D_LZ.UnitTests
         [TestInitialize]
         public void Setup()
         {
-            _aPredictor = new ABasedPredictor();
             _bmpReader = new BmpReader();
         }
 
         [TestMethod]
         public void ImageIsLoadedIntoMemory()
         {
-            _encoder = new Gz2DlzEncoder(TestBmpPath, _aPredictor, _bmpReader);
+            _encoder = new Gz2DlzEncoder(TestBmpPath, new ABasedPredictor(), _bmpReader);
 
             byte[,] originalImage = _encoder.WorkImage;
 
@@ -62,7 +60,7 @@ namespace GZ_2D_LZ.UnitTests
         [TestMethod]
         public void EncodesTheFirstRowIsMarkedAsEncoded()
         {
-            _encoder = new Gz2DlzEncoder(TestBmpPath, _aPredictor, _bmpReader);
+            _encoder = new Gz2DlzEncoder(TestBmpPath, new ABasedPredictor(), _bmpReader);
 
             _encoder.Encode();
 
@@ -78,7 +76,7 @@ namespace GZ_2D_LZ.UnitTests
         [TestMethod]
         public void EncodeEncodesAllPixelsForA5X6Image()
         {
-            _encoder = new Gz2DlzEncoder(TestBmpPath, _aPredictor, _bmpReader);
+            _encoder = new Gz2DlzEncoder(TestBmpPath, new ABasedPredictor(), _bmpReader);
 
             _encoder.Encode();
 
@@ -95,7 +93,7 @@ namespace GZ_2D_LZ.UnitTests
         [TestMethod]
         public void EncodeEncodesAllPixelsForAnImageWithAMatchingBlock()
         {
-            _encoder = new Gz2DlzEncoder(TestBmpPath, _aPredictor, _bmpReader);
+            _encoder = new Gz2DlzEncoder(TestBmpPath, new ABasedPredictor(), _bmpReader);
 
             _encoder.Encode();
 
@@ -112,7 +110,7 @@ namespace GZ_2D_LZ.UnitTests
         [TestMethod]
         public void EncodesHasNoMatchedPoints()
         {
-            _encoder = new Gz2DlzEncoder(TestBmpPath, _aPredictor, _bmpReader);
+            _encoder = new Gz2DlzEncoder(TestBmpPath, new ABasedPredictor(), _bmpReader);
 
             _encoder.Encode();
 
@@ -129,7 +127,7 @@ namespace GZ_2D_LZ.UnitTests
         [TestMethod]
         public void EncodesHasNoResidualValues()
         {
-            _encoder = new Gz2DlzEncoder(TestBmpPath, _aPredictor, _bmpReader);
+            _encoder = new Gz2DlzEncoder(TestBmpPath, new ABasedPredictor(), _bmpReader);
 
             _encoder.Encode();
 
@@ -146,7 +144,7 @@ namespace GZ_2D_LZ.UnitTests
         [TestMethod]
         public void EncodesHasNoMatchLocation()
         {
-            _encoder = new Gz2DlzEncoder(TestBmpPath, _aPredictor, _bmpReader);
+            _encoder = new Gz2DlzEncoder(TestBmpPath, new ABasedPredictor(), _bmpReader);
 
             _encoder.Encode();
 
@@ -163,7 +161,7 @@ namespace GZ_2D_LZ.UnitTests
         [TestMethod]
         public void EncodesHasNoMatchDimensions()
         {
-            _encoder = new Gz2DlzEncoder(TestBmpPath, _aPredictor, _bmpReader);
+            _encoder = new Gz2DlzEncoder(TestBmpPath, new ABasedPredictor(), _bmpReader);
 
             _encoder.Encode();
 
@@ -180,7 +178,7 @@ namespace GZ_2D_LZ.UnitTests
         [TestMethod]
         public void LocateTheBestAproximateMatchForGivenRootPixelGivesTheExpectedBestMatch()
         {
-            _encoder = new Gz2DlzEncoder(One4X4MatchBlockBmpPath, _aPredictor, _bmpReader);
+            _encoder = new Gz2DlzEncoder(One4X4MatchBlockBmpPath, new ABasedPredictor(), _bmpReader);
             var originalImage = _encoder.WorkImage;
             var width = originalImage.GetLength(0);
 
@@ -209,7 +207,7 @@ namespace GZ_2D_LZ.UnitTests
         [TestMethod]
         public void EncodeFindsTheExpectedBlockMatch()
         {
-            _encoder = new Gz2DlzEncoder(One4X4MatchBlockBmpPath, _aPredictor, _bmpReader);
+            _encoder = new Gz2DlzEncoder(One4X4MatchBlockBmpPath, new ABasedPredictor(), _bmpReader);
 
             _encoder.Encode();
 
@@ -221,7 +219,7 @@ namespace GZ_2D_LZ.UnitTests
         [TestMethod]
         public void EncodeFindsTheExpectedBlockMatchIfThereAre2BlockAtTheSameOrigin()
         {
-            _encoder = new Gz2DlzEncoder(TwoPossibleMatchBlocksBmpPath, _aPredictor, _bmpReader);
+            _encoder = new Gz2DlzEncoder(TwoPossibleMatchBlocksBmpPath, new ABasedPredictor(), _bmpReader);
             _encoder.Encode();
 
             Assert.IsNotNull(_encoder.MatchLocation[1, 0]);
