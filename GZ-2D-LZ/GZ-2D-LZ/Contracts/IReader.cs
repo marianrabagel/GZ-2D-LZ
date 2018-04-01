@@ -2,6 +2,6 @@
 {
     public interface IReader
     {
-        byte[,] LoadImageInMemory(string inputFileName);
+        byte[,] GetImageFromFile(string inputFileName);
     }
 }

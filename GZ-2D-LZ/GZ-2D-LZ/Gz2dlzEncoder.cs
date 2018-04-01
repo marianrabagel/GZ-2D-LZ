@@ -1,7 +1,7 @@
 ﻿using System;
-using System.IO;
 using G2_2D_LZ.Contracts;
 using G2_2D_LZ.Helpers;
+using G2_2D_LZ.Writer;
 
 namespace G2_2D_LZ
 {
@@ -26,31 +26,30 @@ namespace G2_2D_LZ
         {
             //todo guard conditions
             InputFileName = inputFileName;
-            _originalImage = reader.LoadImageInMemory(inputFileName);
-            _height = _originalImage.GetLength(0);
+            _originalImage = reader.GetImageFromFile(inputFileName);
 
+            _height = _originalImage.GetLength(0);
             _width = _originalImage.GetLength(1);
 
             InstatiateTables();
-            PopulateWorkImageFromOriginalImage();
+
+            CopyOriginalImageWorkImage();
             _abstractPredictor = abstractPredictor;
         }
 
         public void WriteMatrixToFileAsText()
         {
-            using (StreamWriter streamWriter = new StreamWriter(InputFileName + ".mat"))
-            {
-                streamWriter.Write(WorkImage.GetLength(1) + " ");
-                streamWriter.Write(WorkImage.GetLength(0) + " ");
-                streamWriter.WriteLine();
+            TxtWriter txtWriter = new TxtWriter(InputFileName + ".mat");;
 
-                WriteMatchFlagToFile(streamWriter);
-                WriteMatchLocationToFile(streamWriter);
-                WriteMatchDimensionsToFile(streamWriter);
-                WriteMatrixToFile(Residual, streamWriter);
-                WriteMatrixToFile(_abstractPredictor.PredictionError, streamWriter);
-            }
+            txtWriter.Write(WorkImage.GetLength(1) + " ");
+            txtWriter.Write(WorkImage.GetLength(0) + " ");
+            txtWriter.Write(Environment.NewLine);
 
+            txtWriter.WriteMatchFlagToFile(IsMatchFound);
+            txtWriter.WriteMatchLocationToFile(MatchLocation);
+            txtWriter.WriteMatchDimensionsToFile(MatchDimensions);
+            txtWriter.WriteMatrixToFile(Residual);
+            txtWriter.WriteMatrixToFile(_abstractPredictor.PredictionError);
         }
 
         public void Encode()
@@ -252,64 +251,7 @@ namespace G2_2D_LZ
             }
         }
 
-        private void WriteMatrixToFile(int[,] matrix, StreamWriter streamWriter)
-        {
-            for (int y = 0; y < matrix.GetLength(0); y++)
-            {
-                for (int x = 0; x < matrix.GetLength(1); x++)
-                {
-                    var format = matrix[y, x] + " ";
-                    streamWriter.Write(format);
-                }
-                streamWriter.WriteLine();
-            }
-        }
-
-        private void WriteMatchDimensionsToFile(StreamWriter streamWriter)
-        {
-            for (int y = 0; y < MatchDimensions.GetLength(0); y++)
-            {
-                for (int x = 0; x < MatchDimensions.GetLength(1); x++)
-                {
-                    var value = MatchDimensions[y, x] ?? new Dimensions(0, 0);
-
-                    streamWriter.Write(value.Width + " ");
-                    streamWriter.Write(value.Height + " ");
-                }
-                streamWriter.WriteLine();
-            }
-        }
-
-        private void WriteMatchLocationToFile(StreamWriter streamWriter)
-        {
-            for (int y = 0; y < MatchLocation.GetLength(0); y++)
-            {
-                for (int x = 0; x < MatchLocation.GetLength(1); x++)
-                {
-                    var value = MatchLocation[y, x] ?? new PixelLocation(0, 0);
-                    streamWriter.Write(value.X + " ");
-                    streamWriter.Write(value.Y + " ");
-                }
-                streamWriter.WriteLine();
-            }
-        }
-
-        private void WriteMatchFlagToFile(StreamWriter streamWriter)
-        {
-            bool[,] matrix = IsMatchFound;
-
-            for (int y = 0; y < matrix.GetLength(0); y++)
-            {
-                for (int x = 0; x < matrix.GetLength(1); x++)
-                {
-                    var value = matrix[y, x] ? 1 : 0;
-                    streamWriter.Write(value + " ");
-                }
-                streamWriter.WriteLine();
-            }
-        }
-
-        protected void InstatiateTables()
+        private void InstatiateTables()
         {
             IsMatchFound = new bool[_height, _width];
             IsPixelEncoded = new bool[_height, _width];
@@ -319,7 +261,7 @@ namespace G2_2D_LZ
             WorkImage = new byte[_height, _width];
         }
 
-        private void PopulateWorkImageFromOriginalImage()
+        private void CopyOriginalImageWorkImage()
         {
             for (int y = 0; y < _height; y++)
             {

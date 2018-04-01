@@ -5,7 +5,7 @@ namespace G2_2D_LZ.Readers
 {
     public class BmpReader : IReader
     {
-        public byte[,] LoadImageInMemory(string inputFileName)
+        public byte[,] GetImageFromFile(string inputFileName)
         {
             using (Bitmap bitmap = new Bitmap(inputFileName))
             {

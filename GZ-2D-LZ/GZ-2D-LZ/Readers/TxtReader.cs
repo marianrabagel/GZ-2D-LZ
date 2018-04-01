@@ -6,7 +6,7 @@ namespace G2_2D_LZ.Readers
 {
     public class TxtReader : IReader
     {
-        public byte[,] LoadImageInMemory(string inputFileName)
+        public byte[,] GetImageFromFile(string inputFileName)
         {
             using (StreamReader reader = new StreamReader(inputFileName))
             {
