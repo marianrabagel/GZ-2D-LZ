@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.IO;
 using BitOperations;
 using G2_2D_LZ.Contracts;
@@ -67,7 +66,6 @@ namespace G2_2D_LZ
             MatchDimension = LoadMatchDimensionFromFile(GetInputFileName(_inputFilePath, nameof(MatchDimension)));
             Residual = LoadResidualFromFile(GetInputFileName(_inputFilePath, nameof(Residual)));
             _abstractPredictor.PredictionError = LoadResidualFromFile(GetInputFileName(_inputFilePath, nameof(_abstractPredictor.PredictionError)));
-
         }
 
         private int[,] LoadResidualFromFile(string outputFileName)

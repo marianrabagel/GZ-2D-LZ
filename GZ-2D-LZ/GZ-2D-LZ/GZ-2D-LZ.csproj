@@ -43,7 +43,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Contracts\AbstractPredictor.cs" />
+    <Compile Include="Contracts\Facades\IGz2DlzEncoderFacade.cs" />
     <Compile Include="Contracts\IImageReader.cs" />
+    <Compile Include="Facades\Gz2DlzEncoderFacade.cs" />
     <Compile Include="Helpers\BestMatch.cs" />
     <Compile Include="Helpers\Dimension.cs" />
     <Compile Include="Helpers\Constants.cs" />
@@ -56,6 +58,8 @@
     <Compile Include="Gz2dlzDecoder.cs" />
     <Compile Include="Gz2dlzEncoder.cs" />
     <Compile Include="Helpers\PixelLocation.cs" />
+    <Content Include="Paq\paq6\readme.txt" />
+    <Content Include="Paq\paq81\readme.txt" />
     <Compile Include="Predictors\CalicPredictor.cs" />
     <Compile Include="Readers\BmpImageReader.cs" />
     <Compile Include="Predictors\ABasedPredictor.cs" />
@@ -64,6 +68,7 @@
     <Compile Include="Readers\TxtAsImageReader.cs" />
     <Compile Include="Readers\TxtReader.cs" />
     <Compile Include="Writers\TxtWriter.cs" />
+    <Content Include="Paq\paq81\paq8l.exe" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -93,6 +98,9 @@
       <Project>{3dc0b673-7c65-4dd8-9dc5-1244eb9dc717}</Project>
       <Name>BitOperations</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Paq\paq6\paq6v2.exe" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -3,6 +3,7 @@ using System.IO;
 using BitOperations;
 using BitOperations.Contracts;
 using G2_2D_LZ.Contracts;
+using G2_2D_LZ.Contracts.Facades;
 using G2_2D_LZ.Helpers;
 using G2_2D_LZ.Writers;
 
@@ -10,8 +11,6 @@ namespace G2_2D_LZ
 {
     public class Gz2DlzEncoder
     {
-        private readonly string _inputFilePath;
-
         private readonly byte[,] _originalImage;
         private readonly uint _height;
         private readonly uint _width;
@@ -23,27 +22,24 @@ namespace G2_2D_LZ
         public int[,] Residual { get; private set; } //difference between the pixel in the actual block and the matching block
         public byte[,] WorkImage { get; private set; }
 
-        private readonly AbstractPredictor _abstractPredictor;
+        private readonly IGz2DlzEncoderFacade _gz2DlzEncoderFacade;
 
-        public Gz2DlzEncoder(string inputFilePath, AbstractPredictor abstractPredictor, IImageReader imageReader)
+        public Gz2DlzEncoder(IGz2DlzEncoderFacade gz2DlzEncoderFacade)
         {
-            //todo guard conditions
-            _inputFilePath = inputFilePath;
-            _originalImage = imageReader.GetImageFromFile(inputFilePath);
+            _gz2DlzEncoderFacade = gz2DlzEncoderFacade;
+            _originalImage = _gz2DlzEncoderFacade.ImageReader.GetImageFromFile(_gz2DlzEncoderFacade.InputFilePath);
 
             _height = Convert.ToUInt32(_originalImage.GetLength(0));
             _width = Convert.ToUInt32(_originalImage.GetLength(1));
 
             InstatiateTables();
-
             CopyOriginalImageWorkImage();
-            _abstractPredictor = abstractPredictor;
         }
         
         public void Encode()
         {
-            _abstractPredictor.SetOriginalMatrix(WorkImage);
-            _abstractPredictor.InitializePredictionError((int) _height, (int)_width);
+            _gz2DlzEncoderFacade.AbstractPredictor.SetOriginalMatrix(WorkImage);
+            _gz2DlzEncoderFacade.AbstractPredictor.InitializePredictionError((int) _height, (int)_width);
 
             PredictFirstRow();
             EncodeWorkImage();
@@ -52,7 +48,7 @@ namespace G2_2D_LZ
 
         public void WriteMatrixToFileAsText()
         {
-            TxtWriter txtWriter = new TxtWriter(_inputFilePath + Constants.IntermediaryFileExtension); ;
+            TxtWriter txtWriter = new TxtWriter(_gz2DlzEncoderFacade.InputFilePath + Constants.IntermediaryFileExtension); ;
 
             txtWriter.Write(WorkImage.GetLength(1) + Constants.Separator.ToString());
             txtWriter.Write(WorkImage.GetLength(0) + Constants.Separator.ToString());
@@ -62,18 +58,18 @@ namespace G2_2D_LZ
             txtWriter.WriteMatchLocationToFile(MatchLocation);
             txtWriter.WriteMatchDimensionsToFile(MatchDimension);
             txtWriter.WriteMatrixToFile(Residual);
-            txtWriter.WriteMatrixToFile(_abstractPredictor.PredictionError);
+            txtWriter.WriteMatrixToFile(_gz2DlzEncoderFacade.AbstractPredictor.PredictionError);
         }
 
         public void WriteResultingMatricesToIndividualFiles()
         {
-            Directory.CreateDirectory(_inputFilePath + Constants.Folder);
+            Directory.CreateDirectory(_gz2DlzEncoderFacade.InputFilePath + Constants.Folder);
             //todo move this into its own class
-            SaveIsMatchFoundToFile(_inputFilePath, nameof(IsMatchFound), IsMatchFound);
-            SaveMatchLocationToFile(_inputFilePath, nameof(MatchLocation), MatchLocation);
-            SaveMatchDimensionsToFile(_inputFilePath, nameof(MatchDimension), MatchDimension);
-            SaveResidualToFile(_inputFilePath, nameof(Residual), Residual);
-            SaveResidualToFile(_inputFilePath, nameof(_abstractPredictor.PredictionError), _abstractPredictor.PredictionError);
+            SaveIsMatchFoundToFile(_gz2DlzEncoderFacade.InputFilePath, nameof(IsMatchFound), IsMatchFound);
+            SaveMatchLocationToFile(_gz2DlzEncoderFacade.InputFilePath, nameof(MatchLocation), MatchLocation);
+            SaveMatchDimensionsToFile(_gz2DlzEncoderFacade.InputFilePath, nameof(MatchDimension), MatchDimension);
+            SaveResidualToFile(_gz2DlzEncoderFacade.InputFilePath, nameof(Residual), Residual);
+            SaveResidualToFile(_gz2DlzEncoderFacade.InputFilePath, nameof(_gz2DlzEncoderFacade.AbstractPredictor.PredictionError), _gz2DlzEncoderFacade.AbstractPredictor.PredictionError);
         }
 
         private void SaveResidualToFile(string filePath, string matrixName, int[,] matrix)
@@ -274,7 +270,7 @@ namespace G2_2D_LZ
                     if (y + i < WorkImage.GetLength(0) && x + j < WorkImage.GetLength(1))
                     {
                         IsPixelEncoded[y + i, x + j] = true;
-                        _abstractPredictor.PredictionError[y + i, x + j] = WorkImage[y + i, x + j] - _abstractPredictor.GetPredictionValue(x + j, y + i);
+                        _gz2DlzEncoderFacade.AbstractPredictor.PredictionError[y + i, x + j] = WorkImage[y + i, x + j] - _gz2DlzEncoderFacade.AbstractPredictor.GetPredictionValue(x + j, y + i);
                     }
                 }
             }
@@ -285,7 +281,7 @@ namespace G2_2D_LZ
             for (int i = 0; i < _width; i++)
             {
                 IsPixelEncoded[0, i] = true;
-                _abstractPredictor.PredictionError[0, i] = WorkImage[0, i] - _abstractPredictor.GetPredictionValue(i, 0);
+                _gz2DlzEncoderFacade.AbstractPredictor.PredictionError[0, i] = WorkImage[0, i] - _gz2DlzEncoderFacade.AbstractPredictor.GetPredictionValue(i, 0);
             }
         }
 
