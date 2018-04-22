@@ -24,20 +24,20 @@ namespace GZ_2D_LZ.UnitTests
         public string TestBmpPath = Environment.CurrentDirectory + $"{basePath}test.bmp";
         public string One4X4MatchBlockBmpPath = Environment.CurrentDirectory + $"{basePath}4x4Block.bmp";
 
-        private IGz2DlzEncoderFacade gz2DlzEncoderFacade;
+        private IGz2DlzEncoderFacade _gz2DlzEncoderFacade;
 
         [TestInitialize]
         public void Setup()
         {
             _bmpReader = new BmpImageReader();
-            gz2DlzEncoderFacade = new Gz2DlzEncoderFacade();
+            _gz2DlzEncoderFacade = new Gz2DlzEncoderFacade();
         }
 
         [TestMethod]
         public void ImageIsLoadedIntoMemory()
         {
             SetGz2DLzEncoderFacadeWithTestBmpABasedPredictorAndBmpReader();
-            _encoder = new Gz2DlzEncoder(gz2DlzEncoderFacade);
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
 
             byte[,] originalImage = _encoder.WorkImage;
 
@@ -51,7 +51,7 @@ namespace GZ_2D_LZ.UnitTests
         public void EncodesTheFirstRowIsMarkedAsEncoded()
         {
             SetGz2DLzEncoderFacadeWithTestBmpABasedPredictorAndBmpReader();
-            _encoder = new Gz2DlzEncoder(gz2DlzEncoderFacade);
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
 
             _encoder.Encode();
 
@@ -68,7 +68,7 @@ namespace GZ_2D_LZ.UnitTests
         public void EncodeEncodesAllPixelsForA5X6Image()
         {
             SetGz2DLzEncoderFacadeWithTestBmpABasedPredictorAndBmpReader();
-            _encoder = new Gz2DlzEncoder(gz2DlzEncoderFacade);
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
 
             _encoder.Encode();
 
@@ -86,7 +86,7 @@ namespace GZ_2D_LZ.UnitTests
         public void EncodeEncodesAllPixelsForAnImageWithAMatchingBlock()
         {
             SetGz2DLzEncoderFacadeWithTestBmpABasedPredictorAndBmpReader();
-            _encoder = new Gz2DlzEncoder(gz2DlzEncoderFacade);
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
 
             _encoder.Encode();
 
@@ -101,10 +101,10 @@ namespace GZ_2D_LZ.UnitTests
         }
 
         [TestMethod]
-        public void EncodesHasNoMatchedPoints()
+        public void EncodesHasNoMatchesFound()
         {
             SetGz2DLzEncoderFacadeWithTestBmpABasedPredictorAndBmpReader();
-            _encoder = new Gz2DlzEncoder(gz2DlzEncoderFacade);
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
 
             _encoder.Encode();
 
@@ -122,7 +122,7 @@ namespace GZ_2D_LZ.UnitTests
         public void EncodesHasNoResidualValues()
         {
             SetGz2DLzEncoderFacadeWithTestBmpABasedPredictorAndBmpReader();
-            _encoder = new Gz2DlzEncoder(gz2DlzEncoderFacade);
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
 
             _encoder.Encode();
 
@@ -140,7 +140,7 @@ namespace GZ_2D_LZ.UnitTests
         public void EncodesHasNoMatchLocation()
         {
             SetGz2DLzEncoderFacadeWithTestBmpABasedPredictorAndBmpReader();
-            _encoder = new Gz2DlzEncoder(gz2DlzEncoderFacade);
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
 
             _encoder.Encode();
 
@@ -158,7 +158,7 @@ namespace GZ_2D_LZ.UnitTests
         public void EncodesHasNoMatchDimensions()
         {
             SetGz2DLzEncoderFacadeWithTestBmpABasedPredictorAndBmpReader();
-            _encoder = new Gz2DlzEncoder(gz2DlzEncoderFacade);
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
 
             _encoder.Encode();
 
@@ -175,10 +175,10 @@ namespace GZ_2D_LZ.UnitTests
         [TestMethod]
         public void LocateTheBestAproximateMatchForGivenRootPixelGivesTheExpectedBestMatch()
         {
-            gz2DlzEncoderFacade.InputFilePath = One4X4MatchBlockBmpPath;
-            gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
-            gz2DlzEncoderFacade.ImageReader = _bmpReader;
-            _encoder = new Gz2DlzEncoder(gz2DlzEncoderFacade);
+            _gz2DlzEncoderFacade.InputFilePath = One4X4MatchBlockBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpReader;
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
 
             var originalImage = _encoder.WorkImage;
             var width = originalImage.GetLength(0);
@@ -208,10 +208,10 @@ namespace GZ_2D_LZ.UnitTests
         [TestMethod]
         public void EncodeFindsTheExpectedBlockMatch()
         {
-            gz2DlzEncoderFacade.InputFilePath = One4X4MatchBlockBmpPath;
-            gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
-            gz2DlzEncoderFacade.ImageReader = _bmpReader;
-            _encoder = new Gz2DlzEncoder(gz2DlzEncoderFacade);
+            _gz2DlzEncoderFacade.InputFilePath = One4X4MatchBlockBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpReader;
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
 
             _encoder.Encode();
 
@@ -223,10 +223,10 @@ namespace GZ_2D_LZ.UnitTests
         [TestMethod]
         public void EncodeFindsTheExpectedBlockMatchIfThereAre2BlockAtTheSameOrigin()
         {
-            gz2DlzEncoderFacade.InputFilePath = TwoPossibleMatchBlocksBmpPath;
-            gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
-            gz2DlzEncoderFacade.ImageReader = _bmpReader;
-            _encoder = new Gz2DlzEncoder(gz2DlzEncoderFacade);
+            _gz2DlzEncoderFacade.InputFilePath = TwoPossibleMatchBlocksBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpReader;
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
 
             _encoder.Encode();
 
@@ -251,9 +251,9 @@ namespace GZ_2D_LZ.UnitTests
 
         private void SetGz2DLzEncoderFacadeWithTestBmpABasedPredictorAndBmpReader()
         {
-            gz2DlzEncoderFacade.InputFilePath = TestBmpPath;
-            gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
-            gz2DlzEncoderFacade.ImageReader = _bmpReader;
+            _gz2DlzEncoderFacade.InputFilePath = TestBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpReader;
         }
     }
 }

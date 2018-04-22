@@ -294,8 +294,8 @@ namespace GZ_2D_LZ.IntegrationTests
             _decoder = new Gz2DlzDecoder($"{_lenna256anBmpPath}.mat", new CalicPredictor());
 
             _encoder.Encode();
-            _encoder.WriteMatrixToFileAsText();
-            _decoder.LoadMatrixFromTxtFile();
+            //_encoder.WriteMatrixToFileAsText();
+            //_decoder.LoadMatrixFromTxtFile();
             _decoder.Decode();
 
             var workImage = _decoder.WorkImage;
@@ -313,7 +313,6 @@ namespace GZ_2D_LZ.IntegrationTests
             _decoder = new Gz2DlzDecoder($"{_testBmpPath}.mat", new ABasedPredictor());
 
             _encoder.Encode();
-            _encoder.WriteResultingMatricesToIndividualFiles();
             _decoder.Decode();
 
             var workImage = _decoder.WorkImage;
@@ -325,12 +324,10 @@ namespace GZ_2D_LZ.IntegrationTests
             gz2DlzEncoderFacade.InputFilePath = _one4X4MatchBlockBmpPath;
             gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
             gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
-
             _encoder = new Gz2DlzEncoder(gz2DlzEncoderFacade);
             _decoder = new Gz2DlzDecoder($"{_one4X4MatchBlockBmpPath}.mat", new ABasedPredictor());
 
             _encoder.Encode();
-            _encoder.WriteMatrixToFileAsText();
             _decoder.Decode();
 
             var workImage = _decoder.WorkImage;
@@ -343,12 +340,10 @@ namespace GZ_2D_LZ.IntegrationTests
             gz2DlzEncoderFacade.InputFilePath = _2PossibleMatchBlocksBmpPath;
             gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
             gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
-
             _encoder = new Gz2DlzEncoder(gz2DlzEncoderFacade);
             _decoder = new Gz2DlzDecoder($"{_2PossibleMatchBlocksBmpPath}.mat", new ABasedPredictor());
 
             _encoder.Encode();
-            _encoder.WriteMatrixToFileAsText();
             _decoder.Decode();
 
             var workImage = _decoder.WorkImage;
@@ -361,12 +356,10 @@ namespace GZ_2D_LZ.IntegrationTests
             gz2DlzEncoderFacade.InputFilePath = _lenna256anBmpPath;
             gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
             gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
-
             _encoder = new Gz2DlzEncoder(gz2DlzEncoderFacade);
             _decoder = new Gz2DlzDecoder($"{_lenna256anBmpPath}.mat", new ABasedPredictor());
 
             _encoder.Encode();
-            _encoder.WriteMatrixToFileAsText();
             _decoder.Decode();
 
             var workImage = _decoder.WorkImage;
