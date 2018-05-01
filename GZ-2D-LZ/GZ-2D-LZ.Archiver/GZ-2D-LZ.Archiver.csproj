@@ -43,7 +43,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Contracts\IArchiver.cs" />
     <Compile Include="Paq6V2Archiver.cs" />
-    <Compile Include="Paq81Archiver.cs" />
+    <Compile Include="Paq8lArchiver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -51,8 +51,10 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Paq\paq6\readme.txt" />
-    <Content Include="Paq\paq81\paq8l.exe" />
-    <Content Include="Paq\paq81\readme.txt" />
+    <Content Include="Paq\paq8l\paq8l.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Paq\paq8l\readme.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

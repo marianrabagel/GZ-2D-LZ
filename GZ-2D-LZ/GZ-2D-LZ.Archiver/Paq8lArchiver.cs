@@ -5,9 +5,9 @@ using GZ_2D_LZ.Archiver.Contracts;
 
 namespace GZ_2D_LZ.Archiver
 {
-    public class Paq6V2Archiver : IArchiver
+    public class Paq8lArchiver : IArchiver
     {
-        public string Compress(string inputFolderPath, string outputName = null, int compresionRate = 3)
+        public string Compress(string inputFolderPath, string outputName = null, int compresionRate = 5)
         {
             if (string.IsNullOrEmpty(inputFolderPath))
             {
@@ -16,24 +16,17 @@ namespace GZ_2D_LZ.Archiver
 
             if (string.IsNullOrEmpty(outputName))
             {
-                outputName = inputFolderPath + Constants.Paq6Extension;
+                outputName = inputFolderPath;
             }
 
             if (File.GetAttributes(inputFolderPath) == FileAttributes.Directory)
             {
-                outputName = outputName.Replace("\\" + Constants.Paq6Extension, Constants.Paq6Extension);
-                var strings = Directory.GetFiles(inputFolderPath);
-                inputFolderPath = "";
-
-                foreach (var file in strings)
-                {
-                    inputFolderPath += file + " ";
-                }
+                outputName = outputName.Substring(0, outputName.Length - 1);
             }
 
             string arguments = "-" + compresionRate + " " + outputName + " " + inputFolderPath;
             ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.FileName = Constants.Paq6ExeFileLocation;
+            startInfo.FileName = Constants.Paq8lExeFileLocation;
             startInfo.Arguments = arguments;
             startInfo.UseShellExecute = false;
 
@@ -42,7 +35,7 @@ namespace GZ_2D_LZ.Archiver
                 process.WaitForExit();
             }
 
-            return outputName;
+            return outputName + Constants.Paq8lExtension;
         }
 
         public string Decompress(string archivePath)
@@ -52,9 +45,9 @@ namespace GZ_2D_LZ.Archiver
                 throw new ArgumentNullException(nameof(archivePath));
             }
 
-            string arguments = archivePath;
+            string arguments = "-d " + archivePath;
             ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.FileName = Constants.Paq6ExeFileLocation;
+            startInfo.FileName = Constants.Paq8lExeFileLocation;
             startInfo.Arguments = arguments;
             startInfo.UseShellExecute = false;
 
@@ -63,7 +56,7 @@ namespace GZ_2D_LZ.Archiver
                 process.WaitForExit();
             }
 
-            return archivePath.Replace(Constants.Paq6Extension, "");
+            return archivePath.Replace(Constants.Paq8lExtension, "");
         }
     }
 }

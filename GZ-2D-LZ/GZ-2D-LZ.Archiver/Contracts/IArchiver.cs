@@ -2,7 +2,7 @@
 {
     public interface IArchiver
     {
-        string Compress(string inputFolderPath, string outputName = null);
-        void Decompress(string archivePath);
+        string Compress(string inputFolderPath, string outputName = null, int compresionRate = 3);
+        string Decompress(string archivePath);
     }
 }

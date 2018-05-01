@@ -9,7 +9,7 @@ namespace GZ_2D_LZ.Archiver.UnitTests
 {
     [ExcludeFromCodeCoverage]
     [TestClass]
-    public class Paq6V2ArchiverTests
+    public class Paq8lArchiverTests
     {
         private static readonly string basePath = "\\TestData\\";
         public string TestBmpPath = Environment.CurrentDirectory + $"{basePath}test.bmp";
@@ -19,7 +19,7 @@ namespace GZ_2D_LZ.Archiver.UnitTests
         [TestInitialize]
         public void Setup()
         {
-            _archiver = new Paq6V2Archiver();
+            _archiver = new Paq8lArchiver();
         }
 
         [TestMethod]

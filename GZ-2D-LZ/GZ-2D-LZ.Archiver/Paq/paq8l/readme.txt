@@ -5,7 +5,7 @@ PAQ8 is a series of archivers that achieve very high compression rates at the ex
 However, there have been many compression improvements since then written by others,
  as described in the history section below.
 
-  To compress:   paq8l -5 archive [files_or_folders...]  (creates archive.paq8p)
+  To compress:   paq8l -5 archive [files_or_folders...]  (creates archive.paq8l)
   To decompress: paq8l -d archive.paq8l [output_folder]
 
 The -5 option is the default. It requires 233 MB of memory for compression and same for decompression.
