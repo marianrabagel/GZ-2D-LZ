@@ -43,8 +43,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Contracts\AbstractPredictor.cs" />
+    <Compile Include="Contracts\Facades\IGz2DlzDecoderFacade.cs" />
     <Compile Include="Contracts\Facades\IGz2DlzEncoderFacade.cs" />
     <Compile Include="Contracts\IImageReader.cs" />
+    <Compile Include="Facades\Gz2DlzDecoderFacade.cs" />
     <Compile Include="Facades\Gz2DlzEncoderFacade.cs" />
     <Compile Include="Helpers\BestMatch.cs" />
     <Compile Include="Helpers\Dimension.cs" />
