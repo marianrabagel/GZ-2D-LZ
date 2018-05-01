@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using BitOperations;
 using G2_2D_LZ.Contracts;
 using G2_2D_LZ.Contracts.Facades;
@@ -10,8 +11,6 @@ namespace G2_2D_LZ
 {
     public class Gz2DlzDecoder
     {
-        
-
         public bool[,] IsMatchFound { get; private set; } //has true when a suitable match for a block is found
         public bool[,] IsPixelEncoded { get; private set; } //has true when a pixel has been encoded
         public PixelLocation[,] MatchLocation { get; private set; } //position of the match relative to the block being encoded
@@ -22,7 +21,7 @@ namespace G2_2D_LZ
         private uint _height;
         private uint _width;
 
-        private IGz2DlzDecoderFacade _gz2DlzDecoderFacade;
+        private readonly IGz2DlzDecoderFacade _gz2DlzDecoderFacade;
 
         public Gz2DlzDecoder(IGz2DlzDecoderFacade gz2DlzDecoderFacade)
         {
@@ -31,12 +30,24 @@ namespace G2_2D_LZ
 
         public void Decode()
         {
-            DecodeMatchingTables();
+            var decompressArchive = DecompressArchive();
+
+            var inputFilePath = _gz2DlzDecoderFacade.InputFilePath;
+            DecodeMatchingTablesAndSetWidthAndHeight(inputFilePath);
             WorkImage = new byte[_height, _width];
             SetIsPixelEncodedToTrue();
-            _gz2DlzDecoderFacade. _abstractPredictor.SetOriginalMatrix(WorkImage);
+            _gz2DlzDecoderFacade.AbstractPredictor.SetOriginalMatrix(WorkImage);
             DecodeFirstRow();
+            DecodeAllImageExceptFirstRow();
+        }
 
+        private string DecompressArchive()
+        {
+            return _gz2DlzDecoderFacade.Archiver.Decompress(_gz2DlzDecoderFacade.InputFilePath);
+        }
+
+        private void DecodeAllImageExceptFirstRow()
+        {
             for (int y = 1; y < _height; y++)
             {
                 for (int x = 0; x < _width; x++)
@@ -59,16 +70,17 @@ namespace G2_2D_LZ
             }
         }
 
-        private void DecodeMatchingTables()
+        private void DecodeMatchingTablesAndSetWidthAndHeight(string folderPath)
         {
-            IsMatchFound = LoadIsMatchFoundFromFile(GetInputFileName(_gz2DlzDecoderFacade._inputFilePath, nameof(IsMatchFound)));
-            MatchLocation = LoadMatchLocationFromFile(GetInputFileName(_gz2DlzDecoderFacade._inputFilePath, nameof(MatchLocation)));
-            MatchDimension = LoadMatchDimensionFromFile(GetInputFileName(_gz2DlzDecoderFacade._inputFilePath, nameof(MatchDimension)));
-            Residual = LoadResidualFromFile(GetInputFileName(_gz2DlzDecoderFacade._inputFilePath, nameof(Residual)));
-            _gz2DlzDecoderFacade._abstractPredictor.PredictionError = LoadResidualFromFile(GetInputFileName(_gz2DlzDecoderFacade._inputFilePath, nameof(_gz2DlzDecoderFacade._abstractPredictor.PredictionError)));
+            //change how it gets each file
+            IsMatchFound = LoadIsMatchFoundFromFileAndSetWidthAndHeight(GetInputFileName(folderPath, nameof(IsMatchFound)));
+            MatchLocation = LoadMatchLocationFromFileAndSetWidthAndHeight(GetInputFileName(folderPath, nameof(MatchLocation)));
+            MatchDimension = LoadMatchDimensionFromFileAndSetWidthAndHeight(GetInputFileName(folderPath, nameof(MatchDimension)));
+            Residual = LoadResidualFromFileAndSetWidthAndHeight(GetInputFileName(folderPath, nameof(Residual)));
+            _gz2DlzDecoderFacade.AbstractPredictor.PredictionError = LoadResidualFromFileAndSetWidthAndHeight(GetInputFileName(folderPath, nameof(_gz2DlzDecoderFacade.AbstractPredictor.PredictionError)));
         }
 
-        private int[,] LoadResidualFromFile(string outputFileName)
+        private int[,] LoadResidualFromFileAndSetWidthAndHeight(string outputFileName)
         {
             using (BitReader bitReader = new BitReader(outputFileName))
             {
@@ -90,7 +102,7 @@ namespace G2_2D_LZ
             }
         }
 
-        private Dimension[,] LoadMatchDimensionFromFile(string outputFileName)
+        private Dimension[,] LoadMatchDimensionFromFileAndSetWidthAndHeight(string outputFileName)
         {
             using (BitReader bitReader = new BitReader(outputFileName))
             {
@@ -114,7 +126,7 @@ namespace G2_2D_LZ
             }
         }
 
-        private PixelLocation[,] LoadMatchLocationFromFile(string outputFileName)
+        private PixelLocation[,] LoadMatchLocationFromFileAndSetWidthAndHeight(string outputFileName)
         {
             using (BitReader bitReader = new BitReader(outputFileName))
             {
@@ -138,7 +150,7 @@ namespace G2_2D_LZ
             }
         }
 
-        private bool[,] LoadIsMatchFoundFromFile(string outputFileName)
+        private bool[,] LoadIsMatchFoundFromFileAndSetWidthAndHeight(string outputFileName)
         {
             using (BitReader bitReader = new BitReader(outputFileName))
             {
@@ -160,17 +172,17 @@ namespace G2_2D_LZ
             }
         }
 
-        private string GetInputFileName(string filePath, string matrixName)
+        private string GetInputFileName(string folderPath, string matrixName)
         {
-            filePath = filePath.Replace(Constants.IntermediaryFileExtension, "");
-            string fileName = Path.GetFileName(filePath);
+            folderPath = folderPath.Replace(Constants.IntermediaryFileExtension, "");
+            string fileName = Path.GetFileName(folderPath);
 
-            return filePath + $"{Constants.Folder}\\" + fileName + "." + matrixName + Constants.IntermediaryFileExtension;
+            return folderPath + $"{Constants.Folder}\\" + fileName + "." + matrixName + Constants.IntermediaryFileExtension;
         }
 
         public void LoadMatrixFromTxtFile()
         {
-            using (StreamReader reader = new StreamReader(_gz2DlzDecoderFacade._inputFilePath))
+            using (StreamReader reader = new StreamReader(_gz2DlzDecoderFacade.InputFilePath))
             {
                 var fileContent = reader.ReadToEnd();
                 string[] values = fileContent.Split(Constants.Separator);
@@ -186,13 +198,13 @@ namespace G2_2D_LZ
                 MatchLocation = txtReader.GetMatchLocationFromString(values);
                 MatchDimension = txtReader.GetMatchDimensionsFromString(values);
                 Residual = txtReader.ReadResidualFromTxtFile(values);
-                _gz2DlzDecoderFacade._abstractPredictor.PredictionError = txtReader.ReadPredicionErrorFromTxtFile(values);
+                _gz2DlzDecoderFacade.AbstractPredictor.PredictionError = txtReader.ReadPredicionErrorFromTxtFile(values);
             }
         }
 
         public void SaveOriginalImageAsTxtFile()
         {
-            using (StreamWriter streamWriter = new StreamWriter(_gz2DlzDecoderFacade._inputFilePath + ".decoded.txt"))
+            using (StreamWriter streamWriter = new StreamWriter(_gz2DlzDecoderFacade.InputFilePath + ".decoded.txt"))
             {
                 for (int y = 0; y < _height; y++)
                 {
@@ -244,7 +256,7 @@ namespace G2_2D_LZ
                 {
                     if (y + i < _height && x + j < _width)
                     {
-                        WorkImage[y + i, x + j] = (byte) (_gz2DlzDecoderFacade._abstractPredictor.GetPredictionValue(x + j, y + i) + _gz2DlzDecoderFacade._abstractPredictor.PredictionError[y + i, x + j]);
+                        WorkImage[y + i, x + j] = (byte) (_gz2DlzDecoderFacade.AbstractPredictor.GetPredictionValue(x + j, y + i) + _gz2DlzDecoderFacade.AbstractPredictor.PredictionError[y + i, x + j]);
                     }
                 }
             }
@@ -255,7 +267,7 @@ namespace G2_2D_LZ
             for (int i = 0; i < _width; i++)
             {
                 IsPixelEncoded[0, i] = false;
-                WorkImage[0, i] = (byte) (_gz2DlzDecoderFacade._abstractPredictor.GetPredictionValue(i, 0) + _gz2DlzDecoderFacade._abstractPredictor.PredictionError[0, i]);
+                WorkImage[0, i] = (byte) (_gz2DlzDecoderFacade.AbstractPredictor.GetPredictionValue(i, 0) + _gz2DlzDecoderFacade.AbstractPredictor.PredictionError[0, i]);
             }
         }
     }

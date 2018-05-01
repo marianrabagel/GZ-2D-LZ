@@ -43,8 +43,9 @@ namespace G2_2D_LZ
 
             PredictFirstRow();
             EncodeWorkImage();
+            Directory.CreateDirectory(_gz2DlzEncoderFacade.InputFilePath + Constants.Folder);
             WriteResultingMatricesToIndividualFiles();
-            _gz2DlzEncoderFacade.Archiver.Compress(_gz2DlzEncoderFacade.InputFilePath);
+            _gz2DlzEncoderFacade.Archiver.Compress(_gz2DlzEncoderFacade.InputFilePath + Constants.Folder);
         }
 
         public void WriteMatrixToFileAsText()
@@ -64,7 +65,6 @@ namespace G2_2D_LZ
 
         public void WriteResultingMatricesToIndividualFiles()
         {
-            Directory.CreateDirectory(_gz2DlzEncoderFacade.InputFilePath + Constants.Folder);
             //todo move this into its own class
             SaveIsMatchFoundToFile(_gz2DlzEncoderFacade.InputFilePath, nameof(IsMatchFound), IsMatchFound);
             SaveMatchLocationToFile(_gz2DlzEncoderFacade.InputFilePath, nameof(MatchLocation), MatchLocation);

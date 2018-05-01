@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace G2_2D_LZ.Helpers
+﻿namespace G2_2D_LZ.Helpers
 {
     public class Constants
     {
