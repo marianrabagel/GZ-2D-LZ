@@ -81,9 +81,9 @@ namespace GZ_2D_LZ.Archiver.UnitTests
         public void CompressAndDecompressADirectoryArchiveResultsTheSameFiles()
         {
             var inputFolderPath = Environment.CurrentDirectory + basePath;
+            var files = Directory.GetFiles(inputFolderPath);
             var archiveName = _archiver.Compress(inputFolderPath);
 
-            var files = Directory.GetFiles(inputFolderPath);
             foreach (var file in files)
             {
                 File.Delete(file);

@@ -8,6 +8,7 @@ using G2_2D_LZ.Contracts.Facades;
 using G2_2D_LZ.Facades;
 using G2_2D_LZ.Predictors;
 using G2_2D_LZ.Readers;
+using GZ_2D_LZ.Archiver;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GZ_2D_LZ.IntegrationTests
@@ -30,7 +31,7 @@ namespace GZ_2D_LZ.IntegrationTests
         private string _2PossibleMatchBlocksBmpPath = "2PossibleMatchBlocks.bmp";
         private string _lenna256anBmpPath = "Lenna256an.bmp";
 
-        private IGz2DlzEncoderFacade gz2DlzEncoderFacade;
+        private IGz2DlzEncoderFacade _gz2DlzEncoderFacade;
 
         [TestInitialize]
         public void Setup()
@@ -45,7 +46,7 @@ namespace GZ_2D_LZ.IntegrationTests
             _2PossibleMatchBlocksBmpPath = _basePath + _2PossibleMatchBlocksBmpPath;
             _lenna256anBmpPath = _basePath + _lenna256anBmpPath;
 
-            gz2DlzEncoderFacade = new Gz2DlzEncoderFacade();
+            _gz2DlzEncoderFacade = new Gz2DlzEncoderFacade();
         }
         
         [TestMethod]
@@ -53,11 +54,12 @@ namespace GZ_2D_LZ.IntegrationTests
         {
             IImageReader txtImageReader = new TxtAsImageReader();
 
-            gz2DlzEncoderFacade.InputFilePath = _2PosibleMatchBlocksTxtFileName;
-            gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
-            gz2DlzEncoderFacade.ImageReader = txtImageReader;
+            _gz2DlzEncoderFacade.InputFilePath = _2PosibleMatchBlocksTxtFileName;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = txtImageReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
 
-            _encoder = new Gz2DlzEncoder(gz2DlzEncoderFacade);
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
             _decoder = new Gz2DlzDecoder($"{_2PosibleMatchBlocksTxtFileName}.mat", new ABasedPredictor());
 
             _encoder.Encode();
@@ -79,11 +81,12 @@ namespace GZ_2D_LZ.IntegrationTests
         {
             IImageReader txtImageReader = new TxtAsImageReader();
 
-            gz2DlzEncoderFacade.InputFilePath = _lenna256anTxtFileName;
-            gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
-            gz2DlzEncoderFacade.ImageReader = txtImageReader;
+            _gz2DlzEncoderFacade.InputFilePath = _lenna256anTxtFileName;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = txtImageReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
 
-            _encoder = new Gz2DlzEncoder(gz2DlzEncoderFacade);
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
             _decoder = new Gz2DlzDecoder($"{_lenna256anTxtFileName}.mat", new ABasedPredictor());
 
             _encoder.Encode();
@@ -104,11 +107,12 @@ namespace GZ_2D_LZ.IntegrationTests
         public void EncodeAndDecodeWithCalicPredictorCustomTxtMatrixFileCreatesAFileIndenticalWithTheOriginal()
         {
             IImageReader txtImageReader = new TxtAsImageReader();
-            gz2DlzEncoderFacade.InputFilePath = _2PosibleMatchBlocksTxtFileName;
-            gz2DlzEncoderFacade.AbstractPredictor = new CalicPredictor();
-            gz2DlzEncoderFacade.ImageReader = txtImageReader;
+            _gz2DlzEncoderFacade.InputFilePath = _2PosibleMatchBlocksTxtFileName;
+            _gz2DlzEncoderFacade.AbstractPredictor = new CalicPredictor();
+            _gz2DlzEncoderFacade.ImageReader = txtImageReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
 
-            _encoder = new Gz2DlzEncoder(gz2DlzEncoderFacade);
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
             _decoder = new Gz2DlzDecoder($"{_2PosibleMatchBlocksTxtFileName}.mat", new CalicPredictor());
 
             _encoder.Encode();
@@ -129,11 +133,12 @@ namespace GZ_2D_LZ.IntegrationTests
         public void EncodeAndDecodeWithCalicCustomTxtLena256AnCreatesAFileIndenticalWithTheOriginal()
         {
             IImageReader txtImageReader = new TxtAsImageReader();
-            gz2DlzEncoderFacade.InputFilePath = _lenna256anTxtFileName;
-            gz2DlzEncoderFacade.AbstractPredictor = new CalicPredictor();
-            gz2DlzEncoderFacade.ImageReader = txtImageReader;
+            _gz2DlzEncoderFacade.InputFilePath = _lenna256anTxtFileName;
+            _gz2DlzEncoderFacade.AbstractPredictor = new CalicPredictor();
+            _gz2DlzEncoderFacade.ImageReader = txtImageReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
 
-            _encoder = new Gz2DlzEncoder(gz2DlzEncoderFacade);
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
             _decoder = new Gz2DlzDecoder($"{_lenna256anTxtFileName}.mat", new CalicPredictor());
 
             _encoder.Encode();
@@ -153,11 +158,12 @@ namespace GZ_2D_LZ.IntegrationTests
         [TestMethod]
         public void EncodeAndDecodeWithAPredictorTestBmpResultsTheSamePixels()
         {
-            gz2DlzEncoderFacade.InputFilePath = _testBmpPath;
-            gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
-            gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
+            _gz2DlzEncoderFacade.InputFilePath = _testBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
 
-            _encoder = new Gz2DlzEncoder(gz2DlzEncoderFacade);
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
             _decoder = new Gz2DlzDecoder($"{_testBmpPath}.mat", new ABasedPredictor());
 
             _encoder.Encode();
@@ -172,11 +178,12 @@ namespace GZ_2D_LZ.IntegrationTests
         [TestMethod]
         public void EncodeAndDecodeWithAPredictor4X4BlockBmpResultsTheSamePixels()
         {
-            gz2DlzEncoderFacade.InputFilePath = _one4X4MatchBlockBmpPath;
-            gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
-            gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
+            _gz2DlzEncoderFacade.InputFilePath = _one4X4MatchBlockBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
 
-            _encoder = new Gz2DlzEncoder(gz2DlzEncoderFacade);
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
             _decoder = new Gz2DlzDecoder($"{_one4X4MatchBlockBmpPath}.mat", new ABasedPredictor());
 
             _encoder.Encode();
@@ -191,11 +198,12 @@ namespace GZ_2D_LZ.IntegrationTests
         [TestMethod]
         public void EncodeAndDecodeWithAPredictor2PossibleMatchBlockskBmpResultsTheSamePixels()
         {
-            gz2DlzEncoderFacade.InputFilePath = _2PossibleMatchBlocksBmpPath;
-            gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
-            gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
+            _gz2DlzEncoderFacade.InputFilePath = _2PossibleMatchBlocksBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
 
-            _encoder = new Gz2DlzEncoder(gz2DlzEncoderFacade);
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
             _decoder = new Gz2DlzDecoder($"{_2PossibleMatchBlocksBmpPath}.mat", new ABasedPredictor());
 
             _encoder.Encode();
@@ -210,11 +218,12 @@ namespace GZ_2D_LZ.IntegrationTests
         [TestMethod]
         public void EncodeAndDecodeWithAPredictorLenaBmpResultsTheSamePixels()
         {
-            gz2DlzEncoderFacade.InputFilePath = _lenna256anBmpPath;
-            gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
-            gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
+            _gz2DlzEncoderFacade.InputFilePath = _lenna256anBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
 
-            _encoder = new Gz2DlzEncoder(gz2DlzEncoderFacade);
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
             _decoder = new Gz2DlzDecoder($"{_lenna256anBmpPath}.mat", new ABasedPredictor());
 
             _encoder.Encode();
@@ -229,11 +238,12 @@ namespace GZ_2D_LZ.IntegrationTests
         [TestMethod]
         public void EncodeAndDecodeWithCalicPredictorTestBmpResultsTheSamePixels()
         {
-            gz2DlzEncoderFacade.InputFilePath = _testBmpPath;
-            gz2DlzEncoderFacade.AbstractPredictor = new CalicPredictor();
-            gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
+            _gz2DlzEncoderFacade.InputFilePath = _testBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new CalicPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
 
-            _encoder = new Gz2DlzEncoder(gz2DlzEncoderFacade);
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
             _decoder = new Gz2DlzDecoder($"{_testBmpPath}.mat", new CalicPredictor());
 
             _encoder.Encode();
@@ -248,11 +258,12 @@ namespace GZ_2D_LZ.IntegrationTests
         [TestMethod]
         public void EncodeAndDecodeWithCalic4X4BlockBmpResultsTheSamePixels()
         {
-            gz2DlzEncoderFacade.InputFilePath = _one4X4MatchBlockBmpPath;
-            gz2DlzEncoderFacade.AbstractPredictor = new CalicPredictor();
-            gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
+            _gz2DlzEncoderFacade.InputFilePath = _one4X4MatchBlockBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new CalicPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
 
-            _encoder = new Gz2DlzEncoder(gz2DlzEncoderFacade);
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
             _decoder = new Gz2DlzDecoder($"{_one4X4MatchBlockBmpPath}.mat", new CalicPredictor());
 
             _encoder.Encode();
@@ -267,11 +278,12 @@ namespace GZ_2D_LZ.IntegrationTests
         [TestMethod]
         public void EncodeAndDecodeWithCalic2PossibleMatchBlockskBmpResultsTheSamePixels()
         {
-            gz2DlzEncoderFacade.InputFilePath = _2PossibleMatchBlocksBmpPath;
-            gz2DlzEncoderFacade.AbstractPredictor = new CalicPredictor();
-            gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
+            _gz2DlzEncoderFacade.InputFilePath = _2PossibleMatchBlocksBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new CalicPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
 
-            _encoder = new Gz2DlzEncoder(gz2DlzEncoderFacade);
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
             _decoder = new Gz2DlzDecoder($"{_2PossibleMatchBlocksBmpPath}.mat", new CalicPredictor());
 
             _encoder.Encode();
@@ -286,11 +298,12 @@ namespace GZ_2D_LZ.IntegrationTests
         [TestMethod]
         public void EncodeAndDecodeWithCalicPredictorLenaBmpResultsTheSamePixels()
         {
-            gz2DlzEncoderFacade.InputFilePath = _lenna256anBmpPath;
-            gz2DlzEncoderFacade.AbstractPredictor = new CalicPredictor();
-            gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
+            _gz2DlzEncoderFacade.InputFilePath = _lenna256anBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new CalicPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
 
-            _encoder = new Gz2DlzEncoder(gz2DlzEncoderFacade);
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
             _decoder = new Gz2DlzDecoder($"{_lenna256anBmpPath}.mat", new CalicPredictor());
 
             _encoder.Encode();
@@ -305,11 +318,12 @@ namespace GZ_2D_LZ.IntegrationTests
         [TestMethod]
         public void EncodeAndDecodeWithAPredictorAndBitOperationsTestBmpResultsTheSamePixels()
         {
-            gz2DlzEncoderFacade.InputFilePath = _testBmpPath;
-            gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
-            gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
+            _gz2DlzEncoderFacade.InputFilePath = _testBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
 
-            _encoder = new Gz2DlzEncoder(gz2DlzEncoderFacade);
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
             _decoder = new Gz2DlzDecoder($"{_testBmpPath}.mat", new ABasedPredictor());
 
             _encoder.Encode();
@@ -321,10 +335,11 @@ namespace GZ_2D_LZ.IntegrationTests
         [TestMethod]
         public void EncodeAndDecodeWithAPredictorAndBitOperations4X4BlockBmpResultsTheSamePixels()
         {
-            gz2DlzEncoderFacade.InputFilePath = _one4X4MatchBlockBmpPath;
-            gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
-            gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
-            _encoder = new Gz2DlzEncoder(gz2DlzEncoderFacade);
+            _gz2DlzEncoderFacade.InputFilePath = _one4X4MatchBlockBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
             _decoder = new Gz2DlzDecoder($"{_one4X4MatchBlockBmpPath}.mat", new ABasedPredictor());
 
             _encoder.Encode();
@@ -337,10 +352,11 @@ namespace GZ_2D_LZ.IntegrationTests
         [TestMethod]
         public void EncodeAndDecodeWithAPredictorAndBitOperations2PossibleMatchBlockskBmpResultsTheSamePixels()
         {
-            gz2DlzEncoderFacade.InputFilePath = _2PossibleMatchBlocksBmpPath;
-            gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
-            gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
-            _encoder = new Gz2DlzEncoder(gz2DlzEncoderFacade);
+            _gz2DlzEncoderFacade.InputFilePath = _2PossibleMatchBlocksBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
             _decoder = new Gz2DlzDecoder($"{_2PossibleMatchBlocksBmpPath}.mat", new ABasedPredictor());
 
             _encoder.Encode();
@@ -353,10 +369,11 @@ namespace GZ_2D_LZ.IntegrationTests
         [TestMethod]
         public void EncodeAndDecodeWithAPredictorAndBitOperationsLenaBmpResultsTheSamePixels()
         {
-            gz2DlzEncoderFacade.InputFilePath = _lenna256anBmpPath;
-            gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
-            gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
-            _encoder = new Gz2DlzEncoder(gz2DlzEncoderFacade);
+            _gz2DlzEncoderFacade.InputFilePath = _lenna256anBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
             _decoder = new Gz2DlzDecoder($"{_lenna256anBmpPath}.mat", new ABasedPredictor());
 
             _encoder.Encode();

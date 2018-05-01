@@ -7,6 +7,7 @@ using G2_2D_LZ.Facades;
 using G2_2D_LZ.Helpers;
 using G2_2D_LZ.Predictors;
 using G2_2D_LZ.Readers;
+using GZ_2D_LZ.Archiver;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Constants = GZ_2D_LZ.UnitTests.Common.Constants;
 
@@ -178,6 +179,7 @@ namespace GZ_2D_LZ.UnitTests
             _gz2DlzEncoderFacade.InputFilePath = One4X4MatchBlockBmpPath;
             _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
             _gz2DlzEncoderFacade.ImageReader = _bmpReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
             _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
 
             var originalImage = _encoder.WorkImage;
@@ -211,6 +213,7 @@ namespace GZ_2D_LZ.UnitTests
             _gz2DlzEncoderFacade.InputFilePath = One4X4MatchBlockBmpPath;
             _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
             _gz2DlzEncoderFacade.ImageReader = _bmpReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
             _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
 
             _encoder.Encode();
@@ -226,6 +229,7 @@ namespace GZ_2D_LZ.UnitTests
             _gz2DlzEncoderFacade.InputFilePath = TwoPossibleMatchBlocksBmpPath;
             _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
             _gz2DlzEncoderFacade.ImageReader = _bmpReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
             _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
 
             _encoder.Encode();
@@ -254,6 +258,7 @@ namespace GZ_2D_LZ.UnitTests
             _gz2DlzEncoderFacade.InputFilePath = TestBmpPath;
             _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
             _gz2DlzEncoderFacade.ImageReader = _bmpReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
         }
     }
 }

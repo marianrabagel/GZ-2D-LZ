@@ -82,6 +82,10 @@
     <Content Include="TestData\Encoder\TxtMatrices\Lenna256an.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GZ-2D-LZ.Archiver\GZ-2D-LZ.Archiver.csproj">
+      <Project>{DBD5C1E3-D658-47C2-BA5B-45E7B0273E15}</Project>
+      <Name>GZ-2D-LZ.Archiver</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GZ-2D-LZ.UnitTests.Common\GZ-2D-LZ.UnitTests.Common.csproj">
       <Project>{1e7227df-32d9-4e26-a5a6-40b3c0b7fc77}</Project>
       <Name>GZ-2D-LZ.UnitTests.Common</Name>

@@ -44,6 +44,7 @@ namespace G2_2D_LZ
             PredictFirstRow();
             EncodeWorkImage();
             WriteResultingMatricesToIndividualFiles();
+            _gz2DlzEncoderFacade.Archiver.Compress(_gz2DlzEncoderFacade.InputFilePath);
         }
 
         public void WriteMatrixToFileAsText()
