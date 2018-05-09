@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Net;
 using BitOperations;
@@ -38,6 +39,7 @@ namespace G2_2D_LZ
             _gz2DlzDecoderFacade.AbstractPredictor.SetOriginalMatrix(WorkImage);
             DecodeFirstRow();
             DecodeAllImageExceptFirstRow();
+            //write image to file
         }
 
         private string DecompressArchive()

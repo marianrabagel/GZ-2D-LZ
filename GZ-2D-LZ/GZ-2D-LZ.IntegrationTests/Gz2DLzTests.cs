@@ -486,7 +486,6 @@ namespace GZ_2D_LZ.IntegrationTests
             CompareValueWithPixelFromBmp(_testBmpPath, workImage);
         }
 
-
         private static string GetContentWithoutNewLines(string filename)
         {
             using (StreamReader reader = new StreamReader(filename))

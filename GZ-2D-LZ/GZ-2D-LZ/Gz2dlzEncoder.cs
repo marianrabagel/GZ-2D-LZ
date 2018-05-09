@@ -45,7 +45,7 @@ namespace G2_2D_LZ
             EncodeWorkImage();
             Directory.CreateDirectory(_gz2DlzEncoderFacade.InputFilePath + Constants.Folder);
             WriteResultingMatricesToIndividualFiles();
-            _gz2DlzEncoderFacade.Archiver.Compress(_gz2DlzEncoderFacade.InputFilePath + Constants.Folder);
+            var compress = _gz2DlzEncoderFacade.Archiver.Compress(_gz2DlzEncoderFacade.InputFilePath + Constants.Folder);
         }
 
         public void WriteMatrixToFileAsText()
