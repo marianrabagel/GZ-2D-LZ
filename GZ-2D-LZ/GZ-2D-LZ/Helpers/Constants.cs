@@ -16,9 +16,7 @@
 
         public static string IntermediaryFileExtension = ".mat";
         public static string Folder = ".matrices";
-
+        
         public static char Separator = ' ';
-
-        //todo move into another class
     }
 }

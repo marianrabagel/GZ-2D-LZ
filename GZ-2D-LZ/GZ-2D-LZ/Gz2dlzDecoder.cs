@@ -31,7 +31,6 @@ namespace G2_2D_LZ
         public void Decode()
         {
             var decompressArchive = DecompressArchive();
-
             var inputFilePath = _gz2DlzDecoderFacade.InputFilePath;
             DecodeMatchingTablesAndSetWidthAndHeight(inputFilePath);
             WorkImage = new byte[_height, _width];
@@ -70,14 +69,13 @@ namespace G2_2D_LZ
             }
         }
 
-        private void DecodeMatchingTablesAndSetWidthAndHeight(string folderPath)
+        private void DecodeMatchingTablesAndSetWidthAndHeight(string inputFilePath)
         {
-            //change how it gets each file
-            IsMatchFound = LoadIsMatchFoundFromFileAndSetWidthAndHeight(GetInputFileName(folderPath, nameof(IsMatchFound)));
-            MatchLocation = LoadMatchLocationFromFileAndSetWidthAndHeight(GetInputFileName(folderPath, nameof(MatchLocation)));
-            MatchDimension = LoadMatchDimensionFromFileAndSetWidthAndHeight(GetInputFileName(folderPath, nameof(MatchDimension)));
-            Residual = LoadResidualFromFileAndSetWidthAndHeight(GetInputFileName(folderPath, nameof(Residual)));
-            _gz2DlzDecoderFacade.AbstractPredictor.PredictionError = LoadResidualFromFileAndSetWidthAndHeight(GetInputFileName(folderPath, nameof(_gz2DlzDecoderFacade.AbstractPredictor.PredictionError)));
+            IsMatchFound = LoadIsMatchFoundFromFileAndSetWidthAndHeight(GetInputFileName(inputFilePath, nameof(IsMatchFound)));
+            MatchLocation = LoadMatchLocationFromFileAndSetWidthAndHeight(GetInputFileName(inputFilePath, nameof(MatchLocation)));
+            MatchDimension = LoadMatchDimensionFromFileAndSetWidthAndHeight(GetInputFileName(inputFilePath, nameof(MatchDimension)));
+            Residual = LoadResidualFromFileAndSetWidthAndHeight(GetInputFileName(inputFilePath, nameof(Residual)));
+            _gz2DlzDecoderFacade.AbstractPredictor.PredictionError = LoadResidualFromFileAndSetWidthAndHeight(GetInputFileName(inputFilePath, nameof(_gz2DlzDecoderFacade.AbstractPredictor.PredictionError)));
         }
 
         private int[,] LoadResidualFromFileAndSetWidthAndHeight(string outputFileName)
@@ -172,12 +170,23 @@ namespace G2_2D_LZ
             }
         }
 
-        private string GetInputFileName(string folderPath, string matrixName)
+        private string GetInputFileName(string archiveFilePath, string matrixName)
         {
-            folderPath = folderPath.Replace(Constants.IntermediaryFileExtension, "");
-            string fileName = Path.GetFileName(folderPath);
+            var folderPath = GetFolderPath(archiveFilePath);
+            var extension = Path.GetExtension(folderPath);
+            var fileName = Path.GetFileName(archiveFilePath.Substring(0, folderPath.Length - extension.Length));
 
-            return folderPath + $"{Constants.Folder}\\" + fileName + "." + matrixName + Constants.IntermediaryFileExtension;
+            //archiveFilePath = archiveFilePath.Replace(Constants.IntermediaryFileExtension, "");
+            //string fileName = Path.GetFileName(archiveFilePath);
+            //folderPath = archiveFilePath + $"{Constants.Folder}\\";
+
+            return folderPath + "\\" + fileName + "." + matrixName + Constants.IntermediaryFileExtension;
+        }
+
+        private string GetFolderPath(string inputFilePath)
+        {
+            var extension = Path.GetExtension(inputFilePath);
+            return inputFilePath.Substring(0, inputFilePath.Length - extension.Length);
         }
 
         public void LoadMatrixFromTxtFile()
