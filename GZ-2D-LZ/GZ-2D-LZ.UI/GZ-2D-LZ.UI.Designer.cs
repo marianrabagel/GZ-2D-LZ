@@ -34,6 +34,8 @@
             this.EncodeBtn = new System.Windows.Forms.Button();
             this.DecodeBtn = new System.Windows.Forms.Button();
             this.LoadArchiveBtn = new System.Windows.Forms.Button();
+            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.LoadFolderBtn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // loadImageBtn
@@ -87,11 +89,22 @@
             this.LoadArchiveBtn.UseVisualStyleBackColor = true;
             this.LoadArchiveBtn.Click += new System.EventHandler(this.LoadArchiveBtn_Click);
             // 
+            // LoadFolderBtn
+            // 
+            this.LoadFolderBtn.Location = new System.Drawing.Point(12, 188);
+            this.LoadFolderBtn.Name = "LoadFolderBtn";
+            this.LoadFolderBtn.Size = new System.Drawing.Size(99, 52);
+            this.LoadFolderBtn.TabIndex = 5;
+            this.LoadFolderBtn.Text = "Load from folder and ecode each file";
+            this.LoadFolderBtn.UseVisualStyleBackColor = true;
+            this.LoadFolderBtn.Click += new System.EventHandler(this.LoadFolderBtn_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(691, 453);
+            this.Controls.Add(this.LoadFolderBtn);
             this.Controls.Add(this.LoadArchiveBtn);
             this.Controls.Add(this.DecodeBtn);
             this.Controls.Add(this.EncodeBtn);
@@ -111,6 +124,8 @@
         private System.Windows.Forms.Button EncodeBtn;
         private System.Windows.Forms.Button DecodeBtn;
         private System.Windows.Forms.Button LoadArchiveBtn;
+        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
+        private System.Windows.Forms.Button LoadFolderBtn;
     }
 }
 

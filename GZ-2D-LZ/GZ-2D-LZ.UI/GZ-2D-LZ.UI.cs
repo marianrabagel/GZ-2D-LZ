@@ -1,4 +1,6 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.IO;
+using System.Windows.Forms;
 using G2_2D_LZ;
 using G2_2D_LZ.Contracts.Facades;
 using G2_2D_LZ.Facades;
@@ -40,7 +42,6 @@ namespace GZ_2D_LZ.UI
 
         private void button1_Click(object sender, System.EventArgs e)
         {
-
             IGz2DlzEncoderFacade _gz2DlzEncoderFacade = new Gz2DlzEncoderFacade();
             _gz2DlzEncoderFacade.InputFilePath = inputFile;
             _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
@@ -69,6 +70,41 @@ namespace GZ_2D_LZ.UI
             gz2DlzDecoderFacade.Archiver = new Paq6V2Archiver();
             var _decoder = new Gz2DlzDecoder(gz2DlzDecoderFacade);
             _decoder.Decode();
+        }
+
+        private void LoadFolderBtn_Click(object sender, System.EventArgs e)
+        {
+            var dialogResult = folderBrowserDialog1.ShowDialog();
+
+            if (dialogResult == DialogResult.OK)
+            {
+                var folerPath = folderBrowserDialog1.SelectedPath;
+                var allFilesInFolder = Directory.GetFiles(folerPath);
+                var content = "name | uncompressed size | compressed size" + Environment.NewLine;
+
+                foreach (var filePath in allFilesInFolder)
+                {
+                    string name = Path.GetFileName(filePath);
+                    var uncompressedSize = new FileInfo(filePath).Length;
+
+                    IGz2DlzEncoderFacade _gz2DlzEncoderFacade = new Gz2DlzEncoderFacade();
+                    _gz2DlzEncoderFacade.InputFilePath = filePath;
+                    _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+                    _gz2DlzEncoderFacade.ImageReader = new BmpImageReader();
+                    _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
+                    var _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
+                    _encoder.Encode();
+                    var archivePath = _encoder.ArchivePath;
+                    var compressedSize = new FileInfo(archivePath).Length;
+
+                    content += $"{name} | {uncompressedSize} | {compressedSize}{Environment.NewLine}";
+                }
+
+                using (var streamWriter = new StreamWriter(folerPath + "\\results.txt"))
+                {
+                    streamWriter.Write(content);
+                }
+            }
         }
     }
 }

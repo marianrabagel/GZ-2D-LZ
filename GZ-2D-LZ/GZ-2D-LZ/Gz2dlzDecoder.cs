@@ -42,7 +42,7 @@ namespace G2_2D_LZ
         private void WriteImageToDisk(string decompressArchivePath)
         {
             /*int width = Convert.ToInt32(_width);
-            int height =Convert.ToInt32(_height);
+            int height = Convert.ToInt32(_height);
             using (Bitmap bitmap = new Bitmap(width, height))
             {
                 for (int y = 0; y < _height; y++)
@@ -60,11 +60,11 @@ namespace G2_2D_LZ
 
         private string DecompressArchive()
         {
-            CreateAFolderWIthTheARchiveNameWithouExtension();
+            CreateAFolderWithTheARchiveNameWithouExtension();
             return _gz2DlzDecoderFacade.Archiver.Decompress(_gz2DlzDecoderFacade.InputFilePath);
         }
 
-        private void CreateAFolderWIthTheARchiveNameWithouExtension()
+        private void CreateAFolderWithTheARchiveNameWithouExtension()
         {
             var extension = Path.GetExtension(_gz2DlzDecoderFacade.InputFilePath);
             var filePathWithourExtension =

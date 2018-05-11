@@ -13,6 +13,7 @@ namespace G2_2D_LZ
         private readonly byte[,] _originalImage;
         private readonly uint _height;
         private readonly uint _width;
+        public string ArchivePath;
 
         public bool[,] IsMatchFound { get; private set; } //has true when a suitable match for a block is found
         public bool[,] IsPixelEncoded { get; private set; } //has true when a pixel has been encoded
@@ -44,7 +45,7 @@ namespace G2_2D_LZ
             EncodeWorkImage();
             Directory.CreateDirectory(_gz2DlzEncoderFacade.InputFilePath + Constants.Folder);
             WriteResultingMatricesToIndividualFiles();
-            _gz2DlzEncoderFacade.Archiver.Compress(_gz2DlzEncoderFacade.InputFilePath + Constants.Folder);
+            ArchivePath = _gz2DlzEncoderFacade.Archiver.Compress(_gz2DlzEncoderFacade.InputFilePath + Constants.Folder);
         }
 
         public void WriteMatrixToFileAsText()
