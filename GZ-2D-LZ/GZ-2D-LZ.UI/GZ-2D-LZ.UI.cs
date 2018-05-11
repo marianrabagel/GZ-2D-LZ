@@ -1,13 +1,12 @@
-﻿using System.Drawing;
-using System.IO;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
+using G2_2D_LZ;
 using G2_2D_LZ.Contracts.Facades;
 using G2_2D_LZ.Facades;
 using G2_2D_LZ.Predictors;
 using G2_2D_LZ.Readers;
 using GZ_2D_LZ.Archiver;
 
-namespace G2_2D_LZ
+namespace GZ_2D_LZ.UI
 {
     public partial class Form1 : Form
     {

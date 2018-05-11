@@ -1,4 +1,4 @@
-﻿namespace G2_2D_LZ
+﻿namespace GZ_2D_LZ.UI
 {
     partial class Form1
     {

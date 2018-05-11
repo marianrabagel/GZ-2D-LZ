@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using G2_2D_LZ.Helpers;
 
 namespace G2_2D_LZ.Readers

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GZ-2D-LZ", "GZ-2D-LZ\GZ-2D-LZ.csproj", "{98E447CE-ABE6-4C14-853A-D7D7A58F5E46}"
 EndProject
@@ -22,6 +22,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GZ-2D-LZ.Archiver", "GZ-2D-LZ.Archiver\GZ-2D-LZ.Archiver.csproj", "{DBD5C1E3-D658-47C2-BA5B-45E7B0273E15}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GZ-2D-LZ.Archiver.UnitTests", "GZ-2D-LZ.Archiver.UnitTests\GZ-2D-LZ.Archiver.UnitTests.csproj", "{7C69A934-FC43-4DC6-9224-93C566100C70}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GZ-2D-LZ.UI", "GZ-2D-LZ.UI\GZ-2D-LZ.UI.csproj", "{A8093EF4-4B6E-4D5A-AC2E-1635F403B398}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,6 +67,10 @@ Global
 		{7C69A934-FC43-4DC6-9224-93C566100C70}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C69A934-FC43-4DC6-9224-93C566100C70}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C69A934-FC43-4DC6-9224-93C566100C70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8093EF4-4B6E-4D5A-AC2E-1635F403B398}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8093EF4-4B6E-4D5A-AC2E-1635F403B398}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8093EF4-4B6E-4D5A-AC2E-1635F403B398}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8093EF4-4B6E-4D5A-AC2E-1635F403B398}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

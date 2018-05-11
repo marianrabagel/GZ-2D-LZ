@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace G2_2D_LZ
+namespace GZ_2D_LZ.UI
 {
     static class Program
     {

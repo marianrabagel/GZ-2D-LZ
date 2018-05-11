@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Drawing;
 using System.IO;
-using System.Net;
 using BitOperations;
-using G2_2D_LZ.Contracts;
 using G2_2D_LZ.Contracts.Facades;
 using G2_2D_LZ.Helpers;
 using G2_2D_LZ.Readers;

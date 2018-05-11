@@ -2,7 +2,6 @@
 using System.IO;
 using BitOperations;
 using BitOperations.Contracts;
-using G2_2D_LZ.Contracts;
 using G2_2D_LZ.Contracts.Facades;
 using G2_2D_LZ.Helpers;
 using G2_2D_LZ.Writers;
@@ -45,7 +44,7 @@ namespace G2_2D_LZ
             EncodeWorkImage();
             Directory.CreateDirectory(_gz2DlzEncoderFacade.InputFilePath + Constants.Folder);
             WriteResultingMatricesToIndividualFiles();
-            var compress = _gz2DlzEncoderFacade.Archiver.Compress(_gz2DlzEncoderFacade.InputFilePath + Constants.Folder);
+            _gz2DlzEncoderFacade.Archiver.Compress(_gz2DlzEncoderFacade.InputFilePath + Constants.Folder);
         }
 
         public void WriteMatrixToFileAsText()
