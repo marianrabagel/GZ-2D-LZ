@@ -12,6 +12,8 @@ namespace G2_2D_LZ
     public partial class Form1 : Form
     {
         private string inputFile;
+        private string archiveFilePath;
+
 
         public Form1()
         {
@@ -49,11 +51,21 @@ namespace G2_2D_LZ
             _encoder.Encode();
         }
 
-        private void button2_Click(object sender, System.EventArgs e)
+        private void LoadArchiveBtn_Click(object sender, System.EventArgs e)
+        {
+            DialogResult dialogResult = openFileDialog1.ShowDialog();
+
+            if (dialogResult == DialogResult.OK)
+            {
+                archiveFilePath = openFileDialog1.FileName;
+            }
+        }
+
+        private void DecodeBtn_Click(object sender, System.EventArgs e)
         {
             var gz2DlzDecoderFacade = new Gz2DlzDecoderFacade();
             gz2DlzDecoderFacade = new Gz2DlzDecoderFacade();
-            gz2DlzDecoderFacade.InputFilePath = inputFile;
+            gz2DlzDecoderFacade.InputFilePath = archiveFilePath;
             gz2DlzDecoderFacade.AbstractPredictor = new ABasedPredictor();
             gz2DlzDecoderFacade.Archiver = new Paq6V2Archiver();
             var _decoder = new Gz2DlzDecoder(gz2DlzDecoderFacade);

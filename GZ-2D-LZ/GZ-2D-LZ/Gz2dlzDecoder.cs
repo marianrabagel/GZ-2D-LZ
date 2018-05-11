@@ -31,7 +31,7 @@ namespace G2_2D_LZ
 
         public void Decode()
         {
-            var decompressArchive = DecompressArchive();
+            var decompressArchivePath = DecompressArchive();
             var inputFilePath = _gz2DlzDecoderFacade.InputFilePath;
             DecodeMatchingTablesAndSetWidthAndHeight(inputFilePath);
             WorkImage = new byte[_height, _width];
@@ -39,12 +39,40 @@ namespace G2_2D_LZ
             _gz2DlzDecoderFacade.AbstractPredictor.SetOriginalMatrix(WorkImage);
             DecodeFirstRow();
             DecodeAllImageExceptFirstRow();
-            //write image to file
+            WriteImageToDisk(decompressArchivePath);
+        }
+
+        private void WriteImageToDisk(string decompressArchivePath)
+        {
+            /*int width = Convert.ToInt32(_width);
+            int height =Convert.ToInt32(_height);
+            using (Bitmap bitmap = new Bitmap(width, height))
+            {
+                for (int y = 0; y < _height; y++)
+                {
+                    for (int x = 0; x < width; x++)
+                    {
+                        var color = WorkImage[y, x];
+                        bitmap.SetPixel(x,y, Color.FromArgb(color, color, color)) ;
+                    }
+                }
+                var filename = decompressArchivePath + "\\" + Path.GetFileNameWithoutExtension(decompressArchivePath);
+                bitmap.Save(filename);
+            }*/
         }
 
         private string DecompressArchive()
         {
+            CreateAFolderWIthTheARchiveNameWithouExtension();
             return _gz2DlzDecoderFacade.Archiver.Decompress(_gz2DlzDecoderFacade.InputFilePath);
+        }
+
+        private void CreateAFolderWIthTheARchiveNameWithouExtension()
+        {
+            var extension = Path.GetExtension(_gz2DlzDecoderFacade.InputFilePath);
+            var filePathWithourExtension =
+                _gz2DlzDecoderFacade.InputFilePath.Substring(0, _gz2DlzDecoderFacade.InputFilePath.Length - extension.Length);
+            Directory.CreateDirectory(filePathWithourExtension);
         }
 
         private void DecodeAllImageExceptFirstRow()

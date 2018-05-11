@@ -25,11 +25,11 @@ namespace GZ_2D_LZ.IntegrationTests
         private readonly string _basePath = Environment.CurrentDirectory + "\\TestData\\";
         private string _2PosibleMatchBlocksTxtFileName = "2PossibleMatchBlocks.txt";
         private string _lenna256anTxtFileName = "Lenna256an.txt";
-
         private string _testBmpPath = "test.bmp";
         private string _one4X4MatchBlockBmpPath = "4x4Block.bmp";
         private string _2PossibleMatchBlocksBmpPath = "2PossibleMatchBlocks.bmp";
         private string _lenna256anBmpPath = "Lenna256an.bmp";
+        private string _peppers512 = "Peppers512an.BMP ";
 
         private IGz2DlzEncoderFacade _gz2DlzEncoderFacade;
         private IGz2DlzDecoderFacade gz2DlzDecoderFacade;
@@ -46,6 +46,7 @@ namespace GZ_2D_LZ.IntegrationTests
             _one4X4MatchBlockBmpPath = _basePath + _one4X4MatchBlockBmpPath;
             _2PossibleMatchBlocksBmpPath = _basePath + _2PossibleMatchBlocksBmpPath;
             _lenna256anBmpPath = _basePath + _lenna256anBmpPath;
+            _peppers512 = _basePath + _peppers512;
 
             _gz2DlzEncoderFacade = new Gz2DlzEncoderFacade();
         }
@@ -484,6 +485,32 @@ namespace GZ_2D_LZ.IntegrationTests
 
             var workImage = _decoder.WorkImage;
             CompareValueWithPixelFromBmp(_testBmpPath, workImage);
+        }
+
+        [TestMethod]
+        public void EncodeAndDecodeWithAPredictorAndBitOperationsBoatBmpResultsTheSamePixels()
+        {
+            var aBasedPredictor = new ABasedPredictor();
+            var paq6V2Archiver = new Paq6V2Archiver();
+
+            _gz2DlzEncoderFacade.InputFilePath = _peppers512;
+            _gz2DlzEncoderFacade.AbstractPredictor = aBasedPredictor;
+            _gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
+            _gz2DlzEncoderFacade.Archiver = paq6V2Archiver;
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
+
+            var inputFilePath = _peppers512 + G2_2D_LZ.Helpers.Constants.Folder + Constants.Paq6Extension;
+            gz2DlzDecoderFacade = new Gz2DlzDecoderFacade();
+            gz2DlzDecoderFacade.InputFilePath = inputFilePath;
+            gz2DlzDecoderFacade.AbstractPredictor = aBasedPredictor;
+            gz2DlzDecoderFacade.Archiver = paq6V2Archiver;
+            _decoder = new Gz2DlzDecoder(gz2DlzDecoderFacade);
+
+            _encoder.Encode();
+            _decoder.Decode();
+
+            var workImage = _decoder.WorkImage;
+            CompareValueWithPixelFromBmp(_peppers512, workImage);
         }
 
         private static string GetContentWithoutNewLines(string filename)
