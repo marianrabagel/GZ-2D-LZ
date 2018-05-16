@@ -99,7 +99,7 @@ namespace GZ_2D_LZ.UI
 
                     content += $"{name} | {uncompressedSize} | {compressedSize} | " +
                                $" {uncompressedSize/(decimal)compressedSize} " +
-                               $" | {uncompressedSize /(decimal)(512 * 512)} " +
+                               $" | {8*(compressedSize / (decimal)(512 * 512))}  " +
                                $" {Environment.NewLine}";
                 }
 
