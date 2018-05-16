@@ -45,12 +45,12 @@ namespace G2_2D_LZ
             EncodeWorkImage();
             Directory.CreateDirectory(_gz2DlzEncoderFacade.InputFilePath + Constants.Folder);
             WriteResultingMatricesToIndividualFiles();
-            ArchivePath = _gz2DlzEncoderFacade.Archiver.Compress(_gz2DlzEncoderFacade.InputFilePath + Constants.Folder);
+            ArchivePath = _gz2DlzEncoderFacade.Archiver.Compress(_gz2DlzEncoderFacade.InputFilePath + Constants.Folder, null, 9);
         }
 
         public void WriteMatrixToFileAsText()
         {
-            TxtWriter txtWriter = new TxtWriter(_gz2DlzEncoderFacade.InputFilePath + Constants.IntermediaryFileExtension); ;
+            TxtWriter txtWriter = new TxtWriter(_gz2DlzEncoderFacade.InputFilePath + Constants.IntermediaryFileExtension);
 
             txtWriter.Write(WorkImage.GetLength(1) + Constants.Separator.ToString());
             txtWriter.Write(WorkImage.GetLength(0) + Constants.Separator.ToString());

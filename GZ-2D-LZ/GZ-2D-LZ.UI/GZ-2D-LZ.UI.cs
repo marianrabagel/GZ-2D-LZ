@@ -80,7 +80,7 @@ namespace GZ_2D_LZ.UI
             {
                 var folerPath = folderBrowserDialog1.SelectedPath;
                 var allFilesInFolder = Directory.GetFiles(folerPath);
-                var content = "name | uncompressed size | compressed size" + Environment.NewLine;
+                var content = "name | uncompressed size | compressed size | compression ratio | bits per pixel" + Environment.NewLine;
 
                 foreach (var filePath in allFilesInFolder)
                 {
@@ -97,7 +97,10 @@ namespace GZ_2D_LZ.UI
                     var archivePath = _encoder.ArchivePath;
                     var compressedSize = new FileInfo(archivePath).Length;
 
-                    content += $"{name} | {uncompressedSize} | {compressedSize}{Environment.NewLine}";
+                    content += $"{name} | {uncompressedSize} | {compressedSize} | " +
+                               $" {uncompressedSize/(decimal)compressedSize} " +
+                               $" | {uncompressedSize /(decimal)(512 * 512)} " +
+                               $" {Environment.NewLine}";
                 }
 
                 using (var streamWriter = new StreamWriter(folerPath + "\\results.txt"))

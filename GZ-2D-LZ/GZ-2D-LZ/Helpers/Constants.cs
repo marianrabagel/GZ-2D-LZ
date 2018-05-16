@@ -10,9 +10,9 @@
         public static int NoMatchBlockWidth = 5;
         public static int NoMatchBlockHeight = 5;
 
-        public static int NumberOfBitsForSize = 10;
-        public static int NumberOfBitsForX = 10;
-        public static int NumberOfBitsForPredictionError = 9;
+        public static int NumberOfBitsForSize = 16;
+        public static int NumberOfBitsForX = 16;
+        public static int NumberOfBitsForPredictionError = 16;
 
         public static string IntermediaryFileExtension = ".mat";
         public static string Folder = ".matrices";
