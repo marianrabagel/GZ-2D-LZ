@@ -76,7 +76,7 @@
     <Content Include="TestData\2PossibleMatchBlocks.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="TestData\4x4Block.bmp">
+    <Content Include="TestData\3x4Block.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="TestData\Lenna256an.bmp">

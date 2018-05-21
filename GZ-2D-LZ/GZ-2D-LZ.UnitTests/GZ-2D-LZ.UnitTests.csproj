@@ -58,7 +58,7 @@
     <None Include="TestData\Decoder\2PossibleMatchBlocks_a.bmp.mat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TestData\Decoder\4x4Block_a.bmp.mat">
+    <None Include="TestData\Decoder\3x4Block_a.bmp.mat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="TestData\Decoder\test_a.bmp.mat">
@@ -69,7 +69,7 @@
     <Content Include="TestData\Encoder\2PossibleMatchBlocks.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="TestData\Encoder\4x4Block.bmp">
+    <Content Include="TestData\Encoder\3x4Block.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="TestData\Encoder\Lenna256an.bmp" />

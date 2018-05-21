@@ -11,7 +11,7 @@
             {255, 0, 255, 255, 0, 0}
         };
 
-        public static byte[,] Image4X4Block =
+        public static byte[,] Image3X4Block =
         {
             {192, 192, 192, 192, 192, 192, 192, 192, 192, 192},
             {96, 0, 0, 0, 0, 192, 96, 192, 96, 0},

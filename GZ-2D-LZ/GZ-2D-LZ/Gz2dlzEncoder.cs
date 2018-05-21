@@ -241,7 +241,7 @@ namespace G2_2D_LZ
                             }
 
                         }
-                    } while (colOffset != widthOfTheMatchInThePreviousRow);//condition different than the one from the paper
+                    } while (colOffset != widthOfTheMatchInThePreviousRow);
                 }
 
                 widthOfTheMatchInThePreviousRow = colOffset;

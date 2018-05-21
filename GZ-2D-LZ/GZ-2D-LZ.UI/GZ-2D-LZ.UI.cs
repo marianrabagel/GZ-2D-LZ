@@ -79,8 +79,17 @@ namespace GZ_2D_LZ.UI
             if (dialogResult == DialogResult.OK)
             {
                 var folerPath = folderBrowserDialog1.SelectedPath;
-                var allFilesInFolder = Directory.GetFiles(folerPath);
-                var content = "name | uncompressed size | compressed size | compression ratio | bits per pixel" + Environment.NewLine;
+                var allFilesInFolder = Directory.GetFiles(folerPath, "*.bmp");
+                string content =$@"Paramters: 
+    SearchHeight : {G2_2D_LZ.Helpers.Constants.SearchHeight}
+    SearchWidth : {G2_2D_LZ.Helpers.Constants.SearchWidth}
+    Threshold : {G2_2D_LZ.Helpers.Constants.Threshold}
+    MinMatchSize : {G2_2D_LZ.Helpers.Constants.MinMatchSize}
+    MaxMse : {G2_2D_LZ.Helpers.Constants.MaxMse}
+    NoMatchBlockWidth : {G2_2D_LZ.Helpers.Constants.NoMatchBlockWidth}
+    NoMatchBlockHeight : {G2_2D_LZ.Helpers.Constants.NoMatchBlockHeight}
+" + Environment.NewLine;
+                content += "name | uncompressed size | compressed size | compression ratio | bits per pixel" + Environment.NewLine;
 
                 foreach (var filePath in allFilesInFolder)
                 {
@@ -98,8 +107,8 @@ namespace GZ_2D_LZ.UI
                     var compressedSize = new FileInfo(archivePath).Length;
 
                     content += $"{name} | {uncompressedSize} | {compressedSize} | " +
-                               $" {uncompressedSize/(decimal)compressedSize} " +
-                               $" | {8*(compressedSize / (decimal)(512 * 512))}  " +
+                               $" {uncompressedSize/(double)compressedSize} " +
+                               $" | {8.0*(compressedSize / (double)(512 * 512))}  " +
                                $" {Environment.NewLine}";
                 }
 

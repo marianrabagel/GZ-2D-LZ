@@ -23,7 +23,7 @@ namespace GZ_2D_LZ.UnitTests
         private static readonly string basePath = "\\TestData\\Encoder\\";
         public string TwoPossibleMatchBlocksBmpPath = Environment.CurrentDirectory + $"{basePath}2PossibleMatchBlocks.bmp";
         public string TestBmpPath = Environment.CurrentDirectory + $"{basePath}test.bmp";
-        public string One4X4MatchBlockBmpPath = Environment.CurrentDirectory + $"{basePath}4x4Block.bmp";
+        public string One3X4MatchBlockBmpPath = Environment.CurrentDirectory + $"{basePath}3x4Block.bmp";
 
         private IGz2DlzEncoderFacade _gz2DlzEncoderFacade;
 
@@ -176,7 +176,7 @@ namespace GZ_2D_LZ.UnitTests
         [TestMethod]
         public void LocateTheBestAproximateMatchForGivenRootPixelGivesTheExpectedBestMatch()
         {
-            _gz2DlzEncoderFacade.InputFilePath = One4X4MatchBlockBmpPath;
+            _gz2DlzEncoderFacade.InputFilePath = One3X4MatchBlockBmpPath;
             _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
             _gz2DlzEncoderFacade.ImageReader = _bmpReader;
             _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
@@ -208,9 +208,9 @@ namespace GZ_2D_LZ.UnitTests
         }
 
         [TestMethod]
-        public void EncodeFindsTheExpectedBlockMatch()
+        public void EncodeFindsTheExpectedBlockMatchForMinMatchSize10()
         {
-            _gz2DlzEncoderFacade.InputFilePath = One4X4MatchBlockBmpPath;
+            _gz2DlzEncoderFacade.InputFilePath = One3X4MatchBlockBmpPath;
             _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
             _gz2DlzEncoderFacade.ImageReader = _bmpReader;
             _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
@@ -224,7 +224,7 @@ namespace GZ_2D_LZ.UnitTests
         }
 
         [TestMethod]
-        public void EncodeFindsTheExpectedBlockMatchIfThereAre2BlockAtTheSameOrigin()
+        public void EncodeFindsTheExpectedBlockMatchIfThereAre2BlockAtTheSameOriginForMinMatchSize10()
         {
             _gz2DlzEncoderFacade.InputFilePath = TwoPossibleMatchBlocksBmpPath;
             _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();

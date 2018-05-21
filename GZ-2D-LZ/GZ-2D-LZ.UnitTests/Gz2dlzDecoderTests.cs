@@ -14,7 +14,7 @@ namespace GZ_2D_LZ.UnitTests
     {
         private readonly string basePath = "\\TestData\\Decoder\\";
         private string _testBmpMatFileName = "test_a.bmp.mat";
-        private string _one4X4BlockBmpMatFileName = "4x4Block_a.bmp.mat";
+        private string _one3X4BlockBmpMatFileName = "3x4Block_a.bmp.mat";
         private string _2PossibleMatchBlocksBmpMatFileName = "2PossibleMatchBlocks_a.bmp.mat";
 
         private Gz2DlzDecoder _decoder;
@@ -24,7 +24,7 @@ namespace GZ_2D_LZ.UnitTests
         public void Setup()
         {
             _testBmpMatFileName = GetFullPath(_testBmpMatFileName);
-            _one4X4BlockBmpMatFileName = GetFullPath(_one4X4BlockBmpMatFileName);
+            _one3X4BlockBmpMatFileName = GetFullPath(_one3X4BlockBmpMatFileName);
             _2PossibleMatchBlocksBmpMatFileName = GetFullPath(_2PossibleMatchBlocksBmpMatFileName);
         }
 
@@ -163,7 +163,7 @@ namespace GZ_2D_LZ.UnitTests
         }
 
         [TestMethod]
-        public void LoadMatrixFromTxtFileReadsMatchFlagCorrectlyFor4X4Block()
+        public void LoadMatrixFromTxtFileReadsMatchFlagCorrectlyFor3X4Block()
         {
             bool[,] expected =
             {
@@ -179,7 +179,7 @@ namespace GZ_2D_LZ.UnitTests
                 {false, false, false, false, false, false, false, false, false, false}
             };
             SetTestBmpGz2DlzDecoderFacade();
-            gz2DlzDecoderFacade.InputFilePath = _one4X4BlockBmpMatFileName;
+            gz2DlzDecoderFacade.InputFilePath = _one3X4BlockBmpMatFileName;
             _decoder = new Gz2DlzDecoder(gz2DlzDecoderFacade);
 
             _decoder.LoadMatrixFromTxtFile();
@@ -192,7 +192,7 @@ namespace GZ_2D_LZ.UnitTests
         }
 
         [TestMethod]
-        public void LoadMatrixFromTxtFileReadsMatchLocationCorrectly4X4Block()
+        public void LoadMatrixFromTxtFileReadsMatchLocationCorrectly3X4Block()
         {
             /*x y x y..
               0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
@@ -207,7 +207,7 @@ namespace GZ_2D_LZ.UnitTests
               0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 }*/
 
             SetTestBmpGz2DlzDecoderFacade();
-            gz2DlzDecoderFacade.InputFilePath = _one4X4BlockBmpMatFileName;
+            gz2DlzDecoderFacade.InputFilePath = _one3X4BlockBmpMatFileName;
             _decoder = new Gz2DlzDecoder(gz2DlzDecoderFacade);
 
             _decoder.LoadMatrixFromTxtFile();
@@ -241,7 +241,7 @@ namespace GZ_2D_LZ.UnitTests
         }
 
         [TestMethod]
-        public void LoadMatrixFromTxtFileReadsMatchDimensionsCorrectly4X4Block()
+        public void LoadMatrixFromTxtFileReadsMatchDimensionsCorrectly3X4Block()
         {
             /*x y x y ..
               0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
@@ -256,7 +256,7 @@ namespace GZ_2D_LZ.UnitTests
               0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
               */
             SetTestBmpGz2DlzDecoderFacade();
-            gz2DlzDecoderFacade.InputFilePath = _one4X4BlockBmpMatFileName;
+            gz2DlzDecoderFacade.InputFilePath = _one3X4BlockBmpMatFileName;
             _decoder = new Gz2DlzDecoder(gz2DlzDecoderFacade);
 
             _decoder.LoadMatrixFromTxtFile();
@@ -291,10 +291,10 @@ namespace GZ_2D_LZ.UnitTests
         }
 
         [TestMethod]
-        public void LoadMatrixFromTxtFileReadsResidualCorrectly4X4Block()
+        public void LoadMatrixFromTxtFileReadsResidualCorrectly3X4Block()
         {
             SetTestBmpGz2DlzDecoderFacade();
-            gz2DlzDecoderFacade.InputFilePath = _one4X4BlockBmpMatFileName;
+            gz2DlzDecoderFacade.InputFilePath = _one3X4BlockBmpMatFileName;
             _decoder = new Gz2DlzDecoder(gz2DlzDecoderFacade);
 
             _decoder.LoadMatrixFromTxtFile();
@@ -348,10 +348,10 @@ namespace GZ_2D_LZ.UnitTests
         }
 
         [TestMethod]
-        public void LoadMatrixFromTxtFileReadsPredictionErrorCorrectly4X4Block()
+        public void LoadMatrixFromTxtFileReadsPredictionErrorCorrectly3X4Block()
         {
             SetTestBmpGz2DlzDecoderFacade();
-            gz2DlzDecoderFacade.InputFilePath = _one4X4BlockBmpMatFileName;
+            gz2DlzDecoderFacade.InputFilePath = _one3X4BlockBmpMatFileName;
             _decoder = new Gz2DlzDecoder(gz2DlzDecoderFacade);
             int[,] expectedValues = new int[,]
             {
