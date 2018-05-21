@@ -69,6 +69,9 @@
     <Content Include="TestData\Encoder\2PossibleMatchBlocks.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="TestData\Encoder\4x4Block.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestData\Encoder\3x4Block.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

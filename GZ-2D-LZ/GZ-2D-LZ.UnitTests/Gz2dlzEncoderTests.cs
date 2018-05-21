@@ -24,6 +24,7 @@ namespace GZ_2D_LZ.UnitTests
         public string TwoPossibleMatchBlocksBmpPath = Environment.CurrentDirectory + $"{basePath}2PossibleMatchBlocks.bmp";
         public string TestBmpPath = Environment.CurrentDirectory + $"{basePath}test.bmp";
         public string One3X4MatchBlockBmpPath = Environment.CurrentDirectory + $"{basePath}3x4Block.bmp";
+        public string One6x3MatchBlockBmpPath = Environment.CurrentDirectory + $"{basePath}6x3Block.bmp";
 
         private IGz2DlzEncoderFacade _gz2DlzEncoderFacade;
 
@@ -208,7 +209,7 @@ namespace GZ_2D_LZ.UnitTests
         }
 
         [TestMethod]
-        public void EncodeFindsTheExpectedBlockMatchForMinMatchSize10()
+        public void EncodeDoesntFindTheExpectedBlockMatchForMinMatchSize10()
         {
             _gz2DlzEncoderFacade.InputFilePath = One3X4MatchBlockBmpPath;
             _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
@@ -218,13 +219,27 @@ namespace GZ_2D_LZ.UnitTests
 
             _encoder.Encode();
 
-            Assert.IsNotNull(_encoder.MatchLocation[6, 5]);
-            Assert.AreEqual((uint) 1, _encoder.MatchLocation[6, 5].X);
-            Assert.AreEqual((uint) 2, _encoder.MatchLocation[6, 5].Y);
+            Assert.IsNull(_encoder.MatchLocation[6, 5]);
         }
 
         [TestMethod]
-        public void EncodeFindsTheExpectedBlockMatchIfThereAre2BlockAtTheSameOriginForMinMatchSize10()
+        public void EncodeFindsTheExpectedBlockMatchForMinMatchSize17()
+        {
+            _gz2DlzEncoderFacade.InputFilePath = One6x3MatchBlockBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
+
+            _encoder.Encode();
+
+            Assert.IsNotNull(_encoder.MatchLocation[6, 5]);
+            Assert.AreEqual((uint)1, _encoder.MatchLocation[6, 5].X);
+            Assert.AreEqual((uint)2, _encoder.MatchLocation[6, 5].Y);
+        }
+
+        [TestMethod]
+        public void EncodeDoesntFindsTheExpectedBlockMatchIfThereAre2BlockAtTheSameOriginForMinMatchSize17()
         {
             _gz2DlzEncoderFacade.InputFilePath = TwoPossibleMatchBlocksBmpPath;
             _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
@@ -234,9 +249,7 @@ namespace GZ_2D_LZ.UnitTests
 
             _encoder.Encode();
 
-            Assert.IsNotNull(_encoder.MatchLocation[1, 0]);
-            Assert.AreEqual((uint) 0, _encoder.MatchLocation[1, 0].X);
-            Assert.AreEqual((uint) 0, _encoder.MatchLocation[1, 0].Y);
+            Assert.IsNull(_encoder.MatchLocation[1, 0]);
         }
 
         private void AssertEachValue<T>(T[,] expectedValues, T[,] actualValues)
