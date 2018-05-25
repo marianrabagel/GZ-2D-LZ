@@ -11,16 +11,16 @@ namespace G2_2D_LZ
     public class Gz2DlzEncoder
     {
         private readonly byte[,] _originalImage;
-        private readonly uint _height;
-        private readonly uint _width;
+        private readonly int _height;
+        private readonly int _width;
         public string ArchivePath;
-
+        
         public bool[,] IsMatchFound { get; private set; } //has true when a suitable match for a block is found
         public bool[,] IsPixelEncoded { get; private set; } //has true when a pixel has been encoded
         public PixelLocation[,] MatchLocation { get; private set; } //position of the match relative to the block being encoded
         public Dimension[,] MatchDimension { get; private set; } //width and heigth of the block being encoded
         public int[,] Residual { get; private set; } //difference between the pixel in the actual block and the matching block
-        public byte[,] WorkImage { get; private set; }
+        public byte[,] WorkImage { get; set; } //fractal debugging
 
         private readonly IGz2DlzEncoderFacade _gz2DlzEncoderFacade;
 
@@ -29,8 +29,8 @@ namespace G2_2D_LZ
             _gz2DlzEncoderFacade = gz2DlzEncoderFacade;
             _originalImage = _gz2DlzEncoderFacade.ImageReader.GetImageFromFile(_gz2DlzEncoderFacade.InputFilePath);
 
-            _height = Convert.ToUInt32(_originalImage.GetLength(0));
-            _width = Convert.ToUInt32(_originalImage.GetLength(1));
+            _height = _originalImage.GetLength(0);
+            _width = _originalImage.GetLength(1);
 
             InstatiateTables();
             CopyOriginalImageWorkImage();
@@ -106,8 +106,8 @@ namespace G2_2D_LZ
                     {
                         var dimension = matrix[y, x] ?? new Dimension(0,0);
 
-                        bitWriter.WriteNBits(dimension.Width, Constants.NumberOfBitsForSize);
-                        bitWriter.WriteNBits(dimension.Height, Constants.NumberOfBitsForSize);
+                        bitWriter.WriteNBits(Convert.ToUInt32(dimension.Width), Constants.NumberOfBitsForSize);
+                        bitWriter.WriteNBits(Convert.ToUInt32(dimension.Height), Constants.NumberOfBitsForSize);
                     }
                 }
             }
@@ -127,8 +127,8 @@ namespace G2_2D_LZ
                     {
                         var pixelLocation = matrix[y, x] ?? new PixelLocation(0, 0);
 
-                        bitWriter.WriteNBits(pixelLocation.X, Constants.NumberOfBitsForX);
-                        bitWriter.WriteNBits(pixelLocation.Y, Constants.NumberOfBitsForX);
+                        bitWriter.WriteNBits(Convert.ToUInt32(pixelLocation.X), Constants.NumberOfBitsForX);
+                        bitWriter.WriteNBits(Convert.ToUInt32(pixelLocation.Y), Constants.NumberOfBitsForX);
                     }
                 }
             }
@@ -163,8 +163,8 @@ namespace G2_2D_LZ
 
         private void WriteWithdAndHeightToFile(IBitWriter bitWriter)
         {
-            bitWriter.WriteNBits(_width, Constants.NumberOfBitsForSize);
-            bitWriter.WriteNBits(_height, Constants.NumberOfBitsForSize);
+            bitWriter.WriteNBits(Convert.ToUInt32(_width), Constants.NumberOfBitsForSize);
+            bitWriter.WriteNBits(Convert.ToUInt32(_height), Constants.NumberOfBitsForSize);
         }
         
         private void EncodeWorkImage()
@@ -201,53 +201,24 @@ namespace G2_2D_LZ
         public BestMatch LocateTheBestAproximateMatchForGivenRootPixel(PixelLocation encoderPoint, PixelLocation rootPoint)
         {
             BestMatch bestMatch = new BestMatch();
-            uint rowOffset = 0;
-            var widthOfTheMatchInThePreviousRow = Convert.ToUInt32(_width - 1 - encoderPoint.X);
+            int rowOffset = 0;
+            var widthOfTheMatchInThePreviousRow = _width - 1 - encoderPoint.X;
 
             do
             {
-                uint colOffset = 0;
-                var nextRootPoint = new PixelLocation(rootPoint.X + colOffset, rootPoint.Y + rowOffset);
+                int colOffset = 0;
+                var nextRootPoint = new PixelLocation(rootPoint.X, rootPoint.Y + rowOffset);
 
                 if (IsPixelEncoded[nextRootPoint.Y, nextRootPoint.X] ||
                     nextRootPoint.Y >= encoderPoint.Y && nextRootPoint.X >= encoderPoint.X)
                 {
-                    do
-                    {
-                        var nextToBeEncoded = new PixelLocation(encoderPoint.X + colOffset, encoderPoint.Y + rowOffset);
-
-                        if (encoderPoint.X + colOffset == _width ||
-                            encoderPoint.Y + rowOffset == _height)
-                        {
-                            break;
-                        }
-
-                        if (IsPixelEncoded[nextToBeEncoded.Y, nextToBeEncoded.X])
-                        {
-                            colOffset++;
-                        }
-                        else
-                        {
-                            var pixelToBeEncoded = WorkImage[nextToBeEncoded.Y, nextToBeEncoded.X];
-                            var possibleMatchPixel = WorkImage[nextRootPoint.Y, nextRootPoint.X];
-
-                            if (Math.Abs(pixelToBeEncoded - possibleMatchPixel) <= Constants.Threshold)
-                            {
-                                colOffset++;
-                            }
-                            else
-                            {
-                                break;
-                            }
-
-                        }
-                    } while (colOffset != widthOfTheMatchInThePreviousRow);
+                    colOffset = CoverColumns(encoderPoint, colOffset, rowOffset, nextRootPoint, widthOfTheMatchInThePreviousRow);
                 }
 
                 widthOfTheMatchInThePreviousRow = colOffset;
                 rowOffset++;
 
-                uint matchSize = widthOfTheMatchInThePreviousRow * rowOffset;
+                var matchSize = widthOfTheMatchInThePreviousRow * rowOffset;
                 var blockDimensions = new Dimension(widthOfTheMatchInThePreviousRow, rowOffset);
                 var matchMse = GetMse(encoderPoint, rootPoint, blockDimensions);
 
@@ -257,9 +228,62 @@ namespace G2_2D_LZ
                     bestMatch.Width = widthOfTheMatchInThePreviousRow;
                     bestMatch.Size = matchSize;
                 }
-            } while (widthOfTheMatchInThePreviousRow != 0 && encoderPoint.Y + rowOffset != _height - 1);//condition different than the one from the paper
+            } while (widthOfTheMatchInThePreviousRow != 0 && encoderPoint.Y + rowOffset != _height - 1);
 
             return bestMatch;
+        }
+
+        private int CoverColumns(PixelLocation encoderPoint, int colOffset, int rowOffset, PixelLocation nextRootPoint,
+            int widthOfTheMatchInThePreviousRow)
+        {
+            do
+            {
+                var nextToBeEncoded = new PixelLocation(encoderPoint.X + colOffset, encoderPoint.Y + rowOffset);
+                
+                if (IsEdge(nextToBeEncoded.X, nextToBeEncoded.Y))
+                {
+                    break;
+                }
+                if (IsPixelEncoded[nextToBeEncoded.Y, nextToBeEncoded.X])
+                {
+                    colOffset++;
+                }
+                else
+                {
+                    var pixelToBeEncoded = WorkImage[nextToBeEncoded.Y, nextToBeEncoded.X];
+                    var possibleMatchPixel = WorkImage[nextRootPoint.Y, nextRootPoint.X];
+
+                    if (Math.Abs(pixelToBeEncoded - possibleMatchPixel) <= Constants.Threshold)
+                    {
+                        colOffset++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            } while (colOffset != widthOfTheMatchInThePreviousRow);
+
+            return colOffset;
+        }
+
+        private bool IsEdge(int x, int y)
+        {
+            return x == _width || y == _height ;
+        }
+
+        private int GetXAfterGeometricTransformation(int x)
+        {
+            if (_gz2DlzEncoderFacade.GeometricTransformation == (int) Constants.GeometricTransformation.Identity)
+            {
+                return x;
+            }
+            if (_gz2DlzEncoderFacade.GeometricTransformation == (int)Constants.GeometricTransformation.VerticalMirror)
+            {
+                return Constants.SearchWidth - 1 - x;
+            }
+
+            return x;
         }
 
         private void PredictNoMatchBlock(int x, int y)
@@ -326,9 +350,9 @@ namespace G2_2D_LZ
             return rootX;
         }
 
-        private uint GetMse(PixelLocation encoderPoint, PixelLocation matchedPoint, Dimension blockDimension)
+        private int GetMse(PixelLocation encoderPoint, PixelLocation matchedPoint, Dimension blockDimension)
         {
-            uint sum = 0;
+            int sum = 0;
 
             for (int i = 0; i < blockDimension.Height; i++)
             {
@@ -337,7 +361,7 @@ namespace G2_2D_LZ
                     var nextX = encoderPoint.X + j;
                     if (nextX < _width)
                     {
-                        sum += Convert.ToUInt32(Math.Pow(WorkImage[encoderPoint.Y + i, nextX] -
+                        sum += Convert.ToInt32(Math.Pow(WorkImage[encoderPoint.Y + i, nextX] -
                                                          WorkImage[matchedPoint.Y + i, matchedPoint.X + j], 2));
                     }
                 }

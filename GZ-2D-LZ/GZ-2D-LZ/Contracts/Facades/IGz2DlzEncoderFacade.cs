@@ -8,5 +8,6 @@ namespace G2_2D_LZ.Contracts.Facades
         AbstractPredictor AbstractPredictor { get; set; }
         IImageReader ImageReader { get; set; }
         IArchiver Archiver { get; set; }
+        int GeometricTransformation { get; set; }
     }
 }

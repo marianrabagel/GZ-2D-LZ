@@ -37,8 +37,8 @@ namespace G2_2D_LZ.Readers
             {
                 for (int x = 0; x < _dimension.Width; x++)
                 {
-                    var valueX = Convert.ToUInt32(values[i++]);
-                    var valueY = Convert.ToUInt32(values[i++]);
+                    var valueX = Convert.ToInt32(values[i++]);
+                    var valueY = Convert.ToInt32(values[i++]);
 
                     matrix[y, x] = new PixelLocation(valueX, valueY);
                 }

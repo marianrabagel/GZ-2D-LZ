@@ -2,8 +2,8 @@
 {
     public class BestMatch
     {
-        public uint Height = 0;
-        public uint Width = 0;
-        public uint Size = 0;
+        public int Height = 0;
+        public int Width = 0;
+        public int Size = 0;
     }
 }

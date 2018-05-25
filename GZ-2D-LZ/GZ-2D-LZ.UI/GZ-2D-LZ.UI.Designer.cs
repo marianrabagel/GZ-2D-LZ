@@ -36,6 +36,7 @@
             this.LoadArchiveBtn = new System.Windows.Forms.Button();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.LoadFolderBtn = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // loadImageBtn
@@ -99,11 +100,22 @@
             this.LoadFolderBtn.UseVisualStyleBackColor = true;
             this.LoadFolderBtn.Click += new System.EventHandler(this.LoadFolderBtn_Click);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(13, 287);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(98, 23);
+            this.button1.TabIndex = 6;
+            this.button1.Text = "Convert to bmp";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click_1);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(691, 453);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.LoadFolderBtn);
             this.Controls.Add(this.LoadArchiveBtn);
             this.Controls.Add(this.DecodeBtn);
@@ -126,6 +138,7 @@
         private System.Windows.Forms.Button LoadArchiveBtn;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.Button LoadFolderBtn;
+        private System.Windows.Forms.Button button1;
     }
 }
 

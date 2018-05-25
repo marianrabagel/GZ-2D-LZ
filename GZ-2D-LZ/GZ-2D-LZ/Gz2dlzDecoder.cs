@@ -16,8 +16,8 @@ namespace G2_2D_LZ
         public int[,] Residual { get; private set; } //difference between the pixel in the actual block and the matching block
         public byte[,] WorkImage { get; private set; }
 
-        private uint _height;
-        private uint _width;
+        private int _height;
+        private int _width;
 
         private readonly IGz2DlzDecoderFacade _gz2DlzDecoderFacade;
 
@@ -109,8 +109,8 @@ namespace G2_2D_LZ
         {
             using (BitReader bitReader = new BitReader(outputFileName))
             {
-                _width = bitReader.ReadNBits(Constants.NumberOfBitsForSize);
-                _height = bitReader.ReadNBits(Constants.NumberOfBitsForSize);
+                _width = Convert.ToInt32(bitReader.ReadNBits(Constants.NumberOfBitsForSize));
+                _height = Convert.ToInt32(bitReader.ReadNBits(Constants.NumberOfBitsForSize));
 
                 var matrix = new int[_height, _width];
 
@@ -131,8 +131,8 @@ namespace G2_2D_LZ
         {
             using (BitReader bitReader = new BitReader(outputFileName))
             {
-                _width = bitReader.ReadNBits(Constants.NumberOfBitsForSize);
-                _height = bitReader.ReadNBits(Constants.NumberOfBitsForSize);
+                _width = Convert.ToInt32(bitReader.ReadNBits(Constants.NumberOfBitsForSize));
+                _height = Convert.ToInt32( bitReader.ReadNBits(Constants.NumberOfBitsForSize));
 
                 var matrix = new Dimension[_height, _width];
 
@@ -143,7 +143,7 @@ namespace G2_2D_LZ
                         var xValue = bitReader.ReadNBits(Constants.NumberOfBitsForSize);
                         var yValue = bitReader.ReadNBits(Constants.NumberOfBitsForSize);
 
-                        matrix[y, x] = new Dimension(xValue, yValue);
+                        matrix[y, x] = new Dimension(Convert.ToInt32(xValue), Convert.ToInt32(yValue));
                     }
                 }
 
@@ -155,8 +155,8 @@ namespace G2_2D_LZ
         {
             using (BitReader bitReader = new BitReader(outputFileName))
             {
-                _width = bitReader.ReadNBits(Constants.NumberOfBitsForSize);
-                _height = bitReader.ReadNBits(Constants.NumberOfBitsForSize);
+                _width = Convert.ToInt32(bitReader.ReadNBits(Constants.NumberOfBitsForSize));
+                _height = Convert.ToInt32(bitReader.ReadNBits(Constants.NumberOfBitsForSize));
 
                 var matrix = new PixelLocation[_height, _width];
 
@@ -167,7 +167,7 @@ namespace G2_2D_LZ
                         var xValue = bitReader.ReadNBits(Constants.NumberOfBitsForX);
                         var yValue = bitReader.ReadNBits(Constants.NumberOfBitsForX);
 
-                        matrix[y, x] = new PixelLocation(xValue, yValue);
+                        matrix[y, x] = new PixelLocation(Convert.ToInt32(xValue), Convert.ToInt32(yValue));
                     }
                 }
 
@@ -179,8 +179,8 @@ namespace G2_2D_LZ
         {
             using (BitReader bitReader = new BitReader(outputFileName))
             {
-                _width = bitReader.ReadNBits(Constants.NumberOfBitsForSize);
-                _height = bitReader.ReadNBits(Constants.NumberOfBitsForSize);
+                _width = Convert.ToInt32(bitReader.ReadNBits(Constants.NumberOfBitsForSize));
+                _height = Convert.ToInt32(bitReader.ReadNBits(Constants.NumberOfBitsForSize));
 
                 var matrix = new bool[_height, _width];
 
@@ -222,8 +222,8 @@ namespace G2_2D_LZ
             {
                 var fileContent = reader.ReadToEnd();
                 string[] values = fileContent.Split(Constants.Separator);
-                _height = Convert.ToUInt32(values[1]);
-                _width = Convert.ToUInt32(values[0]);
+                _height = Convert.ToInt32(values[1]);
+                _width = Convert.ToInt32(values[0]);
 
                 TxtReader txtReader = new TxtReader(new Dimension(_width, _height));
 

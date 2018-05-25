@@ -1,4 +1,6 @@
-﻿namespace G2_2D_LZ.Helpers
+﻿using System;
+
+namespace G2_2D_LZ.Helpers
 {
     public class Constants
     {
@@ -18,5 +20,10 @@
         public static string Folder = ".matrices";
         
         public static char Separator = ' ';
+        public enum GeometricTransformation
+        {
+            Identity,
+            VerticalMirror
+        }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Forms;
 using G2_2D_LZ;
@@ -116,6 +118,18 @@ namespace GZ_2D_LZ.UI
                 {
                     streamWriter.Write(content);
                 }
+            }
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            DialogResult dialogResult = openFileDialog1.ShowDialog();
+
+            if (dialogResult == DialogResult.OK)
+            {
+                var fileName = openFileDialog1.FileName;
+                var fromFile = Image.FromFile(fileName);
+                fromFile.Save(Path.ChangeExtension(fileName, ".bmp"), ImageFormat.Bmp);
             }
         }
     }

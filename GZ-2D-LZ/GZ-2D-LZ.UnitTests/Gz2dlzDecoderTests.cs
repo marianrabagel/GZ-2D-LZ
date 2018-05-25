@@ -81,8 +81,8 @@ namespace GZ_2D_LZ.UnitTests
             {
                 for (int x = 0; x < width; x++)
                 {
-                    Assert.AreEqual((uint) 0, matchLocation[y, x].Y);
-                    Assert.AreEqual((uint) 0, matchLocation[y, x].X);
+                    Assert.AreEqual(0, matchLocation[y, x].Y);
+                    Assert.AreEqual(0, matchLocation[y, x].X);
                 }
             }
         }
@@ -106,8 +106,8 @@ namespace GZ_2D_LZ.UnitTests
             {
                 for (int x = 0; x < width; x++)
                 {
-                    Assert.AreEqual((uint) 0, matchDimensions[y, x].Width);
-                    Assert.AreEqual((uint) 0, matchDimensions[y, x].Height);
+                    Assert.AreEqual(0, matchDimensions[y, x].Width);
+                    Assert.AreEqual(0, matchDimensions[y, x].Height);
                 }
             }
         }
@@ -218,15 +218,15 @@ namespace GZ_2D_LZ.UnitTests
 
             Assert.AreEqual(10, height);
             Assert.AreEqual(10, width);
-            Assert.AreEqual((uint) 1, matchLocation[6, 5].X);
-            Assert.AreEqual((uint) 2, matchLocation[6, 5].Y);
+            Assert.AreEqual( 1, matchLocation[6, 5].X);
+            Assert.AreEqual( 2, matchLocation[6, 5].Y);
 
             for (int y = 0; y < 6; y++)
             {
                 for (int x = 0; x < 5; x++)
                 {
-                    Assert.AreEqual((uint) 0, matchLocation[y, x].Y);
-                    Assert.AreEqual((uint) 0, matchLocation[y, x].X);
+                    Assert.AreEqual( 0, matchLocation[y, x].Y);
+                    Assert.AreEqual( 0, matchLocation[y, x].X);
                 }
             }
 
@@ -234,8 +234,8 @@ namespace GZ_2D_LZ.UnitTests
             {
                 for (int x = 6; x < width; x++)
                 {
-                    Assert.AreEqual((uint) 0, matchLocation[y, x].Y);
-                    Assert.AreEqual((uint) 0, matchLocation[y, x].X);
+                    Assert.AreEqual(0, matchLocation[y, x].Y);
+                    Assert.AreEqual(0, matchLocation[y, x].X);
                 }
             }
         }
@@ -268,15 +268,15 @@ namespace GZ_2D_LZ.UnitTests
             Assert.AreEqual(10, height);
             Assert.AreEqual(10, width);
 
-            Assert.AreEqual((uint) 4, matchDimensions[6, 5].Width);
-            Assert.AreEqual((uint) 3, matchDimensions[6, 5].Height);
+            Assert.AreEqual( 4, matchDimensions[6, 5].Width);
+            Assert.AreEqual( 3, matchDimensions[6, 5].Height);
 
             for (int y = 0; y < 6; y++)
             {
                 for (int x = 0; x < 5; x++)
                 {
-                    Assert.AreEqual((uint) 0, matchDimensions[y, x].Width);
-                    Assert.AreEqual((uint) 0, matchDimensions[y, x].Height);
+                    Assert.AreEqual(0, matchDimensions[y, x].Width);
+                    Assert.AreEqual(0, matchDimensions[y, x].Height);
                 }
             }
 
@@ -284,8 +284,8 @@ namespace GZ_2D_LZ.UnitTests
             {
                 for (int x = 6; x < width; x++)
                 {
-                    Assert.AreEqual((uint) 0, matchDimensions[y, x].Width);
-                    Assert.AreEqual((uint) 0, matchDimensions[y, x].Height);
+                    Assert.AreEqual(0, matchDimensions[y, x].Width);
+                    Assert.AreEqual(0, matchDimensions[y, x].Height);
                 }
             }
         }
