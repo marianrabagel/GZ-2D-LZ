@@ -27,6 +27,7 @@ namespace GZ_2D_LZ.IntegrationTests
         private string _lenna256anTxtFileName = "Lenna256an.txt";
         private string _testBmpPath = "test.bmp";
         private string _one3X4MatchBlockBmpPath = "3x4Block.bmp";
+        private string verticalMirrorBmp = "VerticalMirror.bmp";
         private string _2PossibleMatchBlocksBmpPath = "2PossibleMatchBlocks.bmp";
         private string _lenna256anBmpPath = "Lenna256an.bmp";
         private string _peppers512 = "Peppers512an.BMP ";
@@ -44,6 +45,7 @@ namespace GZ_2D_LZ.IntegrationTests
 
             _testBmpPath = _basePath + _testBmpPath;
             _one3X4MatchBlockBmpPath = _basePath + _one3X4MatchBlockBmpPath;
+            verticalMirrorBmp = _basePath + verticalMirrorBmp;
             _2PossibleMatchBlocksBmpPath = _basePath + _2PossibleMatchBlocksBmpPath;
             _lenna256anBmpPath = _basePath + _lenna256anBmpPath;
             _peppers512 = _basePath + _peppers512;
@@ -226,6 +228,30 @@ namespace GZ_2D_LZ.IntegrationTests
 
             var workImage = _decoder.WorkImage;
             CompareValueWithPixelFromBmp(_one3X4MatchBlockBmpPath, workImage);
+        }
+
+        [TestMethod]
+        public void EncodeAndDecodeWithAPredictorVerticalMirrorBmpResultsTheSamePixels()
+        {
+            _gz2DlzEncoderFacade.InputFilePath = verticalMirrorBmp;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
+            _gz2DlzEncoderFacade.GeometricTransformation = (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.VerticalMirror;
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
+
+            var inputFilePath = _one3X4MatchBlockBmpPath + G2_2D_LZ.Helpers.Constants.Folder + Constants.Paq6Extension;
+            gz2DlzDecoderFacade = new Gz2DlzDecoderFacade();
+            gz2DlzDecoderFacade.InputFilePath = inputFilePath;
+            gz2DlzDecoderFacade.AbstractPredictor = new ABasedPredictor();
+            gz2DlzDecoderFacade.Archiver = new Paq6V2Archiver();
+            _decoder = new Gz2DlzDecoder(gz2DlzDecoderFacade);
+
+            _encoder.Encode();
+            _decoder.Decode();
+
+            var workImage = _decoder.WorkImage;
+            CompareValueWithPixelFromBmp(verticalMirrorBmp, workImage);
         }
 
         [TestMethod]

@@ -7,6 +7,7 @@ namespace BitOperations.UnitTests
 {
     [TestClass]
     [ExcludeFromCodeCoverage]
+    [Ignore]
     public class BitReaderTests
     {
         private readonly string _basePath = Environment.CurrentDirectory + "\\TestData\\";

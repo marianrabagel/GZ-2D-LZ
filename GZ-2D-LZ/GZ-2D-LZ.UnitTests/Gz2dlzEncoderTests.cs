@@ -34,6 +34,7 @@ namespace GZ_2D_LZ.UnitTests
         {
             _bmpReader = new BmpImageReader();
             _gz2DlzEncoderFacade = new Gz2DlzEncoderFacade();
+            G2_2D_LZ.Helpers.Constants.MinMatchSize = 17;
         }
 
         [TestMethod]
@@ -183,8 +184,20 @@ namespace GZ_2D_LZ.UnitTests
             _gz2DlzEncoderFacade.ImageReader = _bmpReader;
             _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
             _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
-
             var originalImage = _encoder.WorkImage;
+            MarkFirstRowAsPredicted(originalImage);
+            var encoderPosition = new PixelLocation(5, 5);
+            var rootPosition = new PixelLocation(1, 1);
+
+            BestMatch bestMatch = _encoder.LocateTheBestAproximateMatchForGivenRootPixel(encoderPosition, rootPosition);
+
+            Assert.AreEqual(4, bestMatch.Height);
+            Assert.AreEqual(4, bestMatch.Width);
+            Assert.AreEqual(16, bestMatch.Size);
+        }
+
+        private void MarkFirstRowAsPredicted(byte[,] originalImage)
+        {
             var width = originalImage.GetLength(0);
 
             for (int i = 0; i < width; i++)
@@ -199,14 +212,6 @@ namespace GZ_2D_LZ.UnitTests
             {
                 _encoder.IsPixelEncoded[0, i] = true;
             }
-
-            var encoderPosition = new PixelLocation(5, 5);
-            var rootPosition = new PixelLocation(1, 1);
-            BestMatch bestMatch = _encoder.LocateTheBestAproximateMatchForGivenRootPixel(encoderPosition, rootPosition);
-
-            Assert.AreEqual(4, bestMatch.Height);
-            Assert.AreEqual(4, bestMatch.Width);
-            Assert.AreEqual(16, bestMatch.Size);
         }
 
         [TestMethod]
@@ -217,7 +222,7 @@ namespace GZ_2D_LZ.UnitTests
             _gz2DlzEncoderFacade.ImageReader = _bmpReader;
             _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
             _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
-
+            
             _encoder.Encode();
 
             Assert.IsNull(_encoder.MatchLocation[6, 5]);
@@ -299,23 +304,23 @@ namespace GZ_2D_LZ.UnitTests
             G2_2D_LZ.Helpers.Constants.MinMatchSize = 5;
 
             _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
-            _encoder.WorkImage = new byte[10, 12]
+            /*_encoder.WorkImage = new byte[10, 12]
             {  //0      1      2      3      4      5      6      7      8      9      10    11
                 { 50,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0}, //0
                 {  0,   200,     0,     0,     0,    50,   100,   100,     0,     0,    50,    50}, //1
-                {  0,   250,   250,   250,     0,     0,     0,     0,     0,     0,     0,     0}, //2
-                {  0,   250,   250,   250,     0,     0,     0,     0,     0,     0,     0,     0}, //3
+                {  0,     0,     0,   250,   250,   250,     0,     0,     0,     0,     0,     0}, //2
+                {  0,     0,     0,   250,   250,   250,     0,     0,     0,     0,     0,     0}, //3
                 {  0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0}, //4
                 {  0,     0,     0,     0,     0,     0,     0,     0,   150,     0,     0,     0}, //5
-                {  0,     0,     0,     0,     0,   250,   250,   250,   150,     0,     0,     0}, //6
-                {  0,     0,     0,     0,     0,   250,   250,   250,     0,     0,     0,     0}, //7
+                {100,     0,    100,     0,     0,   250,   250,   250,   150,     0,     0,     0}, //6
+                {  0,   100,     0,     0,     0,   250,   250,   250,     0,     0,     0,     0}, //7
                 {  0,     0,     0,     0,     0,   150,   150,   150,     0,     0,     0,     0}, //8
                 {  0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0}  //9
-            };
+            };*/
             _encoder.Encode();
 
             Assert.IsNotNull(_encoder.MatchLocation[6, 5]);
-            Assert.AreEqual(1, _encoder.MatchLocation[6, 5].X);
+            Assert.AreEqual(5, _encoder.MatchLocation[6, 5].X);
             Assert.AreEqual(2, _encoder.MatchLocation[6, 5].Y);
         }
 

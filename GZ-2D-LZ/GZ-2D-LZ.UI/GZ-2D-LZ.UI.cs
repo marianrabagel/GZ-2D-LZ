@@ -129,6 +129,7 @@ namespace GZ_2D_LZ.UI
             {
                 var fileName = openFileDialog1.FileName;
                 var fromFile = Image.FromFile(fileName);
+                
                 fromFile.Save(Path.ChangeExtension(fileName, ".bmp"), ImageFormat.Bmp);
             }
         }

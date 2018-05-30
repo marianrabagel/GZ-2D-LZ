@@ -78,6 +78,7 @@ namespace GZ_2D_LZ.Archiver.UnitTests
         }
 
         [TestMethod]
+        [Ignore]
         public void CompressAndDecompressADirectoryArchiveResultsTheSameFiles()
         {
             var inputFolderPath = Environment.CurrentDirectory + basePath;
