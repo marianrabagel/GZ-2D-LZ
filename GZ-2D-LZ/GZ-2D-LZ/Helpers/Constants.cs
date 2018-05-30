@@ -23,7 +23,8 @@ namespace G2_2D_LZ.Helpers
         public enum GeometricTransformation
         {
             Identity,
-            VerticalMirror
+            VerticalMirror,
+            All
         }
     }
 }

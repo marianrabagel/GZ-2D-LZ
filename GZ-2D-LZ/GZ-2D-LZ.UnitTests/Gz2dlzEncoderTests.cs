@@ -24,7 +24,7 @@ namespace GZ_2D_LZ.UnitTests
         public string TwoPossibleMatchBlocksBmpPath = Environment.CurrentDirectory + $"{basePath}2PossibleMatchBlocks.bmp";
         public string TestBmpPath = Environment.CurrentDirectory + $"{basePath}test.bmp";
         public string One3X4MatchBlockBmpPath = Environment.CurrentDirectory + $"{basePath}3x4Block.bmp";
-        public string One6x3MatchBlockBmpPath = Environment.CurrentDirectory + $"{basePath}6x3Block.bmp";
+        public string One6X3MatchBlockBmpPath = Environment.CurrentDirectory + $"{basePath}6x3Block.bmp";
         public string VerticalMirrorBmpPath = Environment.CurrentDirectory + $"{basePath}VerticalMirror.bmp";
 
         private IGz2DlzEncoderFacade _gz2DlzEncoderFacade;
@@ -231,7 +231,7 @@ namespace GZ_2D_LZ.UnitTests
         [TestMethod]
         public void EncodeFindsTheExpectedBlockMatchForMinMatchSize17()
         {
-            _gz2DlzEncoderFacade.InputFilePath = One6x3MatchBlockBmpPath;
+            _gz2DlzEncoderFacade.InputFilePath = One6X3MatchBlockBmpPath;
             _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
             _gz2DlzEncoderFacade.ImageReader = _bmpReader;
             _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
@@ -324,6 +324,50 @@ namespace GZ_2D_LZ.UnitTests
             Assert.AreEqual(2, _encoder.MatchLocation[6, 5].Y);
         }
 
+        [TestMethod]
+        public void EncodeForVerticalMirror()
+        {
+            _gz2DlzEncoderFacade.InputFilePath = One3X4MatchBlockBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
+            _gz2DlzEncoderFacade.GeometricTransformation = (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.VerticalMirror;
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
+
+            _encoder.Encode();
+
+            Assert.IsNull(_encoder.MatchLocation[6, 5]);
+        }
+
+        [TestMethod]
+        public void EncodeForVerticalMirror2()
+        {
+            _gz2DlzEncoderFacade.InputFilePath = One6X3MatchBlockBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
+            _gz2DlzEncoderFacade.GeometricTransformation = (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.VerticalMirror;
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
+
+            _encoder.Encode();
+
+            Assert.IsNull(_encoder.MatchLocation[6, 5]);
+        }
+
+        [TestMethod]
+        public void EncodeForVerticalMirror3()
+        {
+            _gz2DlzEncoderFacade.InputFilePath = TwoPossibleMatchBlocksBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
+            _gz2DlzEncoderFacade.GeometricTransformation = (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.VerticalMirror;
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
+
+            _encoder.Encode();
+
+            Assert.IsNull(_encoder.MatchLocation[6, 5]);
+        }
 
         private void AssertEachValue<T>(T[,] expectedValues, T[,] actualValues)
         {

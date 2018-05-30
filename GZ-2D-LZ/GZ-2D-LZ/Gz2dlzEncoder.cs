@@ -176,25 +176,31 @@ namespace G2_2D_LZ
                     {
                         var rootPoint = new PixelLocation(GetRootX(x), GetRootY(y));
                         var encoderPoint = new PixelLocation(x, y);
-                        /*
-                        _gz2DlzEncoderFacade.GeometricTransformation = (int)Constants.GeometricTransformation.Identity;
-                        var bestMatchIdentity = LocateTheBestAproximateMatchForGivenRootPixel(encoderPoint, rootPoint);
-
-                        _gz2DlzEncoderFacade.GeometricTransformation = (int)Constants.GeometricTransformation.VerticalMirror;
-                        var bestMatchVerticalMirror = LocateTheBestAproximateMatchForGivenRootPixel(encoderPoint, rootPoint);
-
                         BestMatch bestMatch;
 
-                        if (bestMatchIdentity.Size > bestMatchVerticalMirror.Size)
+                        if (_gz2DlzEncoderFacade.GeometricTransformation == (int) Constants.GeometricTransformation.All)
                         {
-                            bestMatch = bestMatchIdentity;
+                            _gz2DlzEncoderFacade.GeometricTransformation = (int) Constants.GeometricTransformation.Identity;
+                            var bestMatchIdentity = LocateTheBestAproximateMatchForGivenRootPixel(encoderPoint, rootPoint);
+                            _gz2DlzEncoderFacade.GeometricTransformation = (int) Constants.GeometricTransformation.VerticalMirror;
+
+                            var bestMatchVerticalMirror = LocateTheBestAproximateMatchForGivenRootPixel(encoderPoint, rootPoint);
+
+                            if (bestMatchIdentity.Size >= bestMatchVerticalMirror.Size)
+                            {
+                                bestMatch = bestMatchIdentity;
+                                _gz2DlzEncoderFacade.GeometricTransformation = (int) Constants.GeometricTransformation.Identity;
+                            }
+                            else
+                            {
+                                bestMatch = bestMatchVerticalMirror;
+                                _gz2DlzEncoderFacade.GeometricTransformation = (int) Constants.GeometricTransformation.VerticalMirror;
+                            }
                         }
                         else
                         {
-                            bestMatch = bestMatchVerticalMirror;
-                        }*/
-
-                        var bestMatch = LocateTheBestAproximateMatchForGivenRootPixel(encoderPoint, rootPoint);
+                            bestMatch = LocateTheBestAproximateMatchForGivenRootPixel(encoderPoint, rootPoint);
+                        }
 
                         if (bestMatch.Size > Constants.MinMatchSize)
                         {
@@ -266,6 +272,12 @@ namespace G2_2D_LZ
                     {
                         var pixelToBeEncoded = WorkImage[nextToBeEncoded.Y, nextToBeEncoded.X];
                         var x = GetNextRootX(nextRootPoint.X, colOffset);
+
+                        if (x < 0)
+                        {
+                            break;
+                        }
+
                         var possibleMatchPixel = WorkImage[nextRootPoint.Y, x];
 
                         if (Math.Abs(pixelToBeEncoded - possibleMatchPixel) <= Constants.Threshold)
