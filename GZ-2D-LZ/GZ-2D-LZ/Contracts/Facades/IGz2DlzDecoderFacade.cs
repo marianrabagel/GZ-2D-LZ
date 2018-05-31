@@ -7,5 +7,6 @@ namespace G2_2D_LZ.Contracts.Facades
         string InputFilePath { get; set; }
         AbstractPredictor AbstractPredictor { get; set; }
         IArchiver Archiver { get; set; }
+        int GeometricTransformation { get; set; }
     }
 }

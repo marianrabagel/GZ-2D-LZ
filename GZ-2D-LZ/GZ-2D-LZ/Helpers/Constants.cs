@@ -22,7 +22,7 @@ namespace G2_2D_LZ.Helpers
         public static char Separator = ' ';
         public enum GeometricTransformation
         {
-            Identity,
+            Identity = 0,
             VerticalMirror,
             All
         }

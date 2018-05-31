@@ -14,6 +14,7 @@ namespace G2_2D_LZ
         public PixelLocation[,] MatchLocation { get; private set; } //position of the match relative to the block being encoded
         public Dimension[,] MatchDimension { get; private set; } //width and heigth of the block being encoded
         public int[,] Residual { get; private set; } //difference between the pixel in the actual block and the matching block
+        public int[,] GeometricTransformation { get; private set; }
         public byte[,] WorkImage { get; private set; }
 
         private int _height;
@@ -102,7 +103,30 @@ namespace G2_2D_LZ
             MatchLocation = LoadMatchLocationFromFileAndSetWidthAndHeight(GetInputFileName(inputFilePath, nameof(MatchLocation)));
             MatchDimension = LoadMatchDimensionFromFileAndSetWidthAndHeight(GetInputFileName(inputFilePath, nameof(MatchDimension)));
             Residual = LoadResidualFromFileAndSetWidthAndHeight(GetInputFileName(inputFilePath, nameof(Residual)));
+            GeometricTransformation = LoadGeometricTransformationFromFileAndSetWidthAndHeight(GetInputFileName(inputFilePath, nameof(GeometricTransformation)));
             _gz2DlzDecoderFacade.AbstractPredictor.PredictionError = LoadResidualFromFileAndSetWidthAndHeight(GetInputFileName(inputFilePath, nameof(_gz2DlzDecoderFacade.AbstractPredictor.PredictionError)));
+        }
+
+        private int[,] LoadGeometricTransformationFromFileAndSetWidthAndHeight(string outputFileName)
+        {
+            using (BitReader bitReader = new BitReader(outputFileName))
+            {
+                _width = Convert.ToInt32(bitReader.ReadNBits(Constants.NumberOfBitsForSize));
+                _height = Convert.ToInt32(bitReader.ReadNBits(Constants.NumberOfBitsForSize));
+
+                var matrix = new int[_height, _width];
+
+                for (int y = 0; y < _height; y++)
+                {
+                    for (int x = 0; x < _width; x++)
+                    {
+                        var value = bitReader.ReadNBits(Constants.NumberOfBitsForSize);
+                        matrix[y, x] = Convert.ToInt32(value);
+                    }
+                }
+
+                return matrix;
+            }
         }
 
         private int[,] LoadResidualFromFileAndSetWidthAndHeight(string outputFileName)
@@ -273,15 +297,40 @@ namespace G2_2D_LZ
             var matchLocation = MatchLocation[y, x];
             var matchDimension = MatchDimension[y, x];
 
-            for (int i = 0; i < matchDimension.Height; i++)
+            for (int yy = 0; yy < matchDimension.Height; yy++)
             {
-                for (int j = 0; j < matchDimension.Width; j++)
+                for (int xx = 0; xx < matchDimension.Width; xx++)
                 {
-                    WorkImage[y + i, x + j] =
-                        (byte) (WorkImage[matchLocation.Y + i, matchLocation.X + j] + Residual[y + i, x + j]);
-                    IsPixelEncoded[y + i, x + j] = false;
+                    //var nextX = x + xx;
+                    if (GeometricTransformation[y, x] == (int) Constants.GeometricTransformation.Identity)
+                    {
+                        _gz2DlzDecoderFacade.GeometricTransformation = (int) Constants.GeometricTransformation.Identity;
+                    }
+                    if (GeometricTransformation[y, x] == (int)Constants.GeometricTransformation.VerticalMirror)
+                    {
+                        _gz2DlzDecoderFacade.GeometricTransformation = (int)Constants.GeometricTransformation.VerticalMirror;
+                    }
+
+                    var nextX = GetNextRootX(x, xx);
+                    WorkImage[y + yy, nextX] =
+                        (byte) (WorkImage[matchLocation.Y + yy, matchLocation.X + xx] + Residual[y + yy, nextX]);
+                    IsPixelEncoded[y + yy, nextX] = false;
                 }
             }
+        }
+
+        private int GetNextRootX(int x, int colOffset)
+        {
+            if (_gz2DlzDecoderFacade.GeometricTransformation == (int)Constants.GeometricTransformation.Identity)
+            {
+                return x + colOffset;
+            }
+            if (_gz2DlzDecoderFacade.GeometricTransformation == (int)Constants.GeometricTransformation.VerticalMirror)
+            {
+                return x - colOffset;
+            }
+
+            throw new Exception("not set");
         }
 
         private void ReconstructWithPredictonNoMatchBlock(int y, int x)

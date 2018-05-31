@@ -103,6 +103,7 @@ namespace GZ_2D_LZ.UI
                     _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
                     _gz2DlzEncoderFacade.ImageReader = new BmpImageReader();
                     _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
+                    _gz2DlzEncoderFacade.GeometricTransformation = (int) G2_2D_LZ.Helpers.Constants.GeometricTransformation.All;
                     var _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
                     _encoder.Encode();
                     var archivePath = _encoder.ArchivePath;

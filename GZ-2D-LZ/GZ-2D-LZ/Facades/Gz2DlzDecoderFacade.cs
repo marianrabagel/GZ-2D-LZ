@@ -9,5 +9,6 @@ namespace G2_2D_LZ.Facades
         public string InputFilePath { get; set; }
         public AbstractPredictor AbstractPredictor { get; set; }
         public IArchiver Archiver { get; set; }
+        public int GeometricTransformation { get; set; }
     }
 }

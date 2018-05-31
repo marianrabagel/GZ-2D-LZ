@@ -318,7 +318,7 @@ namespace GZ_2D_LZ.UnitTests
                 {  0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0}  //9
             };*/
             _encoder.Encode();
-
+            _encoder.WriteMatrixToFileAsText();
             Assert.IsNotNull(_encoder.MatchLocation[6, 5]);
             Assert.AreEqual(5, _encoder.MatchLocation[6, 5].X);
             Assert.AreEqual(2, _encoder.MatchLocation[6, 5].Y);
@@ -335,6 +335,7 @@ namespace GZ_2D_LZ.UnitTests
             _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
 
             _encoder.Encode();
+            _encoder.WriteMatrixToFileAsText();
 
             Assert.IsNull(_encoder.MatchLocation[6, 5]);
         }
@@ -391,6 +392,22 @@ namespace GZ_2D_LZ.UnitTests
             _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
             _gz2DlzEncoderFacade.GeometricTransformation =
                 (int) G2_2D_LZ.Helpers.Constants.GeometricTransformation.Identity;
+        }
+
+        private void DisplayImageToOutputWindow<T>(T[,] bytes)
+        {
+            int height1 = bytes.GetLength(0);
+            int width1 = bytes.GetLength(1);
+
+            for (int y = 0; y < height1; y++)
+            {
+                for (int x = 0; x < width1; x++)
+                {
+                    System.Diagnostics.Debug.Write(bytes[y, x] + " ");
+                }
+
+                System.Diagnostics.Debug.WriteLine(" ");
+            }
         }
     }
 }
