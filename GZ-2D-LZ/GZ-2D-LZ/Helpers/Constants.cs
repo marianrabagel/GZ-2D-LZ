@@ -24,6 +24,7 @@ namespace G2_2D_LZ.Helpers
         {
             Identity = 0,
             VerticalMirror,
+            HorizontalMirror,
             All
         }
     }

@@ -100,10 +100,10 @@ namespace GZ_2D_LZ.UI
 
                     IGz2DlzEncoderFacade _gz2DlzEncoderFacade = new Gz2DlzEncoderFacade();
                     _gz2DlzEncoderFacade.InputFilePath = filePath;
-                    _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+                    _gz2DlzEncoderFacade.AbstractPredictor = new CalicPredictor();
                     _gz2DlzEncoderFacade.ImageReader = new BmpImageReader();
                     _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
-                    _gz2DlzEncoderFacade.GeometricTransformation = (int) G2_2D_LZ.Helpers.Constants.GeometricTransformation.All;
+                    _gz2DlzEncoderFacade.GeometricTransformation = (int) G2_2D_LZ.Helpers.Constants.GeometricTransformation.HorizontalMirror;
                     var _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
                     _encoder.Encode();
                     var archivePath = _encoder.ArchivePath;

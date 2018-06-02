@@ -79,6 +79,12 @@
     <Content Include="TestData\3x4Block.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="TestData\barb.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestData\HorizontalMirror.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestData\Lenna256an.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

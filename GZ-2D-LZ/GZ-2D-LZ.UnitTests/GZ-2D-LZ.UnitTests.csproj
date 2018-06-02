@@ -61,6 +61,7 @@
     <None Include="TestData\Decoder\3x4Block_a.bmp.mat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="TestData\Decoder\HorizontalMirror.bmp.mat" />
     <None Include="TestData\Decoder\test_a.bmp.mat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -70,6 +71,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="TestData\Encoder\2PossibleMatchBlocks.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestData\Encoder\HorizontalMirror.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="TestData\Encoder\VerticalMirror.bmp">

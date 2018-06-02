@@ -26,6 +26,7 @@ namespace GZ_2D_LZ.UnitTests
         public string One3X4MatchBlockBmpPath = Environment.CurrentDirectory + $"{basePath}3x4Block.bmp";
         public string One6X3MatchBlockBmpPath = Environment.CurrentDirectory + $"{basePath}6x3Block.bmp";
         public string VerticalMirrorBmpPath = Environment.CurrentDirectory + $"{basePath}VerticalMirror.bmp";
+        public string HorizontalMirrorBmpPath = Environment.CurrentDirectory + $"{basePath}HorizontalMirror.bmp";
 
         private IGz2DlzEncoderFacade _gz2DlzEncoderFacade;
 
@@ -185,7 +186,7 @@ namespace GZ_2D_LZ.UnitTests
             _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
             _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
             var originalImage = _encoder.WorkImage;
-            MarkFirstRowAsPredicted(originalImage);
+            MarkFirst5RowsAsPredicted(originalImage);
             var encoderPosition = new PixelLocation(5, 5);
             var rootPosition = new PixelLocation(1, 1);
 
@@ -196,22 +197,64 @@ namespace GZ_2D_LZ.UnitTests
             Assert.AreEqual(16, bestMatch.Size);
         }
 
-        private void MarkFirstRowAsPredicted(byte[,] originalImage)
+        [TestMethod]
+        public void LocateTheBestAproximateMatchForGivenRootPixelGivesTheExpectedBestMatchVerticalMirror()
         {
-            var width = originalImage.GetLength(0);
+            _gz2DlzEncoderFacade.InputFilePath = VerticalMirrorBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
+            _gz2DlzEncoderFacade.GeometricTransformation = (int) G2_2D_LZ.Helpers.Constants.GeometricTransformation.VerticalMirror;
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
+            var originalImage = _encoder.WorkImage;
+            MarkFirst5RowsAsPredicted(originalImage);
+            var encoderPosition = new PixelLocation(5, 6);
+            var rootPosition = new PixelLocation(5, 2);
 
-            for (int i = 0; i < width; i++)
+            BestMatch bestMatch = _encoder.LocateTheBestAproximateMatchForGivenRootPixel(encoderPosition, rootPosition);
+
+            Assert.AreEqual(2, bestMatch.Height);
+            Assert.AreEqual(3, bestMatch.Width);
+            Assert.AreEqual(6, bestMatch.Size);
+        }
+
+        [TestMethod]
+        public void LocateTheBestAproximateMatchForGivenRootPixelGivesTheExpectedBestMatchHorizontalMirror()
+        {
+            _gz2DlzEncoderFacade.InputFilePath = HorizontalMirrorBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
+            _gz2DlzEncoderFacade.GeometricTransformation = (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.HorizontalMirror;
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
+            _encoder.WorkImage = new byte[10, 12]
+            {  //0      1      2      3      4      5      6      7      8      9      10    11
+                { 50,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0}, //0
+                {  0,   200,     0,     0,     0,    50,   100,   100,     0,     0,    50,    50}, //1
+                {  0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0}, //2
+                {  0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0}, //3
+                {  0,   150,   150,   150,     0,     0,     0,     0,     0,     0,     0,     0}, //4
+                {  0,   250,   250,   250,     0,     0,     0,     0,   150,     0,     0,     0}, //5
+                {100,   250,   250,   250,     0,   250,   250,   250,   150,     0,     0,     0}, //6
+                {  0,   100,     0,     0,     0,   250,   250,   250,     0,     0,     0,     0}, //7
+                {  0,     0,     0,     0,     0,   150,   150,   150,     0,     0,     0,     0}, //8
+                {  0,     0,     0,     0,     0,   200,   200,   200,     0,     0,     0,     0}  //9
+            };
+            var originalImage = _encoder.WorkImage;
+            MarkFirst5RowsAsPredicted(originalImage);
+            for (int x = 0; x < 4; x++)
             {
-                _encoder.IsPixelEncoded[0, i] = true;
-                _encoder.IsPixelEncoded[1, i] = true;
-                _encoder.IsPixelEncoded[2, i] = true;
-                _encoder.IsPixelEncoded[3, i] = true;
-                _encoder.IsPixelEncoded[4, i] = true;
+                _encoder.IsPixelEncoded[5, x] = true;
+                _encoder.IsPixelEncoded[6, x] = true;
             }
-            for (int i = 0; i < 5; i++)
-            {
-                _encoder.IsPixelEncoded[0, i] = true;
-            }
+            var encoderPosition = new PixelLocation(5, 6);
+            var rootPosition = new PixelLocation(1, 6);
+
+            BestMatch bestMatch = _encoder.LocateTheBestAproximateMatchForGivenRootPixel(encoderPosition, rootPosition);
+
+            Assert.AreEqual(3, bestMatch.Height);
+            Assert.AreEqual(3, bestMatch.Width);
+            Assert.AreEqual(9, bestMatch.Size);
         }
 
         [TestMethod]
@@ -257,8 +300,6 @@ namespace GZ_2D_LZ.UnitTests
 
             Assert.IsNull(_encoder.MatchLocation[1, 0]);
         }
-
-
 
         [TestMethod]
         public void EncodeFindsTheExpectedBlockMatchForIdentityTransform()
@@ -317,11 +358,44 @@ namespace GZ_2D_LZ.UnitTests
                 {  0,     0,     0,     0,     0,   150,   150,   150,     0,     0,     0,     0}, //8
                 {  0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0}  //9
             };*/
+
             _encoder.Encode();
-            _encoder.WriteMatrixToFileAsText();
+
             Assert.IsNotNull(_encoder.MatchLocation[6, 5]);
             Assert.AreEqual(5, _encoder.MatchLocation[6, 5].X);
             Assert.AreEqual(2, _encoder.MatchLocation[6, 5].Y);
+        }
+
+        [TestMethod]
+        public void EncodeFindsTheExpectedBlockMatchForHorizontalMirrorTransform()
+        {
+            _gz2DlzEncoderFacade.InputFilePath = HorizontalMirrorBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
+            _gz2DlzEncoderFacade.GeometricTransformation = (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.HorizontalMirror;
+
+            G2_2D_LZ.Helpers.Constants.MinMatchSize = 5;
+
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
+            /*_encoder.WorkImage = new byte[10, 12]
+            {  //0      1      2      3      4      5      6      7      8      9      10    11
+                { 50,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0}, //0
+                {  0,   200,     0,     0,     0,    50,   100,   100,     0,     0,    50,    50}, //1
+                {  0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0}, //2
+                {  0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0}, //3
+                {  0,   150,   150,   150,     0,     0,     0,     0,     0,     0,     0,     0}, //4
+                {  0,   250,   250,   250,     0,     0,     0,     0,   150,     0,     0,     0}, //5
+                {100,   250,   250,   250,     0,   250,   250,   250,   150,     0,     0,     0}, //6
+                {  0,   100,     0,     0,     0,   250,   250,   250,     0,     0,     0,     0}, //7
+                {  0,     0,     0,     0,     0,   150,   150,   150,     0,     0,     0,     0}, //8
+                {  0,     0,     0,     0,     0,   200,   200,   200,     0,     0,     0,     0}  //9
+            };*/
+
+            _encoder.Encode();
+            Assert.IsNotNull(_encoder.MatchLocation[6, 5]);
+            Assert.AreEqual(1, _encoder.MatchLocation[6, 5].X);
+            Assert.AreEqual(6, _encoder.MatchLocation[6, 5].Y);
         }
 
         [TestMethod]
@@ -370,6 +444,53 @@ namespace GZ_2D_LZ.UnitTests
             Assert.IsNull(_encoder.MatchLocation[6, 5]);
         }
 
+
+        [TestMethod]
+        public void EncodeForHorizontalMirror()
+        {
+            _gz2DlzEncoderFacade.InputFilePath = One3X4MatchBlockBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
+            _gz2DlzEncoderFacade.GeometricTransformation = (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.HorizontalMirror;
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
+
+            _encoder.Encode();
+            _encoder.WriteMatrixToFileAsText();
+
+            Assert.IsNull(_encoder.MatchLocation[6, 5]);
+        }
+
+        [TestMethod]
+        public void EncodeForHorizontalMirror2()
+        {
+            _gz2DlzEncoderFacade.InputFilePath = One6X3MatchBlockBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
+            _gz2DlzEncoderFacade.GeometricTransformation = (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.HorizontalMirror;
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
+
+            _encoder.Encode();
+
+            Assert.IsNull(_encoder.MatchLocation[6, 5]);
+        }
+
+        [TestMethod]
+        public void EncodeForHorizontalMirror3()
+        {
+            _gz2DlzEncoderFacade.InputFilePath = TwoPossibleMatchBlocksBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
+            _gz2DlzEncoderFacade.GeometricTransformation = (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.HorizontalMirror;
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
+
+            _encoder.Encode();
+
+            Assert.IsNull(_encoder.MatchLocation[6, 5]);
+        }
+
         private void AssertEachValue<T>(T[,] expectedValues, T[,] actualValues)
         {
             int height = actualValues.GetLength(0);
@@ -392,6 +513,20 @@ namespace GZ_2D_LZ.UnitTests
             _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
             _gz2DlzEncoderFacade.GeometricTransformation =
                 (int) G2_2D_LZ.Helpers.Constants.GeometricTransformation.Identity;
+        }
+
+        private void MarkFirst5RowsAsPredicted(byte[,] originalImage)
+        {
+            var width = originalImage.GetLength(0);
+
+            for (int x = 0; x < width; x++)
+            {
+                _encoder.IsPixelEncoded[0, x] = true;
+                _encoder.IsPixelEncoded[1, x] = true;
+                _encoder.IsPixelEncoded[2, x] = true;
+                _encoder.IsPixelEncoded[3, x] = true;
+                _encoder.IsPixelEncoded[4, x] = true;
+            }
         }
 
         private void DisplayImageToOutputWindow<T>(T[,] bytes)

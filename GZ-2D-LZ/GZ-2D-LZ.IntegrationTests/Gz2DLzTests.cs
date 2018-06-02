@@ -28,8 +28,10 @@ namespace GZ_2D_LZ.IntegrationTests
         private string _testBmpPath = "test.bmp";
         private string _one3X4MatchBlockBmpPath = "3x4Block.bmp";
         private string verticalMirrorBmp = "VerticalMirror.bmp";
+        private string HorizontalMirrorBmp = "HorizontalMirror.bmp";
         private string _2PossibleMatchBlocksBmpPath = "2PossibleMatchBlocks.bmp";
         private string _lenna256anBmpPath = "Lenna256an.bmp";
+        private string barbBmpPath = "Lenna256an.bmp";
         private string _peppers512 = "Peppers512an.BMP ";
 
         private IGz2DlzEncoderFacade _gz2DlzEncoderFacade;
@@ -46,8 +48,10 @@ namespace GZ_2D_LZ.IntegrationTests
             _testBmpPath = _basePath + _testBmpPath;
             _one3X4MatchBlockBmpPath = _basePath + _one3X4MatchBlockBmpPath;
             verticalMirrorBmp = _basePath + verticalMirrorBmp;
+            HorizontalMirrorBmp = _basePath + HorizontalMirrorBmp;
             _2PossibleMatchBlocksBmpPath = _basePath + _2PossibleMatchBlocksBmpPath;
             _lenna256anBmpPath = _basePath + _lenna256anBmpPath;
+            barbBmpPath = _basePath + barbBmpPath;
             _peppers512 = _basePath + _peppers512;
 
             _gz2DlzEncoderFacade = new Gz2DlzEncoderFacade();
@@ -247,12 +251,39 @@ namespace GZ_2D_LZ.IntegrationTests
             gz2DlzDecoderFacade.Archiver = new Paq6V2Archiver();
             gz2DlzDecoderFacade.GeometricTransformation = (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.VerticalMirror;
             _decoder = new Gz2DlzDecoder(gz2DlzDecoderFacade);
-
+            G2_2D_LZ.Helpers.Constants.MinMatchSize = 5;
             _encoder.Encode();
             _decoder.Decode();
 
             var workImage = _decoder.WorkImage;
             CompareValueWithPixelFromBmp(verticalMirrorBmp, workImage);
+        }
+
+        [TestMethod]
+        public void EncodeAndDecodeWithAPredictorHorizontalMirrorBmpResultsTheSamePixels()
+        {
+            _gz2DlzEncoderFacade.InputFilePath = HorizontalMirrorBmp;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
+            _gz2DlzEncoderFacade.GeometricTransformation = (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.HorizontalMirror;
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
+
+            var inputFilePath = HorizontalMirrorBmp + G2_2D_LZ.Helpers.Constants.Folder + Constants.Paq6Extension;
+            gz2DlzDecoderFacade = new Gz2DlzDecoderFacade();
+            gz2DlzDecoderFacade.InputFilePath = inputFilePath;
+            gz2DlzDecoderFacade.AbstractPredictor = new ABasedPredictor();
+            gz2DlzDecoderFacade.Archiver = new Paq6V2Archiver();
+            gz2DlzDecoderFacade.GeometricTransformation = (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.HorizontalMirror;
+            _decoder = new Gz2DlzDecoder(gz2DlzDecoderFacade);
+            G2_2D_LZ.Helpers.Constants.MinMatchSize = 5;
+
+            _encoder.Encode();
+            _encoder.WriteMatrixToFileAsText();
+            _decoder.Decode();
+
+            var workImage = _decoder.WorkImage;
+            CompareValueWithPixelFromBmp(HorizontalMirrorBmp, workImage);
         }
 
         [TestMethod]
@@ -270,7 +301,6 @@ namespace GZ_2D_LZ.IntegrationTests
             gz2DlzDecoderFacade.InputFilePath = inputFilePath;
             gz2DlzDecoderFacade.AbstractPredictor = new ABasedPredictor();
             gz2DlzDecoderFacade.Archiver = new Paq6V2Archiver();
-            gz2DlzDecoderFacade.GeometricTransformation = (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.All;
             _decoder = new Gz2DlzDecoder(gz2DlzDecoderFacade);
 
             _encoder.Encode();
@@ -304,6 +334,58 @@ namespace GZ_2D_LZ.IntegrationTests
         }
 
         [TestMethod]
+        public void EncodeAndDecodeWithAPredictor2PossibleMatchBlockskBmpResultsTheSamePixelsForVerticalGeometricTransformations()
+        {
+            _gz2DlzEncoderFacade.InputFilePath = _2PossibleMatchBlocksBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
+            _gz2DlzEncoderFacade.GeometricTransformation = (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.VerticalMirror;
+
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
+
+            var inputFilePath = _2PossibleMatchBlocksBmpPath + G2_2D_LZ.Helpers.Constants.Folder + Constants.Paq6Extension;
+            gz2DlzDecoderFacade = new Gz2DlzDecoderFacade();
+            gz2DlzDecoderFacade.InputFilePath = inputFilePath;
+            gz2DlzDecoderFacade.AbstractPredictor = new ABasedPredictor();
+            gz2DlzDecoderFacade.Archiver = new Paq6V2Archiver();
+            gz2DlzDecoderFacade.GeometricTransformation = (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.VerticalMirror;
+            _decoder = new Gz2DlzDecoder(gz2DlzDecoderFacade);
+
+            _encoder.Encode();
+            _decoder.Decode();
+
+            var workImage = _decoder.WorkImage;
+            CompareValueWithPixelFromBmp(_2PossibleMatchBlocksBmpPath, workImage);
+        }
+
+        [TestMethod]
+        public void EncodeAndDecodeWithAPredictor2PossibleMatchBlockskBmpResultsTheSamePixelsForHorizontalGeometricTransformations()
+        {
+            _gz2DlzEncoderFacade.InputFilePath = _2PossibleMatchBlocksBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
+            _gz2DlzEncoderFacade.GeometricTransformation = (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.HorizontalMirror;
+
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
+
+            var inputFilePath = _2PossibleMatchBlocksBmpPath + G2_2D_LZ.Helpers.Constants.Folder + Constants.Paq6Extension;
+            gz2DlzDecoderFacade = new Gz2DlzDecoderFacade();
+            gz2DlzDecoderFacade.InputFilePath = inputFilePath;
+            gz2DlzDecoderFacade.AbstractPredictor = new ABasedPredictor();
+            gz2DlzDecoderFacade.Archiver = new Paq6V2Archiver();
+            gz2DlzDecoderFacade.GeometricTransformation = (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.HorizontalMirror;
+            _decoder = new Gz2DlzDecoder(gz2DlzDecoderFacade);
+
+            _encoder.Encode();
+            _decoder.Decode();
+
+            var workImage = _decoder.WorkImage;
+            CompareValueWithPixelFromBmp(_2PossibleMatchBlocksBmpPath, workImage);
+        }
+
+        [TestMethod]
         public void EncodeAndDecodeWithAPredictor2PossibleMatchBlockskBmpResultsTheSamePixelsAllGeometricTransformations()
         {
             _gz2DlzEncoderFacade.InputFilePath = _2PossibleMatchBlocksBmpPath;
@@ -319,7 +401,6 @@ namespace GZ_2D_LZ.IntegrationTests
             gz2DlzDecoderFacade.InputFilePath = inputFilePath;
             gz2DlzDecoderFacade.AbstractPredictor = new ABasedPredictor();
             gz2DlzDecoderFacade.Archiver = new Paq6V2Archiver();
-            gz2DlzDecoderFacade.GeometricTransformation = (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.All;
             _decoder = new Gz2DlzDecoder(gz2DlzDecoderFacade);
 
             _encoder.Encode();
@@ -353,13 +434,13 @@ namespace GZ_2D_LZ.IntegrationTests
         }
 
         [TestMethod]
-        public void EncodeAndDecodeWithAPredictorLenaBmpResultsTheSamePixelsAllGeometricTransformations()
+        public void EncodeAndDecodeWithAPredictorLenaBmpResultsTheSamePixelsVerticalGeometricTransformations()
         {
             _gz2DlzEncoderFacade.InputFilePath = _lenna256anBmpPath;
             _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
             _gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
             _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
-            _gz2DlzEncoderFacade.GeometricTransformation = (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.All;
+            _gz2DlzEncoderFacade.GeometricTransformation = (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.VerticalMirror;
             _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
 
             var inputFilePath = _lenna256anBmpPath + G2_2D_LZ.Helpers.Constants.Folder + Constants.Paq6Extension;
@@ -374,6 +455,77 @@ namespace GZ_2D_LZ.IntegrationTests
 
             var workImage = _decoder.WorkImage;
             CompareValueWithPixelFromBmp(_lenna256anBmpPath, workImage);
+        }
+
+        [TestMethod]
+        public void EncodeAndDecodeWithAPredictorLenaBmpResultsTheSamePixelsHorizontalGeometricTransformations()
+        {
+            _gz2DlzEncoderFacade.InputFilePath = _lenna256anBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
+            _gz2DlzEncoderFacade.GeometricTransformation = (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.HorizontalMirror;
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
+
+            var inputFilePath = _lenna256anBmpPath + G2_2D_LZ.Helpers.Constants.Folder + Constants.Paq6Extension;
+            gz2DlzDecoderFacade = new Gz2DlzDecoderFacade();
+            gz2DlzDecoderFacade.InputFilePath = inputFilePath;
+            gz2DlzDecoderFacade.AbstractPredictor = new ABasedPredictor();
+            gz2DlzDecoderFacade.Archiver = new Paq6V2Archiver();
+            _decoder = new Gz2DlzDecoder(gz2DlzDecoderFacade);
+
+            _encoder.Encode();
+            _decoder.Decode();
+
+            var workImage = _decoder.WorkImage;
+            CompareValueWithPixelFromBmp(_lenna256anBmpPath, workImage);
+        }
+
+        [TestMethod]
+        public void EncodeAndDecodeWithAPredictorLenaBmpResultsTheSamePixelsAllGeometricTransformations()
+        {
+            _gz2DlzEncoderFacade.InputFilePath = _lenna256anBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
+           // _gz2DlzEncoderFacade.GeometricTransformation = (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.All;
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
+
+            var inputFilePath = _lenna256anBmpPath + G2_2D_LZ.Helpers.Constants.Folder + Constants.Paq6Extension;
+            gz2DlzDecoderFacade = new Gz2DlzDecoderFacade();
+            gz2DlzDecoderFacade.InputFilePath = inputFilePath;
+            gz2DlzDecoderFacade.AbstractPredictor = new ABasedPredictor();
+            gz2DlzDecoderFacade.Archiver = new Paq6V2Archiver();
+            _decoder = new Gz2DlzDecoder(gz2DlzDecoderFacade);
+
+            _encoder.Encode();
+            _decoder.Decode();
+
+            var workImage = _decoder.WorkImage;
+            CompareValueWithPixelFromBmp(_lenna256anBmpPath, workImage);
+        }
+        [TestMethod]
+        public void EncodeAndDecodeWithAPredictorBarbBmpResultsTheSamePixelsAllGeometricTransformations()
+        {
+            _gz2DlzEncoderFacade.InputFilePath = barbBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
+            // _gz2DlzEncoderFacade.GeometricTransformation = (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.All;
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
+
+            var inputFilePath = barbBmpPath + G2_2D_LZ.Helpers.Constants.Folder + Constants.Paq6Extension;
+            gz2DlzDecoderFacade = new Gz2DlzDecoderFacade();
+            gz2DlzDecoderFacade.InputFilePath = inputFilePath;
+            gz2DlzDecoderFacade.AbstractPredictor = new ABasedPredictor();
+            gz2DlzDecoderFacade.Archiver = new Paq6V2Archiver();
+            _decoder = new Gz2DlzDecoder(gz2DlzDecoderFacade);
+
+            _encoder.Encode();
+            _decoder.Decode();
+
+            var workImage = _decoder.WorkImage;
+            CompareValueWithPixelFromBmp(barbBmpPath, workImage);
         }
 
         [TestMethod]
@@ -466,6 +618,29 @@ namespace GZ_2D_LZ.IntegrationTests
 
             var workImage = _decoder.WorkImage;
             CompareValueWithPixelFromBmp(_lenna256anBmpPath, workImage);
+        }
+
+        [TestMethod]
+        public void EncodeAndDecodeWithCalicPredictorBarbBmpResultsTheSamePixels()
+        {
+            _gz2DlzEncoderFacade.InputFilePath = barbBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new CalicPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
+
+            var inputFilePath = barbBmpPath + G2_2D_LZ.Helpers.Constants.Folder + Constants.Paq6Extension;
+            gz2DlzDecoderFacade = new Gz2DlzDecoderFacade();
+            gz2DlzDecoderFacade.InputFilePath = inputFilePath;
+            gz2DlzDecoderFacade.AbstractPredictor = new CalicPredictor();
+            gz2DlzDecoderFacade.Archiver = new Paq6V2Archiver();
+            _decoder = new Gz2DlzDecoder(gz2DlzDecoderFacade);
+
+            _encoder.Encode();
+            _decoder.Decode();
+
+            var workImage = _decoder.WorkImage;
+            CompareValueWithPixelFromBmp(barbBmpPath, workImage);
         }
 
         [TestMethod]

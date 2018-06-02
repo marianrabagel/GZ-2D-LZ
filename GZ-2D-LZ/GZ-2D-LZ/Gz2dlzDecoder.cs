@@ -301,7 +301,6 @@ namespace G2_2D_LZ
             {
                 for (int xx = 0; xx < matchDimension.Width; xx++)
                 {
-                    //var nextX = x + xx;
                     if (GeometricTransformation[y, x] == (int) Constants.GeometricTransformation.Identity)
                     {
                         _gz2DlzDecoderFacade.GeometricTransformation = (int) Constants.GeometricTransformation.Identity;
@@ -310,18 +309,35 @@ namespace G2_2D_LZ
                     {
                         _gz2DlzDecoderFacade.GeometricTransformation = (int)Constants.GeometricTransformation.VerticalMirror;
                     }
+                    if (GeometricTransformation[y, x] == (int)Constants.GeometricTransformation.HorizontalMirror)
+                    {
+                        _gz2DlzDecoderFacade.GeometricTransformation = (int)Constants.GeometricTransformation.HorizontalMirror;
+                    }
 
-                    var nextX = GetNextRootX(x, xx);
-                    WorkImage[y + yy, nextX] =
-                        (byte) (WorkImage[matchLocation.Y + yy, matchLocation.X + xx] + Residual[y + yy, nextX]);
-                    IsPixelEncoded[y + yy, nextX] = false;
+                    var nextX = x + xx;
+                    var nextY = y + yy;
+                    var nextRootY = GetNextRootY(matchLocation.Y, yy);
+                    var nextRootX = GetNextRootX(matchLocation.X, xx);
+                    WorkImage[nextY, nextX] = (byte) (WorkImage[nextRootY, nextRootX] + Residual[nextY, nextX]);
+                    IsPixelEncoded[nextY, nextX] = false;
                 }
             }
         }
 
+        private int GetNextRootY(int y, int rowOffset)
+        {
+            if (_gz2DlzDecoderFacade.GeometricTransformation == (int)Constants.GeometricTransformation.HorizontalMirror)
+            {
+                return y - rowOffset;
+            }
+
+            return y + rowOffset;
+        }
+
         private int GetNextRootX(int x, int colOffset)
         {
-            if (_gz2DlzDecoderFacade.GeometricTransformation == (int)Constants.GeometricTransformation.Identity)
+            if (_gz2DlzDecoderFacade.GeometricTransformation == (int)Constants.GeometricTransformation.Identity
+                || _gz2DlzDecoderFacade.GeometricTransformation == (int)Constants.GeometricTransformation.HorizontalMirror)
             {
                 return x + colOffset;
             }
