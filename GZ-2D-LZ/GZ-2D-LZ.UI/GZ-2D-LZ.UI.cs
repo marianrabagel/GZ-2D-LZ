@@ -50,7 +50,7 @@ namespace GZ_2D_LZ.UI
             _gz2DlzEncoderFacade.ImageReader = new BmpImageReader();
             _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
             var _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
-            _encoder.Encode();
+            _encoder.Encode((int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.Identity);
         }
 
         private void LoadArchiveBtn_Click(object sender, System.EventArgs e)
@@ -103,9 +103,9 @@ namespace GZ_2D_LZ.UI
                     _gz2DlzEncoderFacade.AbstractPredictor = new CalicPredictor();
                     _gz2DlzEncoderFacade.ImageReader = new BmpImageReader();
                     _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
-                    _gz2DlzEncoderFacade.GeometricTransformation = (int) G2_2D_LZ.Helpers.Constants.GeometricTransformation.HorizontalMirror;
                     var _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
-                    _encoder.Encode();
+                    //_encoder.Encode((int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.Identity);
+                    _encoder.Encode(null);
                     var archivePath = _encoder.ArchivePath;
                     var compressedSize = new FileInfo(archivePath).Length;
 

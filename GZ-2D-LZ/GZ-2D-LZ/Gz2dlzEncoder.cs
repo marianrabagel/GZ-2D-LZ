@@ -37,12 +37,12 @@ namespace G2_2D_LZ
             CopyOriginalImageWorkImage();
         }
         
-        public void Encode()
+        public void Encode(int? specificGeometricTransform)
         {
             _gz2DlzEncoderFacade.AbstractPredictor.SetOriginalMatrix(WorkImage);
             _gz2DlzEncoderFacade.AbstractPredictor.InitializePredictionError((int) _height, (int)_width);
             PredictFirstRow();
-            EncodeWorkImage();
+            EncodeWorkImage(specificGeometricTransform);
             Directory.CreateDirectory(_gz2DlzEncoderFacade.InputFilePath + Constants.Folder);
             WriteResultingMatricesToIndividualFiles();
             ArchivePath = _gz2DlzEncoderFacade.Archiver.Compress(_gz2DlzEncoderFacade.InputFilePath + Constants.Folder, null, 9);
@@ -188,7 +188,7 @@ namespace G2_2D_LZ
             bitWriter.WriteNBits(Convert.ToUInt32(_height), Constants.NumberOfBitsForSize);
         }
         
-        private void EncodeWorkImage()
+        private void EncodeWorkImage(int? specificGeometricTransform)
         {
             for (int y = 1; y < _height; y++)
             {
@@ -199,66 +199,62 @@ namespace G2_2D_LZ
                         PixelLocation rootPoint;
                         var encoderPoint = new PixelLocation(x, y);
                         BestMatch bestMatch;
+                        int geometricTransformation;
 
-                        if (_gz2DlzEncoderFacade.GeometricTransformation == (int) Constants.GeometricTransformation.All)
+                        if (specificGeometricTransform == null)
                         {
-                            _gz2DlzEncoderFacade.GeometricTransformation =
-                                (int) Constants.GeometricTransformation.Identity;
-                            var rootPointForIdentity =
-                                new PixelLocation(GetRootX(encoderPoint.X), GetRootY(encoderPoint.Y));
-                            var bestMatchIdentity =
-                                LocateTheBestAproximateMatchForGivenRootPixel(encoderPoint, rootPointForIdentity);
+                            geometricTransformation = (int) Constants.GeometricTransformation.Identity;
+                            var rootPointForIdentity = new PixelLocation(GetRootX(encoderPoint.X, geometricTransformation), GetRootY(encoderPoint.Y, geometricTransformation));
+                            var bestMatchIdentity = LocateTheBestAproximateMatchForGivenRootPixel(encoderPoint, rootPointForIdentity, geometricTransformation);
 
-                            _gz2DlzEncoderFacade.GeometricTransformation =
-                                (int) Constants.GeometricTransformation.VerticalMirror;
+                            geometricTransformation = (int) Constants.GeometricTransformation.VerticalMirror;
                             var rootPointForVerticalMirror =
-                                new PixelLocation(GetRootX(encoderPoint.X), GetRootY(encoderPoint.Y));
+                                new PixelLocation(GetRootX(encoderPoint.X, geometricTransformation), GetRootY(encoderPoint.Y, geometricTransformation));
                             var bestMatchVerticalMirror =
-                                LocateTheBestAproximateMatchForGivenRootPixel(encoderPoint, rootPointForVerticalMirror);
+                                LocateTheBestAproximateMatchForGivenRootPixel(encoderPoint, rootPointForVerticalMirror, geometricTransformation);
 
-                            _gz2DlzEncoderFacade.GeometricTransformation =
+                            geometricTransformation =
                                 (int) Constants.GeometricTransformation.HorizontalMirror;
                             var rootPointForHorizontalMirror =
-                                new PixelLocation(GetRootX(encoderPoint.X), GetRootY(encoderPoint.Y));
+                                new PixelLocation(GetRootX(encoderPoint.X, geometricTransformation), GetRootY(encoderPoint.Y, geometricTransformation));
                             var bestMatchHorizontalMirror =
-                                LocateTheBestAproximateMatchForGivenRootPixel(encoderPoint, rootPointForVerticalMirror);
+                                LocateTheBestAproximateMatchForGivenRootPixel(encoderPoint, rootPointForVerticalMirror, geometricTransformation);
 
                             if (bestMatchIdentity.Size >= bestMatchVerticalMirror.Size)
                             {
                                 bestMatch = bestMatchIdentity;
-                                _gz2DlzEncoderFacade.GeometricTransformation =
+                                geometricTransformation =
                                     (int) Constants.GeometricTransformation.Identity;
                                 rootPoint = rootPointForIdentity;
                             }
                             else
                             {
                                 bestMatch = bestMatchVerticalMirror;
-                                _gz2DlzEncoderFacade.GeometricTransformation =
-                                    (int) Constants.GeometricTransformation.VerticalMirror;
+                                geometricTransformation = (int) Constants.GeometricTransformation.VerticalMirror;
                                 rootPoint = rootPointForVerticalMirror;
                             }
 
                             if (bestMatchHorizontalMirror.Size > bestMatch.Size)
                             {
                                 bestMatch = bestMatchHorizontalMirror;
-                                _gz2DlzEncoderFacade.GeometricTransformation =
+                                geometricTransformation =
                                     (int) Constants.GeometricTransformation.HorizontalMirror;
                                 rootPoint = rootPointForHorizontalMirror;
                             }
                         }
                         else
                         {
-                            rootPoint = new PixelLocation(GetRootX(x), GetRootY(y));
-                            bestMatch = LocateTheBestAproximateMatchForGivenRootPixel(encoderPoint, rootPoint);
+                            geometricTransformation = (int) specificGeometricTransform;
+                            rootPoint = new PixelLocation(GetRootX(x, geometricTransformation), GetRootY(y, geometricTransformation));
+                            bestMatch = LocateTheBestAproximateMatchForGivenRootPixel(encoderPoint, rootPoint, geometricTransformation);
                         }
-
                         if (bestMatch.Size > Constants.MinMatchSize)
                         {
                             IsMatchFound[y, x] = true;
                             MatchDimension[y, x] = new Dimension(bestMatch.Width, bestMatch.Height);
                             MatchLocation[y, x] = rootPoint;
-                            GeometricTransformation[y, x] = _gz2DlzEncoderFacade.GeometricTransformation;
-                            SetResidualAndIsPixelEncoded(x, y);
+                            GeometricTransformation[y, x] = geometricTransformation;
+                            SetResidualAndIsPixelEncoded(x, y, geometricTransformation);
                         }
                         else
                         {
@@ -271,7 +267,7 @@ namespace G2_2D_LZ
             }
         }
 
-        public BestMatch LocateTheBestAproximateMatchForGivenRootPixel(PixelLocation encoderPoint, PixelLocation rootPoint)
+        public BestMatch LocateTheBestAproximateMatchForGivenRootPixel(PixelLocation encoderPoint, PixelLocation rootPoint, int geometricTransformation)
         {
             BestMatch bestMatch = new BestMatch();
             int rowOffset = 0;
@@ -279,13 +275,13 @@ namespace G2_2D_LZ
 
             do
             {
-                int colOffset = CalculateTheWidthOfTheMatch(encoderPoint, rowOffset, rootPoint, widthOfTheMatchInThePreviousRow);
+                int colOffset = CalculateTheWidthOfTheMatch(encoderPoint, rowOffset, rootPoint, widthOfTheMatchInThePreviousRow, geometricTransformation);
                 widthOfTheMatchInThePreviousRow = colOffset;
                 rowOffset++;
 
                 var matchSize = widthOfTheMatchInThePreviousRow * rowOffset;
                 var blockDimensions = new Dimension(widthOfTheMatchInThePreviousRow, rowOffset);
-                var matchMse = GetMse(encoderPoint, rootPoint, blockDimensions);
+                var matchMse = GetMse(encoderPoint, rootPoint, blockDimensions, geometricTransformation);
 
                 if (matchSize >= bestMatch.Size && matchMse <= Constants.MaxMse)
                 {
@@ -299,10 +295,10 @@ namespace G2_2D_LZ
         }
 
         private int CalculateTheWidthOfTheMatch(PixelLocation encoderPoint, int rowOffset,
-            PixelLocation rootPoint, int widthOfTheMatchInThePreviousRow)
+            PixelLocation rootPoint, int widthOfTheMatchInThePreviousRow, int geometricTransformation)
         {
             int colOffset = 0;
-            var nextRootY = GetNextRootY(rootPoint.Y, rowOffset);
+            var nextRootY = GetNextRootY(rootPoint.Y, rowOffset, geometricTransformation);
 
             if (nextRootY < 0)
             {
@@ -329,7 +325,7 @@ namespace G2_2D_LZ
                     else
                     {
                         var pixelToBeEncoded = WorkImage[nextToBeEncoded.Y, nextToBeEncoded.X];
-                        var x = GetNextRootX(nextRootPoint.X, colOffset);
+                        var x = GetNextRootX(nextRootPoint.X, colOffset, geometricTransformation);
 
                         if (x < 0)
                         {
@@ -354,9 +350,9 @@ namespace G2_2D_LZ
             return colOffset;
         }
 
-        private int GetNextRootY(int y, int rowOffset)
+        private int GetNextRootY(int y, int rowOffset, int geometricTransformation)
         {
-            if(_gz2DlzEncoderFacade.GeometricTransformation == (int)Constants.GeometricTransformation.HorizontalMirror)
+            if(geometricTransformation == (int)Constants.GeometricTransformation.HorizontalMirror)
             {
                 return y - rowOffset;
             }
@@ -364,9 +360,9 @@ namespace G2_2D_LZ
             return y + rowOffset;
         }
 
-        private int GetNextRootX(int x, int colOffset)
+        private int GetNextRootX(int x, int colOffset, int geometricTransformation)
         {
-            if (_gz2DlzEncoderFacade.GeometricTransformation == (int) Constants.GeometricTransformation.VerticalMirror)
+            if (geometricTransformation == (int) Constants.GeometricTransformation.VerticalMirror)
             {
                 return x - colOffset;
             }
@@ -403,7 +399,7 @@ namespace G2_2D_LZ
             }
         }
 
-        private void SetResidualAndIsPixelEncoded(int encoderX, int encoderY)
+        private void SetResidualAndIsPixelEncoded(int encoderX, int encoderY, int geometricTransformation)
         {
             var matchDimension = MatchDimension[encoderY, encoderX];
             var matchLocation = MatchLocation[encoderY, encoderX];
@@ -412,8 +408,9 @@ namespace G2_2D_LZ
             {
                 for (int xx = 0; xx < matchDimension.Width; xx++)
                 {
-                    var nextX = GetNextRootX(matchLocation.X, xx);
-                    var nextY = GetNextRootY(matchLocation.Y, yy);
+                    var nextX = GetNextRootX(matchLocation.X, xx, geometricTransformation);
+                    var nextY = GetNextRootY(matchLocation.Y, yy, geometricTransformation);
+                    
                     Residual[encoderY + yy, encoderX + xx] = WorkImage[encoderY + yy, encoderX + xx] -
                                                      WorkImage[nextY, nextX];
                     IsPixelEncoded[encoderY + yy, encoderX + xx] = true;
@@ -421,9 +418,9 @@ namespace G2_2D_LZ
             }
         }
 
-        private int GetRootY(int y)
+        private int GetRootY(int y, int geometricTransformation)
         {
-            if (_gz2DlzEncoderFacade.GeometricTransformation == (int) Constants.GeometricTransformation.HorizontalMirror)
+            if (geometricTransformation == (int) Constants.GeometricTransformation.HorizontalMirror)
             {
                 return y;
             }
@@ -438,10 +435,9 @@ namespace G2_2D_LZ
             return rootY;
         }
 
-        private int GetRootX(int x)
+        private int GetRootX(int x, int geometricTransformation)
         {
-
-            if (_gz2DlzEncoderFacade.GeometricTransformation == (int) Constants.GeometricTransformation.VerticalMirror)
+            if (geometricTransformation == (int) Constants.GeometricTransformation.VerticalMirror)
             {
                 return x;
             }
@@ -456,7 +452,7 @@ namespace G2_2D_LZ
             return rootX;
         }
 
-        private double GetMse(PixelLocation encoderPoint, PixelLocation matchedPoint, Dimension blockDimension)
+        private double GetMse(PixelLocation encoderPoint, PixelLocation matchedPoint, Dimension blockDimension, int geometricTransformation)
         {
             int sum = 0;
 
@@ -464,8 +460,14 @@ namespace G2_2D_LZ
             {
                 for (int xx = 0; xx < blockDimension.Width; xx++)
                 {
-                    var matchedPointX = GetNextRootX(matchedPoint.X, xx);
-                    var matchedPointY = GetNextRootY(matchedPoint.Y, yy);
+                    var matchedPointX = GetNextRootX(matchedPoint.X, xx, geometricTransformation);
+                    var matchedPointY = GetNextRootY(matchedPoint.Y, yy, geometricTransformation);
+
+                    if (matchedPointX < 0)
+                    {
+                        break;
+                    }
+
                     sum += Convert.ToInt32(Math.Pow(WorkImage[encoderPoint.Y + yy, encoderPoint.X + xx] -
                                                     WorkImage[matchedPointY, matchedPointX], 2));
                 }

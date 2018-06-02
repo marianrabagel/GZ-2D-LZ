@@ -10,6 +10,6 @@ namespace G2_2D_LZ.Facades
         public AbstractPredictor AbstractPredictor { get; set; }
         public IImageReader ImageReader { get; set; }
         public IArchiver Archiver { get; set; }
-        public int GeometricTransformation { get; set; }
+        //public int GeometricTransformation { get; set; }
     }
 }
