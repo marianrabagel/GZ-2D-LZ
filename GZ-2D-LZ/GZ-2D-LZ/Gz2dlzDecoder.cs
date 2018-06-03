@@ -351,13 +351,13 @@ namespace G2_2D_LZ
 
         private void ReconstructWithPredictonNoMatchBlock(int y, int x)
         {
-            for (int i = 0; i < Constants.NoMatchBlockHeight; i++)
+            for (int yy = 0; yy < Constants.NoMatchBlockHeight; yy++)
             {
-                for (int j = 0; j < Constants.NoMatchBlockWidth; j++)
+                for (int xx = 0; xx < Constants.NoMatchBlockWidth; xx++)
                 {
-                    if (y + i < _height && x + j < _width)
+                    if (y + yy < _height && x + xx < _width)
                     {
-                        WorkImage[y + i, x + j] = (byte) (_gz2DlzDecoderFacade.AbstractPredictor.GetPredictionValue(x + j, y + i) + _gz2DlzDecoderFacade.AbstractPredictor.PredictionError[y + i, x + j]);
+                        WorkImage[y + yy, x + xx] = (byte) (_gz2DlzDecoderFacade.AbstractPredictor.GetPredictionValue(x + xx, y + yy) + _gz2DlzDecoderFacade.AbstractPredictor.PredictionError[y + yy, x + xx]);
                     }
                 }
             }

@@ -208,23 +208,17 @@ namespace G2_2D_LZ
                             var bestMatchIdentity = LocateTheBestAproximateMatchForGivenRootPixel(encoderPoint, rootPointForIdentity, geometricTransformation);
 
                             geometricTransformation = (int) Constants.GeometricTransformation.VerticalMirror;
-                            var rootPointForVerticalMirror =
-                                new PixelLocation(GetRootX(encoderPoint.X, geometricTransformation), GetRootY(encoderPoint.Y, geometricTransformation));
-                            var bestMatchVerticalMirror =
-                                LocateTheBestAproximateMatchForGivenRootPixel(encoderPoint, rootPointForVerticalMirror, geometricTransformation);
+                            var rootPointForVerticalMirror = new PixelLocation(GetRootX(encoderPoint.X, geometricTransformation), GetRootY(encoderPoint.Y, geometricTransformation));
+                            var bestMatchVerticalMirror = LocateTheBestAproximateMatchForGivenRootPixel(encoderPoint, rootPointForVerticalMirror, geometricTransformation);
 
-                            geometricTransformation =
-                                (int) Constants.GeometricTransformation.HorizontalMirror;
-                            var rootPointForHorizontalMirror =
-                                new PixelLocation(GetRootX(encoderPoint.X, geometricTransformation), GetRootY(encoderPoint.Y, geometricTransformation));
-                            var bestMatchHorizontalMirror =
-                                LocateTheBestAproximateMatchForGivenRootPixel(encoderPoint, rootPointForVerticalMirror, geometricTransformation);
+                            geometricTransformation = (int) Constants.GeometricTransformation.HorizontalMirror;
+                            var rootPointForHorizontalMirror = new PixelLocation(GetRootX(encoderPoint.X, geometricTransformation), GetRootY(encoderPoint.Y, geometricTransformation));
+                            var bestMatchHorizontalMirror = LocateTheBestAproximateMatchForGivenRootPixel(encoderPoint, rootPointForVerticalMirror, geometricTransformation);
 
                             if (bestMatchIdentity.Size >= bestMatchVerticalMirror.Size)
                             {
                                 bestMatch = bestMatchIdentity;
-                                geometricTransformation =
-                                    (int) Constants.GeometricTransformation.Identity;
+                                geometricTransformation = (int) Constants.GeometricTransformation.Identity;
                                 rootPoint = rootPointForIdentity;
                             }
                             else
@@ -237,8 +231,7 @@ namespace G2_2D_LZ
                             if (bestMatchHorizontalMirror.Size > bestMatch.Size)
                             {
                                 bestMatch = bestMatchHorizontalMirror;
-                                geometricTransformation =
-                                    (int) Constants.GeometricTransformation.HorizontalMirror;
+                                geometricTransformation = (int) Constants.GeometricTransformation.HorizontalMirror;
                                 rootPoint = rootPointForHorizontalMirror;
                             }
                         }
