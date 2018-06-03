@@ -304,8 +304,8 @@ namespace G2_2D_LZ
             {
                 return colOffset;
             }
-
-            var nextRootPoint = new PixelLocation(rootPoint.X + colOffset, nextRootY);
+            
+            var nextRootPoint = new PixelLocation(rootPoint.X, nextRootY);
 
             if (IsPixelEncoded[nextRootPoint.Y, nextRootPoint.X]
                 )//|| nextRootPoint.Y >= encoderPoint.Y && nextRootPoint.X >= encoderPoint.X)
@@ -314,34 +314,35 @@ namespace G2_2D_LZ
                 {
                     var nextToBeEncoded = new PixelLocation(encoderPoint.X + colOffset, encoderPoint.Y + rowOffset);
 
-                    if (IsEdge(nextToBeEncoded.X, nextToBeEncoded.Y))
+                    if (IsEdge(nextToBeEncoded.X, nextToBeEncoded.Y) 
+                        || IsPixelEncoded[nextToBeEncoded.Y, nextToBeEncoded.X])
                     {
                         break;
                     }
-                    if (IsPixelEncoded[nextToBeEncoded.Y, nextToBeEncoded.X])
+
+                    var pixelToBeEncoded = WorkImage[nextToBeEncoded.Y, nextToBeEncoded.X];
+                    var nextRootX = GetNextRootX(nextRootPoint.X, colOffset, geometricTransformation);
+
+                    if (nextRootX < 0)
+                    {
+                        break;
+                    }
+
+                    //1
+                    if (!IsPixelEncoded[nextRootPoint.Y, nextRootX])
+                    {
+                        break;
+                    }
+
+                    var possibleMatchPixel = WorkImage[nextRootPoint.Y, nextRootX];
+
+                    if (Math.Abs(pixelToBeEncoded - possibleMatchPixel) <= Constants.Threshold)
                     {
                         colOffset++;
                     }
                     else
                     {
-                        var pixelToBeEncoded = WorkImage[nextToBeEncoded.Y, nextToBeEncoded.X];
-                        var x = GetNextRootX(nextRootPoint.X, colOffset, geometricTransformation);
-
-                        if (x < 0)
-                        {
-                            break;
-                        }
-
-                        var possibleMatchPixel = WorkImage[nextRootPoint.Y, x];
-
-                        if (Math.Abs(pixelToBeEncoded - possibleMatchPixel) <= Constants.Threshold)
-                        {
-                            colOffset++;
-                        }
-                        else
-                        {
-                            break;
-                        }
+                        break;
                     }
 
                 } while (colOffset != widthOfTheMatchInThePreviousRow);
@@ -463,10 +464,10 @@ namespace G2_2D_LZ
                     var matchedPointX = GetNextRootX(matchedPoint.X, xx, geometricTransformation);
                     var matchedPointY = GetNextRootY(matchedPoint.Y, yy, geometricTransformation);
 
-                    if (matchedPointX < 0)
+                    /*if (matchedPointX < 0)
                     {
                         break;
-                    }
+                    }*/
 
                     sum += Convert.ToInt32(Math.Pow(WorkImage[encoderPoint.Y + yy, encoderPoint.X + xx] -
                                                     WorkImage[matchedPointY, matchedPointX], 2));

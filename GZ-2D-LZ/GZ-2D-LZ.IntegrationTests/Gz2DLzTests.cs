@@ -31,7 +31,8 @@ namespace GZ_2D_LZ.IntegrationTests
         private string _horizontalMirrorBmp = "HorizontalMirror.bmp";
         private string _2PossibleMatchBlocksBmpPath = "2PossibleMatchBlocks.bmp";
         private string _lenna256AnBmpPath = "Lenna256an.bmp";
-        private string _barbBmpPath = "Lenna256an.bmp";
+        private string _barbBmpPath = "barb.bmp";
+        private string franceBmpPath = "france.bmp";
         private string _peppers512 = "Peppers512an.BMP ";
 
         int? specificGeometricTransform = (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.Identity;
@@ -54,6 +55,7 @@ namespace GZ_2D_LZ.IntegrationTests
             _2PossibleMatchBlocksBmpPath = _basePath + _2PossibleMatchBlocksBmpPath;
             _lenna256AnBmpPath = _basePath + _lenna256AnBmpPath;
             _barbBmpPath = _basePath + _barbBmpPath;
+            franceBmpPath = _basePath + franceBmpPath;
             _peppers512 = _basePath + _peppers512;
         }
         
@@ -789,7 +791,7 @@ namespace GZ_2D_LZ.IntegrationTests
         }
 
         [TestMethod]
-        public void EncodeAndDecodeWithCalicPredictorBarbBmpResultsTheSamePixels()
+        public void EncodeAndDecodeWithCalicPredictorBarbBmpResultsTheSamePixelsAll()
         {
             _gz2DlzEncoderFacade = new Gz2DlzEncoderFacade();
             _gz2DlzEncoderFacade.InputFilePath = _barbBmpPath;
@@ -807,12 +809,39 @@ namespace GZ_2D_LZ.IntegrationTests
             };
             _decoder = new Gz2DlzDecoder(_gz2DlzDecoderFacade);
 
-            _encoder.Encode(specificGeometricTransform);
+            _encoder.Encode(null);
             _decoder.Decode();
 
             var workImage = _decoder.WorkImage;
             CompareValueWithPixelFromBmp(_barbBmpPath, workImage);
         }
+
+        [TestMethod]
+        public void EncodeAndDecodeWithCalicPredictorFranceBmpResultsTheSamePixelsAll()
+        {
+            _gz2DlzEncoderFacade = new Gz2DlzEncoderFacade();
+            _gz2DlzEncoderFacade.InputFilePath = franceBmpPath;
+            _gz2DlzEncoderFacade.AbstractPredictor = new CalicPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpImageReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
+
+            var inputFilePath = franceBmpPath + G2_2D_LZ.Helpers.Constants.Folder + Constants.Paq6Extension;
+            _gz2DlzDecoderFacade = new Gz2DlzDecoderFacade
+            {
+                InputFilePath = inputFilePath,
+                AbstractPredictor = new CalicPredictor(),
+                Archiver = new Paq6V2Archiver()
+            };
+            _decoder = new Gz2DlzDecoder(_gz2DlzDecoderFacade);
+
+            _encoder.Encode(null);
+            _decoder.Decode();
+
+            var workImage = _decoder.WorkImage;
+            CompareValueWithPixelFromBmp(franceBmpPath, workImage);
+        }
+
 
         [TestMethod]
         public void EncodeAndDecodeWithAPredictorAndBitOperationsTestBmpResultsTheSamePixels()
