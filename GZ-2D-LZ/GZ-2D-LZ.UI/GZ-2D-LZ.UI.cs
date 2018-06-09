@@ -9,6 +9,7 @@ using G2_2D_LZ.Facades;
 using G2_2D_LZ.Predictors;
 using G2_2D_LZ.Readers;
 using GZ_2D_LZ.Archiver;
+using Constants = G2_2D_LZ.Helpers.Constants;
 
 namespace GZ_2D_LZ.UI
 {
@@ -71,18 +72,23 @@ namespace GZ_2D_LZ.UI
             gz2DlzDecoderFacade.AbstractPredictor = new ABasedPredictor();
             gz2DlzDecoderFacade.Archiver = new Paq6V2Archiver();
             var _decoder = new Gz2DlzDecoder(gz2DlzDecoderFacade);
-            _decoder.Decode();
+            _decoder.Decode((int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.Identity);
         }
 
         private void LoadFolderBtn_Click(object sender, System.EventArgs e)
         {
             var dialogResult = folderBrowserDialog1.ShowDialog();
+            int? specificGeometricTransform = HasGeometricTransformation.Checked
+                ? (int?)null
+                : (int)Constants.GeometricTransformation.NoGeometricTransformation;
+
 
             if (dialogResult == DialogResult.OK)
             {
                 var folerPath = folderBrowserDialog1.SelectedPath;
                 var allFilesInFolder = Directory.GetFiles(folerPath, "*.bmp");
-                string content =$@"Paramters: 
+                string content =$@"Paramters:
+    WithGeometricTransformation: {specificGeometricTransform == null}
     SearchHeight : {G2_2D_LZ.Helpers.Constants.SearchHeight}
     SearchWidth : {G2_2D_LZ.Helpers.Constants.SearchWidth}
     Threshold : {G2_2D_LZ.Helpers.Constants.Threshold}
@@ -93,6 +99,7 @@ namespace GZ_2D_LZ.UI
 " + Environment.NewLine;
                 content += "name | uncompressed size | compressed size | compression ratio | bits per pixel" + Environment.NewLine;
 
+               
                 foreach (var filePath in allFilesInFolder)
                 {
                     string name = Path.GetFileName(filePath);
@@ -104,8 +111,8 @@ namespace GZ_2D_LZ.UI
                     _gz2DlzEncoderFacade.ImageReader = new BmpImageReader();
                     _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
                     var _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
-                    //_encoder.Encode((int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.Identity);
-                    _encoder.Encode(null);
+
+                    _encoder.Encode(specificGeometricTransform);
                     var archivePath = _encoder.ArchivePath;
                     var compressedSize = new FileInfo(archivePath).Length;
 

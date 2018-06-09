@@ -44,7 +44,7 @@ namespace G2_2D_LZ
             PredictFirstRow();
             EncodeWorkImage(specificGeometricTransform);
             Directory.CreateDirectory(_gz2DlzEncoderFacade.InputFilePath + Constants.Folder);
-            WriteResultingMatricesToIndividualFiles();
+            WriteResultingMatricesToIndividualFiles(specificGeometricTransform);
             ArchivePath = _gz2DlzEncoderFacade.Archiver.Compress(_gz2DlzEncoderFacade.InputFilePath + Constants.Folder, null, 9);
         }
 
@@ -64,7 +64,7 @@ namespace G2_2D_LZ
             txtWriter.WriteMatrixToFile(GeometricTransformation);
         }
 
-        public void WriteResultingMatricesToIndividualFiles()
+        public void WriteResultingMatricesToIndividualFiles(int? specificGeometricTransform)
         {
             //todo move this into its own class
             SaveIsMatchFoundToFile(_gz2DlzEncoderFacade.InputFilePath, nameof(IsMatchFound), IsMatchFound);
@@ -72,7 +72,12 @@ namespace G2_2D_LZ
             SaveMatchDimensionsToFile(_gz2DlzEncoderFacade.InputFilePath, nameof(MatchDimension), MatchDimension);
             ConvertToPositiveAndSaveMatrixToFile(_gz2DlzEncoderFacade.InputFilePath, nameof(Residual), Residual);
             ConvertToPositiveAndSaveMatrixToFile(_gz2DlzEncoderFacade.InputFilePath, nameof(_gz2DlzEncoderFacade.AbstractPredictor.PredictionError), _gz2DlzEncoderFacade.AbstractPredictor.PredictionError);
-            SaveIntMatrixToFile(_gz2DlzEncoderFacade.InputFilePath, nameof(GeometricTransformation), GeometricTransformation);
+
+            if (specificGeometricTransform != (int) Helpers.Constants.GeometricTransformation.NoGeometricTransformation)
+            {
+                SaveIntMatrixToFile(_gz2DlzEncoderFacade.InputFilePath, nameof(GeometricTransformation),
+                    GeometricTransformation);
+            }
         }
 
         private void SaveIntMatrixToFile(string filePath, string matrixName, int[,] matrix)
@@ -215,6 +220,10 @@ namespace G2_2D_LZ
                             var rootPointForHorizontalMirror = new PixelLocation(GetRootX(encoderPoint.X, geometricTransformation), GetRootY(encoderPoint.Y, geometricTransformation));
                             var bestMatchHorizontalMirror = LocateTheBestAproximateMatchForGivenRootPixel(encoderPoint, rootPointForVerticalMirror, geometricTransformation);
 
+                            geometricTransformation = (int)Constants.GeometricTransformation.FirstDiagonalMirror;
+                            var rootPointForFirstDiagonallMirror = new PixelLocation(GetRootX(encoderPoint.X, geometricTransformation), GetRootY(encoderPoint.Y, geometricTransformation));
+                            var bestMatchForFIrstDiagonalMirror = LocateTheBestAproximateMatchForGivenRootPixel(encoderPoint, rootPointForFirstDiagonallMirror, geometricTransformation);
+
                             if (bestMatchIdentity.Size >= bestMatchVerticalMirror.Size)
                             {
                                 bestMatch = bestMatchIdentity;
@@ -233,6 +242,12 @@ namespace G2_2D_LZ
                                 bestMatch = bestMatchHorizontalMirror;
                                 geometricTransformation = (int) Constants.GeometricTransformation.HorizontalMirror;
                                 rootPoint = rootPointForHorizontalMirror;
+                            }
+                            if (bestMatchForFIrstDiagonalMirror.Size > bestMatch.Size)
+                            {
+                                bestMatch = bestMatchForFIrstDiagonalMirror;
+                                geometricTransformation = (int)Constants.GeometricTransformation.FirstDiagonalMirror;
+                                rootPoint = rootPointForFirstDiagonallMirror;
                             }
                         }
                         else
@@ -321,7 +336,6 @@ namespace G2_2D_LZ
                         break;
                     }
 
-                    //1
                     if (!IsPixelEncoded[nextRootPoint.Y, nextRootX])
                     {
                         break;
@@ -346,22 +360,38 @@ namespace G2_2D_LZ
 
         private int GetNextRootY(int y, int rowOffset, int geometricTransformation)
         {
-            if(geometricTransformation == (int)Constants.GeometricTransformation.HorizontalMirror)
+            if (geometricTransformation == (int) Constants.GeometricTransformation.HorizontalMirror
+                || geometricTransformation == (int)Constants.GeometricTransformation.FirstDiagonalMirror)
             {
                 return y - rowOffset;
             }
 
-            return y + rowOffset;
+            if (geometricTransformation == (int) Constants.GeometricTransformation.Identity
+                || geometricTransformation == (int)Constants.GeometricTransformation.VerticalMirror
+                || geometricTransformation == (int)Constants.GeometricTransformation.NoGeometricTransformation
+                )
+            {
+                return y + rowOffset;
+            }
+
+            throw new InvalidOperationException("geometric tranformation not set" + nameof(GetNextRootY));
         }
 
         private int GetNextRootX(int x, int colOffset, int geometricTransformation)
         {
-            if (geometricTransformation == (int) Constants.GeometricTransformation.VerticalMirror)
+            if (geometricTransformation == (int) Constants.GeometricTransformation.VerticalMirror
+                || geometricTransformation == (int)Constants.GeometricTransformation.FirstDiagonalMirror)
             {
                 return x - colOffset;
             }
+            if (geometricTransformation == (int) Constants.GeometricTransformation.Identity
+                || geometricTransformation == (int) Constants.GeometricTransformation.HorizontalMirror
+                || geometricTransformation == (int) Constants.GeometricTransformation.NoGeometricTransformation)
+            {
+                return x + colOffset;
+            }
 
-            return x + colOffset;
+            throw new InvalidOperationException("geometric tranformation not set" + nameof(GetNextRootX));
         }
 
         private bool IsEdge(int x, int y)
@@ -412,38 +442,59 @@ namespace G2_2D_LZ
             }
         }
 
-        private int GetRootY(int y, int geometricTransformation)
+        private static int GetRootY(int y, int geometricTransformation)
         {
             if (geometricTransformation == (int) Constants.GeometricTransformation.HorizontalMirror)
             {
                 return y;
             }
 
-            var rootY = y - Constants.SearchHeight;
-
-            if (rootY < 0)
+            if (geometricTransformation == (int) Constants.GeometricTransformation.FirstDiagonalMirror)
             {
-                rootY = 0;
+                return y - 1;
             }
 
-            return rootY;
+            if (geometricTransformation == (int) Constants.GeometricTransformation.VerticalMirror
+                || geometricTransformation == (int) Constants.GeometricTransformation.Identity
+                || geometricTransformation == (int) Constants.GeometricTransformation.NoGeometricTransformation)
+            {
+
+                var rootY = y - Constants.SearchHeight;
+
+                if (rootY < 0)
+                {
+                    rootY = 0;
+                }
+
+                return rootY;
+            }
+
+            throw new InvalidOperationException("geometric tranformation not set" + nameof(GetRootY));
         }
 
-        private int GetRootX(int x, int geometricTransformation)
+        private static int GetRootX(int x, int geometricTransformation)
         {
-            if (geometricTransformation == (int) Constants.GeometricTransformation.VerticalMirror)
+            if (geometricTransformation == (int) Constants.GeometricTransformation.VerticalMirror
+                || geometricTransformation == (int)Constants.GeometricTransformation.FirstDiagonalMirror)
             {
                 return x;
             }
 
-            var rootX = x - Constants.SearchWidth;
-
-            if (rootX < 0)
+            if (geometricTransformation == (int) Constants.GeometricTransformation.HorizontalMirror
+                || geometricTransformation == (int) Constants.GeometricTransformation.Identity
+                || geometricTransformation == (int) Constants.GeometricTransformation.NoGeometricTransformation)
             {
-                rootX = 0;
+                var rootX = x - Constants.SearchWidth;
+
+                if (rootX < 0)
+                {
+                    rootX = 0;
+                }
+
+                return rootX;
             }
 
-            return rootX;
+            throw new InvalidOperationException("geometric tranformation not set" + nameof(GetRootX));
         }
 
         private double GetMse(PixelLocation encoderPoint, PixelLocation matchedPoint, Dimension blockDimension, int geometricTransformation)
@@ -456,12 +507,6 @@ namespace G2_2D_LZ
                 {
                     var matchedPointX = GetNextRootX(matchedPoint.X, xx, geometricTransformation);
                     var matchedPointY = GetNextRootY(matchedPoint.Y, yy, geometricTransformation);
-
-                    /*if (matchedPointX < 0)
-                    {
-                        break;
-                    }*/
-
                     sum += Convert.ToInt32(Math.Pow(WorkImage[encoderPoint.Y + yy, encoderPoint.X + xx] -
                                                     WorkImage[matchedPointY, matchedPointX], 2));
                 }

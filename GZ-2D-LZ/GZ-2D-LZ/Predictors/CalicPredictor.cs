@@ -7,6 +7,22 @@ namespace G2_2D_LZ.Predictors
     {
         public override int GetPredictionValue(int x, int y)
         {
+            var predictionValue = GetRawPredictionValue(x, y);
+            
+            if (predictionValue < 0)
+            {
+                predictionValue = 0;
+            }
+            if (predictionValue > 255)
+            {
+                predictionValue = 255;
+            }
+
+            return predictionValue;
+        }
+
+        private int GetRawPredictionValue(int x, int y)
+        {
             if (x == 0 && y == 0)
             {
                 return 128;
@@ -14,7 +30,7 @@ namespace G2_2D_LZ.Predictors
 
             var width = Matrix.GetLength(1) - 1;
 
-            var onePositionLeft = x - 1 < 0 ? 0 : x-1;
+            var onePositionLeft = x - 1 < 0 ? 0 : x - 1;
             var onePositionRight = x + 1 > width ? width : x + 1;
             var onePositionUp = y - 1 < 0 ? 0 : y - 1;
             var twoPositionsUp = y - 2 < 0 ? 0 : y - 2;
@@ -35,16 +51,19 @@ namespace G2_2D_LZ.Predictors
                 ne = 0;
                 nne = 0;
             }
+
             if (y == 1)
             {
                 nn = 0;
                 nne = 0;
             }
+
             if (x == 0)
             {
                 w = 0;
                 ww = 0;
             }
+
             if (x == 1)
             {
                 ww = 0;

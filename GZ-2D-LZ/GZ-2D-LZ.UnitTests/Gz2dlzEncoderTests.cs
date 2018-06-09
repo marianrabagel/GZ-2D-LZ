@@ -27,6 +27,7 @@ namespace GZ_2D_LZ.UnitTests
         public string One6X3MatchBlockBmpPath = Environment.CurrentDirectory + $"{basePath}6x3Block.bmp";
         public string VerticalMirrorBmpPath = Environment.CurrentDirectory + $"{basePath}VerticalMirror.bmp";
         public string HorizontalMirrorBmpPath = Environment.CurrentDirectory + $"{basePath}HorizontalMirror.bmp";
+        public string FirstDiagonalMirrorBmp = Environment.CurrentDirectory + $"{basePath}FirstDiagonalMirror.bmp";
 
         int? specificGeometricTransform = (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.Identity;
 
@@ -398,6 +399,38 @@ namespace GZ_2D_LZ.UnitTests
             Assert.IsNotNull(_encoder.MatchLocation[6, 5]);
             Assert.AreEqual(1, _encoder.MatchLocation[6, 5].X);
             Assert.AreEqual(6, _encoder.MatchLocation[6, 5].Y);
+        }
+
+        [TestMethod]
+        public void EncodeFindsTheExpectedBlockMatchForFirstDiagonalMirrorTransform()
+        {
+            _gz2DlzEncoderFacade.InputFilePath = FirstDiagonalMirrorBmp;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
+
+            G2_2D_LZ.Helpers.Constants.MinMatchSize = 5;
+
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
+           /* _encoder.WorkImage = new byte[10, 12]
+            {    //0      1      2      3      4      5      6      7      8      9      10    11
+                { 50,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0}, //0
+                {  0,   200,     0,     0,     0,    50,   100,   100,     0,     0,    50,    50}, //1
+                {  0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0}, //2
+                {  0,     0,     0,   150,   150,   150,     0,     0,     0,     0,     0,     0}, //3
+                {  0,     0,     0,   250,   250,   250,     0,     0,     0,     0,     0,     0}, //4
+                {  0,     0,     0,   250,   250,   250,     0,     0,   150,     0,     0,     0}, //5
+                {100,     0,     0,     0,     0,   250,   250,   250,   150,     0,     0,     0}, //6
+                {  0,   100,     0,     0,     0,   250,   250,   250,     0,     0,     0,     0}, //7
+                {  0,     0,     0,     0,     0,   150,   150,   150,     0,     0,     0,     0}, //8
+                {  0,     0,     0,     0,     0,   200,   200,   200,     0,     0,     0,     0}  //9
+            };*/
+
+            _encoder.Encode((int) G2_2D_LZ.Helpers.Constants.GeometricTransformation.FirstDiagonalMirror);
+
+            Assert.IsNotNull(_encoder.MatchLocation[6, 5]);
+            Assert.AreEqual(5, _encoder.MatchLocation[6, 5].X);
+            Assert.AreEqual(5, _encoder.MatchLocation[6, 5].Y);
         }
 
         [TestMethod]

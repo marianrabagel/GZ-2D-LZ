@@ -37,6 +37,7 @@
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.LoadFolderBtn = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
+            this.HasGeometricTransformation = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // loadImageBtn
@@ -55,7 +56,7 @@
             // 
             // OriginalImage
             // 
-            this.OriginalImage.Location = new System.Drawing.Point(117, 13);
+            this.OriginalImage.Location = new System.Drawing.Point(189, 13);
             this.OriginalImage.Name = "OriginalImage";
             this.OriginalImage.Size = new System.Drawing.Size(391, 338);
             this.OriginalImage.TabIndex = 1;
@@ -110,11 +111,22 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
+            // HasGeometricTransformation
+            // 
+            this.HasGeometricTransformation.AutoSize = true;
+            this.HasGeometricTransformation.Location = new System.Drawing.Point(12, 246);
+            this.HasGeometricTransformation.Name = "HasGeometricTransformation";
+            this.HasGeometricTransformation.Size = new System.Drawing.Size(171, 17);
+            this.HasGeometricTransformation.TabIndex = 7;
+            this.HasGeometricTransformation.Text = "With geometric transforamtions";
+            this.HasGeometricTransformation.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(691, 453);
+            this.Controls.Add(this.HasGeometricTransformation);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.LoadFolderBtn);
             this.Controls.Add(this.LoadArchiveBtn);
@@ -125,6 +137,7 @@
             this.Name = "Form1";
             this.Text = "Form1";
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -139,6 +152,7 @@
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.Button LoadFolderBtn;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.CheckBox HasGeometricTransformation;
     }
 }
 
