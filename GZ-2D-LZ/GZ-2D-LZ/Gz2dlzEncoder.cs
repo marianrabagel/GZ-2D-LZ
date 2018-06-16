@@ -195,6 +195,13 @@ namespace G2_2D_LZ
         
         private void EncodeWorkImage(int? specificGeometricTransform)
         {
+
+            int countIdentiy = 0;
+            int countVertical = 0;
+            int countHorizontal = 0;
+            int count180 = 0;
+            int countPrediction = 0;
+
             for (int y = 1; y < _height; y++)
             {
                 for (int x = 0; x < _width; x++)
@@ -263,15 +270,43 @@ namespace G2_2D_LZ
                             MatchLocation[y, x] = rootPoint;
                             GeometricTransformation[y, x] = geometricTransformation;
                             SetResidualAndIsPixelEncoded(x, y, geometricTransformation);
+                            
+                            if (geometricTransformation == (int) Constants.GeometricTransformation.Identity)
+                            {
+                                countIdentiy++;
+                            }
+                            if (geometricTransformation == (int)Constants.GeometricTransformation.VerticalMirror)
+                            {
+                                countVertical++;
+                            }
+                            if (geometricTransformation == (int)Constants.GeometricTransformation.HorizontalMirror)
+                            {
+                                countHorizontal++;
+                            }
+                            if (geometricTransformation == (int)Constants.GeometricTransformation.FirstDiagonalMirror)
+                            {
+                                count180++;
+                            }
                         }
                         else
                         {
                             IsMatchFound[y, x] = false;
                             PredictNoMatchBlock(x, y);
                             x += Constants.NoMatchBlockWidth - 1;
+                            countPrediction++;
                         }
                     }
                 }
+            }
+
+            using (StreamWriter wr = new StreamWriter(_gz2DlzEncoderFacade.InputFilePath + "_counts.txt"))
+            {
+                wr.WriteLine(_gz2DlzEncoderFacade.InputFilePath);
+                wr.WriteLine(countIdentiy + ": " + countIdentiy);
+                wr.WriteLine(countVertical+ ": " + countVertical);
+                wr.WriteLine(countHorizontal + ": " + countHorizontal);
+                wr.WriteLine(count180 + ": " + count180);
+                wr.WriteLine(countPrediction + ": " + countPrediction);
             }
         }
 
