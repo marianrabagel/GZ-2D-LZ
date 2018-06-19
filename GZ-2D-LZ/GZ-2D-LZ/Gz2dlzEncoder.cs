@@ -271,7 +271,8 @@ namespace G2_2D_LZ
                             GeometricTransformation[y, x] = geometricTransformation;
                             SetResidualAndIsPixelEncoded(x, y, geometricTransformation);
                             
-                            if (geometricTransformation == (int) Constants.GeometricTransformation.Identity)
+                            if (geometricTransformation == (int) Constants.GeometricTransformation.Identity
+                                || geometricTransformation == (int)Constants.GeometricTransformation.NoGeometricTransformation)
                             {
                                 countIdentiy++;
                             }
@@ -302,11 +303,11 @@ namespace G2_2D_LZ
             using (StreamWriter wr = new StreamWriter(_gz2DlzEncoderFacade.InputFilePath + "_counts.txt"))
             {
                 wr.WriteLine(_gz2DlzEncoderFacade.InputFilePath);
-                wr.WriteLine(countIdentiy + ": " + countIdentiy);
-                wr.WriteLine(countVertical+ ": " + countVertical);
-                wr.WriteLine(countHorizontal + ": " + countHorizontal);
-                wr.WriteLine(count180 + ": " + count180);
-                wr.WriteLine(countPrediction + ": " + countPrediction);
+                wr.WriteLine(nameof(countIdentiy) + ": " + countIdentiy);
+                wr.WriteLine(nameof(countVertical)+ ": " + countVertical);
+                wr.WriteLine(nameof(countHorizontal) + ": " + countHorizontal);
+                wr.WriteLine(nameof(count180) + ": " + count180);
+                wr.WriteLine(nameof(countPrediction) + ": " + countPrediction);
             }
         }
 
@@ -314,7 +315,7 @@ namespace G2_2D_LZ
         {
             BestMatch bestMatch = new BestMatch();
             int rowOffset = 0;
-            var widthOfTheMatchInThePreviousRow = _width - 1 - encoderPoint.X;
+            var widthOfTheMatchInThePreviousRow = _width - encoderPoint.X; //-1
 
             do
             {
@@ -332,7 +333,7 @@ namespace G2_2D_LZ
                     bestMatch.Width = widthOfTheMatchInThePreviousRow;
                     bestMatch.Size = matchSize;
                 }
-            } while (widthOfTheMatchInThePreviousRow != 0 && encoderPoint.Y + rowOffset != _height - 1);
+            } while (widthOfTheMatchInThePreviousRow != 0 && encoderPoint.Y + rowOffset != _height );//-1
 
             return bestMatch;
         }
@@ -351,13 +352,13 @@ namespace G2_2D_LZ
             var nextRootPoint = new PixelLocation(rootPoint.X, nextRootY);
 
             if (IsPixelEncoded[nextRootPoint.Y, nextRootPoint.X]
-                )//|| nextRootPoint.Y >= encoderPoint.Y && nextRootPoint.X >= encoderPoint.X)
+                || nextRootPoint.Y >= encoderPoint.Y && nextRootPoint.X >= encoderPoint.X)
             {
                 do
                 {
                     var nextToBeEncoded = new PixelLocation(encoderPoint.X + colOffset, encoderPoint.Y + rowOffset);
 
-                    if (IsEdge(nextToBeEncoded.X, nextToBeEncoded.Y) 
+                    if (IsHigherThanWidthOrHeight(nextToBeEncoded.X, nextToBeEncoded.Y) 
                         || IsPixelEncoded[nextToBeEncoded.Y, nextToBeEncoded.X])
                     {
                         break;
@@ -370,11 +371,11 @@ namespace G2_2D_LZ
                     {
                         break;
                     }
-
+/*
                     if (!IsPixelEncoded[nextRootPoint.Y, nextRootX])
                     {
                         break;
-                    }
+                    }*/
 
                     var possibleMatchPixel = WorkImage[nextRootPoint.Y, nextRootX];
 
@@ -429,7 +430,7 @@ namespace G2_2D_LZ
             throw new InvalidOperationException("geometric tranformation not set" + nameof(GetNextRootX));
         }
 
-        private bool IsEdge(int x, int y)
+        private bool IsHigherThanWidthOrHeight(int x, int y)
         {
             return x == _width || y == _height ;
         }
@@ -481,7 +482,7 @@ namespace G2_2D_LZ
         {
             if (geometricTransformation == (int) Constants.GeometricTransformation.HorizontalMirror)
             {
-                return y;
+                return y - 1;
             }
 
             if (geometricTransformation == (int) Constants.GeometricTransformation.FirstDiagonalMirror)

@@ -79,6 +79,9 @@
     <Content Include="TestData\Encoder\FirstDiagonalMirror.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="TestData\Encoder\Grey.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestData\Encoder\VerticalMirror.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -88,6 +88,9 @@
     <Content Include="TestData\france.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="TestData\Grey.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestData\HorizontalMirror.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
