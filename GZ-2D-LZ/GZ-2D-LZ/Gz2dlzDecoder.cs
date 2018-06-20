@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Windows.Forms.VisualStyles;
 using BitOperations;
 using G2_2D_LZ.Contracts.Facades;
 using G2_2D_LZ.Helpers;
@@ -303,75 +304,58 @@ namespace G2_2D_LZ
             var matchLocation = MatchLocation[y, x];
             var matchDimension = MatchDimension[y, x];
             
-            for (int yy = 0; yy < matchDimension.Height; yy++)
+            for (int yOffset = 0; yOffset < matchDimension.Height; yOffset++)
             {
-                for (int xx = 0; xx < matchDimension.Width; xx++)
+                for (int xOffset = 0; xOffset < matchDimension.Width; xOffset++)
                 {
-                    if (specificGeometricTransform != (int) Constants.GeometricTransformation.NoGeometricTransformation)
-                    {
-                        if (GeometricTransformation[y, x] == (int) Constants.GeometricTransformation.Identity)
-                        {
-                            specificGeometricTransform = (int) Constants.GeometricTransformation.Identity;
-                        }
-                        if (GeometricTransformation[y, x] == (int) Constants.GeometricTransformation.VerticalMirror)
-                        {
-                            specificGeometricTransform = (int) Constants.GeometricTransformation.VerticalMirror;
-                        }
-                        if (GeometricTransformation[y, x] == (int) Constants.GeometricTransformation.HorizontalMirror)
-                        {
-                            specificGeometricTransform = (int) Constants.GeometricTransformation.HorizontalMirror;
-                        }
-                        if (GeometricTransformation[y, x] == (int)Constants.GeometricTransformation.FirstDiagonalMirror)
-                        {
-                            specificGeometricTransform = (int)Constants.GeometricTransformation.FirstDiagonalMirror;
-                        }
-                    }
-
-                    var nextX = x + xx;
-                    var nextY = y + yy;
-                    var nextRootY = GetNextRootY(matchLocation.Y, yy, specificGeometricTransform);
-                    var nextRootX = GetNextRootX(matchLocation.X, xx, specificGeometricTransform);
-                    WorkImage[nextY, nextX] = (byte) (WorkImage[nextRootY, nextRootX] + Residual[nextY, nextX]);
-                    IsPixelEncoded[nextY, nextX] = false;
+                    var geometricTransformation = GetGeometricTransformation(y, x, specificGeometricTransform);
+                    var nextPixel = new PixelLocation(x + xOffset, y + yOffset);
+                    var nextRootY = NextRoot.GetNextRootY(matchLocation.Y, yOffset, geometricTransformation);
+                    var nextRootX = NextRoot.GetNextRootX(matchLocation.X, xOffset, geometricTransformation);
+                    WorkImage[nextPixel.Y, nextPixel.X] = (byte) (WorkImage[nextRootY, nextRootX] + Residual[nextPixel.Y, nextPixel.X]);
+                    IsPixelEncoded[nextPixel.Y, nextPixel.X] = false;
                 }
             }
         }
 
-        private int GetNextRootY(int y, int rowOffset, int? specificGeometricTransform)
+        private int GetGeometricTransformation(int y, int x, int? specificGeometricTransform)
         {
-            if (specificGeometricTransform == (int) Constants.GeometricTransformation.HorizontalMirror 
-                || specificGeometricTransform == (int)Constants.GeometricTransformation.FirstDiagonalMirror)
+            int geometricTransformation;
+            var isWithGeometricTransformation = specificGeometricTransform != (int) Constants.GeometricTransformation.NoGeometricTransformation;
+
+            if (isWithGeometricTransformation)
             {
-                return y - rowOffset;
+                geometricTransformation = GetGeometricTransformationFromMatrix(y, x);
+            }
+            else
+            {
+                geometricTransformation = (int) Constants.GeometricTransformation.NoGeometricTransformation;
             }
 
-            if (specificGeometricTransform == (int) Constants.GeometricTransformation.Identity
-                || specificGeometricTransform == (int) Constants.GeometricTransformation.VerticalMirror
-                || specificGeometricTransform == (int) Constants.GeometricTransformation.NoGeometricTransformation)
-            {
-
-                return y + rowOffset;
-            }
-
-            throw new InvalidOperationException("geometric tranformation not set" + nameof(GetNextRootY));
+            return geometricTransformation;
         }
 
-        private int GetNextRootX(int x, int colOffset, int? specificGeometricTransform)
+        private int GetGeometricTransformationFromMatrix(int y, int x)
         {
-            if (specificGeometricTransform == (int) Constants.GeometricTransformation.VerticalMirror 
-                || specificGeometricTransform == (int)Constants.GeometricTransformation.FirstDiagonalMirror)
+            if (GeometricTransformation[y, x] == (int) Constants.GeometricTransformation.Identity)
             {
-                return x - colOffset;
+                return (int) Constants.GeometricTransformation.Identity;
+            }
+            if (GeometricTransformation[y, x] == (int) Constants.GeometricTransformation.VerticalMirror)
+            {
+                return (int) Constants.GeometricTransformation.VerticalMirror;
+            }
+            if (GeometricTransformation[y, x] == (int) Constants.GeometricTransformation.HorizontalMirror)
+            {
+                return (int) Constants.GeometricTransformation.HorizontalMirror;
+            }
+            if (GeometricTransformation[y, x] == (int) Constants.GeometricTransformation.FirstDiagonalMirror)
+            {
+                return (int) Constants.GeometricTransformation.FirstDiagonalMirror;
             }
 
-            if (specificGeometricTransform == (int) Constants.GeometricTransformation.Identity
-                || specificGeometricTransform == (int) Constants.GeometricTransformation.HorizontalMirror
-                || specificGeometricTransform == (int) Constants.GeometricTransformation.NoGeometricTransformation)
-            {
-                return x + colOffset;
-            }
-
-            throw new InvalidOperationException("geometric tranformation not set" + nameof(GetNextRootX));
+            throw new InvalidOperationException("geometric transforamtion not found in matrix " +
+                                                nameof(GetGeometricTransformationFromMatrix));
         }
 
         private void ReconstructWithPredictonNoMatchBlock(int y, int x)

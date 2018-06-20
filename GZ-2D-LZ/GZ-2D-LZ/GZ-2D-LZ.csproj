@@ -56,6 +56,7 @@
     <Compile Include="Helpers\Constants.cs" />
     <Compile Include="Gz2dlzDecoder.cs" />
     <Compile Include="Gz2dlzEncoder.cs" />
+    <Compile Include="Helpers\NextRoot.cs" />
     <Compile Include="Helpers\PixelLocation.cs" />
     <Compile Include="Predictors\CalicPredictor.cs" />
     <Compile Include="Readers\BmpImageReader.cs" />

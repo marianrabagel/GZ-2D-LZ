@@ -315,7 +315,7 @@ namespace G2_2D_LZ
         {
             BestMatch bestMatch = new BestMatch();
             int rowOffset = 0;
-            var widthOfTheMatchInThePreviousRow = _width - encoderPoint.X; //-1
+            var widthOfTheMatchInThePreviousRow = _width - encoderPoint.X;
 
             do
             {
@@ -333,7 +333,7 @@ namespace G2_2D_LZ
                     bestMatch.Width = widthOfTheMatchInThePreviousRow;
                     bestMatch.Size = matchSize;
                 }
-            } while (widthOfTheMatchInThePreviousRow != 0 && encoderPoint.Y + rowOffset != _height );//-1
+            } while (widthOfTheMatchInThePreviousRow != 0 && encoderPoint.Y + rowOffset != _height );
 
             return bestMatch;
         }
@@ -342,7 +342,7 @@ namespace G2_2D_LZ
             PixelLocation rootPoint, int widthOfTheMatchInThePreviousRow, int geometricTransformation)
         {
             int colOffset = 0;
-            var nextRootY = GetNextRootY(rootPoint.Y, rowOffset, geometricTransformation);
+            var nextRootY = NextRoot.GetNextRootY(rootPoint.Y, rowOffset, geometricTransformation);
 
             if (nextRootY < 0)
             {
@@ -365,17 +365,12 @@ namespace G2_2D_LZ
                     }
 
                     var pixelToBeEncoded = WorkImage[nextToBeEncoded.Y, nextToBeEncoded.X];
-                    var nextRootX = GetNextRootX(nextRootPoint.X, colOffset, geometricTransformation);
+                    var nextRootX = NextRoot.GetNextRootX(nextRootPoint.X, colOffset, geometricTransformation);
 
                     if (nextRootX < 0)
                     {
                         break;
                     }
-/*
-                    if (!IsPixelEncoded[nextRootPoint.Y, nextRootX])
-                    {
-                        break;
-                    }*/
 
                     var possibleMatchPixel = WorkImage[nextRootPoint.Y, nextRootX];
 
@@ -392,42 +387,6 @@ namespace G2_2D_LZ
             }
 
             return colOffset;
-        }
-
-        private int GetNextRootY(int y, int rowOffset, int geometricTransformation)
-        {
-            if (geometricTransformation == (int) Constants.GeometricTransformation.HorizontalMirror
-                || geometricTransformation == (int)Constants.GeometricTransformation.FirstDiagonalMirror)
-            {
-                return y - rowOffset;
-            }
-
-            if (geometricTransformation == (int) Constants.GeometricTransformation.Identity
-                || geometricTransformation == (int)Constants.GeometricTransformation.VerticalMirror
-                || geometricTransformation == (int)Constants.GeometricTransformation.NoGeometricTransformation
-                )
-            {
-                return y + rowOffset;
-            }
-
-            throw new InvalidOperationException("geometric tranformation not set" + nameof(GetNextRootY));
-        }
-
-        private int GetNextRootX(int x, int colOffset, int geometricTransformation)
-        {
-            if (geometricTransformation == (int) Constants.GeometricTransformation.VerticalMirror
-                || geometricTransformation == (int)Constants.GeometricTransformation.FirstDiagonalMirror)
-            {
-                return x - colOffset;
-            }
-            if (geometricTransformation == (int) Constants.GeometricTransformation.Identity
-                || geometricTransformation == (int) Constants.GeometricTransformation.HorizontalMirror
-                || geometricTransformation == (int) Constants.GeometricTransformation.NoGeometricTransformation)
-            {
-                return x + colOffset;
-            }
-
-            throw new InvalidOperationException("geometric tranformation not set" + nameof(GetNextRootX));
         }
 
         private bool IsHigherThanWidthOrHeight(int x, int y)
@@ -468,8 +427,8 @@ namespace G2_2D_LZ
             {
                 for (int xx = 0; xx < matchDimension.Width; xx++)
                 {
-                    var nextX = GetNextRootX(matchLocation.X, xx, geometricTransformation);
-                    var nextY = GetNextRootY(matchLocation.Y, yy, geometricTransformation);
+                    var nextX = NextRoot.GetNextRootX(matchLocation.X, xx, geometricTransformation);
+                    var nextY = NextRoot.GetNextRootY(matchLocation.Y, yy, geometricTransformation);
                     
                     Residual[encoderY + yy, encoderX + xx] = WorkImage[encoderY + yy, encoderX + xx] -
                                                      WorkImage[nextY, nextX];
@@ -541,8 +500,8 @@ namespace G2_2D_LZ
             {
                 for (int xx = 0; xx < blockDimension.Width; xx++)
                 {
-                    var matchedPointX = GetNextRootX(matchedPoint.X, xx, geometricTransformation);
-                    var matchedPointY = GetNextRootY(matchedPoint.Y, yy, geometricTransformation);
+                    var matchedPointX = NextRoot.GetNextRootX(matchedPoint.X, xx, geometricTransformation);
+                    var matchedPointY = NextRoot.GetNextRootY(matchedPoint.Y, yy, geometricTransformation);
                     sum += Convert.ToInt32(Math.Pow(WorkImage[encoderPoint.Y + yy, encoderPoint.X + xx] -
                                                     WorkImage[matchedPointY, matchedPointX], 2));
                 }
