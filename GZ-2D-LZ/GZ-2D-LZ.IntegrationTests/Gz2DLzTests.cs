@@ -31,6 +31,8 @@ namespace GZ_2D_LZ.IntegrationTests
         private string _horizontalMirrorBmp = "HorizontalMirror.bmp";
         private string _firstDiagonalMirrorBmp = "FirstDiagonalMirror.bmp";
         private string _greyBmp = "Grey.bmp";
+        private string _grey256Bmp = "Grey_256.bmp";
+        private string _twoColorsBmp = "TwoColors.bmp";
 
         private string _2PossibleMatchBlocksBmpPath = "2PossibleMatchBlocks.bmp";
         private string _lenna256AnBmpPath = "Lenna256an.bmp";
@@ -57,6 +59,8 @@ namespace GZ_2D_LZ.IntegrationTests
             _horizontalMirrorBmp = _basePath + _horizontalMirrorBmp;
             _firstDiagonalMirrorBmp = _basePath + _firstDiagonalMirrorBmp;
             _greyBmp = _basePath + _greyBmp;
+            _grey256Bmp = _basePath + _grey256Bmp;
+            _twoColorsBmp = _basePath + _twoColorsBmp;
             _2PossibleMatchBlocksBmpPath = _basePath + _2PossibleMatchBlocksBmpPath;
             _lenna256AnBmpPath = _basePath + _lenna256AnBmpPath;
             _barbBmpPath = _basePath + _barbBmpPath;
@@ -346,7 +350,7 @@ namespace GZ_2D_LZ.IntegrationTests
         }
 
         [TestMethod]
-        public void EncodeAndDecodeWithAPredictorGreyMirrorBmpResultsTheSamePixels()
+        public void EncodeAndDecodeWithAPredictorGreyBmpResultsTheSamePixels()
         {
             _gz2DlzEncoderFacade = new Gz2DlzEncoderFacade
             {
@@ -372,6 +376,64 @@ namespace GZ_2D_LZ.IntegrationTests
 
             var workImage = _decoder.WorkImage;
             CompareValueWithPixelFromBmp(_greyBmp, workImage);
+        }
+
+        [TestMethod]
+        public void EncodeAndDecodeWithAPredictorGrey256BmpResultsTheSamePixels()
+        {
+            _gz2DlzEncoderFacade = new Gz2DlzEncoderFacade
+            {
+                InputFilePath = _grey256Bmp,
+                AbstractPredictor = new ABasedPredictor(),
+                ImageReader = _bmpImageReader,
+                Archiver = new Paq6V2Archiver()
+            };
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
+
+            var inputFilePath = _grey256Bmp + G2_2D_LZ.Helpers.Constants.Folder + Constants.Paq6Extension;
+            _gz2DlzDecoderFacade = new Gz2DlzDecoderFacade
+            {
+                InputFilePath = inputFilePath,
+                AbstractPredictor = new ABasedPredictor(),
+                Archiver = new Paq6V2Archiver()
+            };
+            _decoder = new Gz2DlzDecoder(_gz2DlzDecoderFacade);
+            G2_2D_LZ.Helpers.Constants.MinMatchSize = 5;
+            var geometricTransform = (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.HorizontalMirror;
+            _encoder.Encode(geometricTransform);
+            _decoder.Decode(geometricTransform);
+
+            var workImage = _decoder.WorkImage;
+            CompareValueWithPixelFromBmp(_grey256Bmp, workImage);
+        }
+
+        [TestMethod]
+        public void EncodeAndDecodeWithAPredictorTwoColorsBmpResultsTheSamePixels()
+        {
+            _gz2DlzEncoderFacade = new Gz2DlzEncoderFacade
+            {
+                InputFilePath = _twoColorsBmp,
+                AbstractPredictor = new ABasedPredictor(),
+                ImageReader = _bmpImageReader,
+                Archiver = new Paq6V2Archiver()
+            };
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
+
+            var inputFilePath = _twoColorsBmp + G2_2D_LZ.Helpers.Constants.Folder + Constants.Paq6Extension;
+            _gz2DlzDecoderFacade = new Gz2DlzDecoderFacade
+            {
+                InputFilePath = inputFilePath,
+                AbstractPredictor = new ABasedPredictor(),
+                Archiver = new Paq6V2Archiver()
+            };
+            _decoder = new Gz2DlzDecoder(_gz2DlzDecoderFacade);
+            G2_2D_LZ.Helpers.Constants.MinMatchSize = 5;
+            var geometricTransform = (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.Identity;
+            _encoder.Encode(geometricTransform);
+            _decoder.Decode(geometricTransform);
+
+            var workImage = _decoder.WorkImage;
+            CompareValueWithPixelFromBmp(_twoColorsBmp, workImage);
         }
 
         [TestMethod]

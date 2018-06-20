@@ -318,9 +318,9 @@ namespace G2_2D_LZ
             }
         }
 
-        private int GetGeometricTransformation(int y, int x, int? specificGeometricTransform)
+        private Constants.GeometricTransformation GetGeometricTransformation(int y, int x, int? specificGeometricTransform)
         {
-            int geometricTransformation;
+            Constants.GeometricTransformation geometricTransformation;
             var isWithGeometricTransformation = specificGeometricTransform != (int) Constants.GeometricTransformation.NoGeometricTransformation;
 
             if (isWithGeometricTransformation)
@@ -329,29 +329,29 @@ namespace G2_2D_LZ
             }
             else
             {
-                geometricTransformation = (int) Constants.GeometricTransformation.NoGeometricTransformation;
+                geometricTransformation = Constants.GeometricTransformation.NoGeometricTransformation;
             }
 
             return geometricTransformation;
         }
 
-        private int GetGeometricTransformationFromMatrix(int y, int x)
+        private Constants.GeometricTransformation GetGeometricTransformationFromMatrix(int y, int x)
         {
             if (GeometricTransformation[y, x] == (int) Constants.GeometricTransformation.Identity)
             {
-                return (int) Constants.GeometricTransformation.Identity;
+                return  Constants.GeometricTransformation.Identity;
             }
             if (GeometricTransformation[y, x] == (int) Constants.GeometricTransformation.VerticalMirror)
             {
-                return (int) Constants.GeometricTransformation.VerticalMirror;
+                return Constants.GeometricTransformation.VerticalMirror;
             }
             if (GeometricTransformation[y, x] == (int) Constants.GeometricTransformation.HorizontalMirror)
             {
-                return (int) Constants.GeometricTransformation.HorizontalMirror;
+                return Constants.GeometricTransformation.HorizontalMirror;
             }
             if (GeometricTransformation[y, x] == (int) Constants.GeometricTransformation.FirstDiagonalMirror)
             {
-                return (int) Constants.GeometricTransformation.FirstDiagonalMirror;
+                return Constants.GeometricTransformation.FirstDiagonalMirror;
             }
 
             throw new InvalidOperationException("geometric transforamtion not found in matrix " +

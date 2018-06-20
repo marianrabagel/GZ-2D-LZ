@@ -29,6 +29,8 @@ namespace GZ_2D_LZ.UnitTests
         public string HorizontalMirrorBmpPath = Environment.CurrentDirectory + $"{basePath}HorizontalMirror.bmp";
         public string FirstDiagonalMirrorBmp = Environment.CurrentDirectory + $"{basePath}FirstDiagonalMirror.bmp";
         public string GreyBmp = Environment.CurrentDirectory + $"{basePath}Grey.bmp";
+        public string Grey256Bmp = Environment.CurrentDirectory + $"{basePath}Grey_256.bmp";
+        public string TwoColorsBmp = Environment.CurrentDirectory + $"{basePath}TwoColors.bmp";
 
         readonly int? specificGeometricTransform = (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.Identity;
 
@@ -214,7 +216,7 @@ namespace GZ_2D_LZ.UnitTests
             var encoderPosition = new PixelLocation(5, 6);
             var rootPosition = new PixelLocation(5, 2);
 
-            BestMatch bestMatch = _encoder.LocateTheBestAproximateMatchForGivenRootPixel(encoderPosition, rootPosition, (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.VerticalMirror);
+            BestMatch bestMatch = _encoder.LocateTheBestAproximateMatchForGivenRootPixel(encoderPosition, rootPosition, G2_2D_LZ.Helpers.Constants.GeometricTransformation.VerticalMirror);
 
             Assert.AreEqual(2, bestMatch.Height);
             Assert.AreEqual(3, bestMatch.Width);
@@ -241,6 +243,46 @@ namespace GZ_2D_LZ.UnitTests
             Assert.AreEqual(108, bestMatch.Size);
         }
 
+        [TestMethod]
+        public void LocateTheBestAproximateMatchForGivenRootPixelGivesTheExpectedBestMatchForGrey256Image()
+        {
+            _gz2DlzEncoderFacade.InputFilePath = Grey256Bmp;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
+            var originalImage = _encoder.WorkImage;
+            MarkFirstRowAsPredicted(originalImage);
+            var encoderPosition = new PixelLocation(0, 1);
+            var rootPosition = new PixelLocation(0, 0);
+
+            BestMatch bestMatch = _encoder.LocateTheBestAproximateMatchForGivenRootPixel(encoderPosition, rootPosition, (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.Identity);
+
+            Assert.AreEqual(255, bestMatch.Height);
+            Assert.AreEqual(256, bestMatch.Width);
+            Assert.AreEqual(255*256, bestMatch.Size);
+        }
+
+        [TestMethod]
+        public void LocateTheBestAproximateMatchForGivenRootPixelGivesTheExpectedBestMatchForTwoColorsImage()
+        {
+            _gz2DlzEncoderFacade.InputFilePath = TwoColorsBmp;
+            _gz2DlzEncoderFacade.AbstractPredictor = new ABasedPredictor();
+            _gz2DlzEncoderFacade.ImageReader = _bmpReader;
+            _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
+            _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
+            var originalImage = _encoder.WorkImage;
+            MarkFirstRowAsPredicted(originalImage);
+            var encoderPosition = new PixelLocation(128, 1);
+            var rootPosition = new PixelLocation(128, 0);
+
+            BestMatch bestMatch = _encoder.LocateTheBestAproximateMatchForGivenRootPixel(encoderPosition, rootPosition, (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.Identity);
+
+            Assert.AreEqual(255, bestMatch.Height);
+            Assert.AreEqual(128, bestMatch.Width);
+            Assert.AreEqual(255 * 128, bestMatch.Size);
+        }
+
         private void MarkFirstRowAsPredicted(byte[,] originalImage)
         {
             for (int x = 0; x < originalImage.GetLength(1); x++)
@@ -258,7 +300,7 @@ namespace GZ_2D_LZ.UnitTests
             _gz2DlzEncoderFacade.Archiver = new Paq6V2Archiver();
             _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
             _encoder.WorkImage = new byte[10, 12]
-            {  //0      1      2      3      4      5      6      7      8      9      10    11
+            {    //0      1      2      3      4      5      6      7      8      9      10    11
                 { 50,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0}, //0
                 {  0,   200,     0,     0,     0,    50,   100,   100,     0,     0,    50,    50}, //1
                 {  0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0}, //2
@@ -280,7 +322,7 @@ namespace GZ_2D_LZ.UnitTests
             var encoderPosition = new PixelLocation(5, 6);
             var rootPosition = new PixelLocation(1, 6);
 
-            BestMatch bestMatch = _encoder.LocateTheBestAproximateMatchForGivenRootPixel(encoderPosition, rootPosition, (int)G2_2D_LZ.Helpers.Constants.GeometricTransformation.HorizontalMirror);
+            BestMatch bestMatch = _encoder.LocateTheBestAproximateMatchForGivenRootPixel(encoderPosition, rootPosition, G2_2D_LZ.Helpers.Constants.GeometricTransformation.HorizontalMirror);
 
             Assert.AreEqual(3, bestMatch.Height);
             Assert.AreEqual(3, bestMatch.Width);

@@ -73,6 +73,12 @@
     <Content Include="TestData\Encoder\2PossibleMatchBlocks.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="TestData\Encoder\TwoColors.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestData\Encoder\Grey_256.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestData\Encoder\HorizontalMirror.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

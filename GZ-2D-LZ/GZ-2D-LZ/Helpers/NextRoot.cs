@@ -4,16 +4,16 @@ namespace G2_2D_LZ.Helpers
 {
     public class NextRoot
     {
-        public static int GetNextRootX(int x, int colOffset, int geometricTransformation)
+        public static int GetNextRootX(int x, int colOffset, Constants.GeometricTransformation geometricTransformation)
         {
-            if (geometricTransformation == (int)Constants.GeometricTransformation.VerticalMirror
-                || geometricTransformation == (int)Constants.GeometricTransformation.FirstDiagonalMirror)
+            if (geometricTransformation == Constants.GeometricTransformation.VerticalMirror
+                || geometricTransformation == Constants.GeometricTransformation.FirstDiagonalMirror)
             {
                 return x - colOffset;
             }
-            if (geometricTransformation == (int)Constants.GeometricTransformation.Identity
-                || geometricTransformation == (int)Constants.GeometricTransformation.HorizontalMirror
-                || geometricTransformation == (int)Constants.GeometricTransformation.NoGeometricTransformation)
+            if (geometricTransformation == Constants.GeometricTransformation.Identity
+                || geometricTransformation == Constants.GeometricTransformation.HorizontalMirror
+                || geometricTransformation == Constants.GeometricTransformation.NoGeometricTransformation)
             {
                 return x + colOffset;
             }
@@ -21,17 +21,17 @@ namespace G2_2D_LZ.Helpers
             throw new InvalidOperationException("geometric tranformation not set" + nameof(GetNextRootX));
         }
 
-        public static int GetNextRootY(int y, int rowOffset, int geometricTransformation)
+        public static int GetNextRootY(int y, int rowOffset, Constants.GeometricTransformation geometricTransformation)
         {
-            if (geometricTransformation == (int)Constants.GeometricTransformation.HorizontalMirror
-                || geometricTransformation == (int)Constants.GeometricTransformation.FirstDiagonalMirror)
+            if (geometricTransformation == Constants.GeometricTransformation.HorizontalMirror
+                || geometricTransformation == Constants.GeometricTransformation.FirstDiagonalMirror)
             {
                 return y - rowOffset;
             }
 
-            if (geometricTransformation == (int)Constants.GeometricTransformation.Identity
-                || geometricTransformation == (int)Constants.GeometricTransformation.VerticalMirror
-                || geometricTransformation == (int)Constants.GeometricTransformation.NoGeometricTransformation
+            if (geometricTransformation == Constants.GeometricTransformation.Identity
+                || geometricTransformation == Constants.GeometricTransformation.VerticalMirror
+                || geometricTransformation == Constants.GeometricTransformation.NoGeometricTransformation
             )
             {
                 return y + rowOffset;
