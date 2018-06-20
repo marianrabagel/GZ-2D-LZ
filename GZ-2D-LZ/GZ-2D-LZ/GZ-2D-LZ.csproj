@@ -52,6 +52,7 @@
     <Compile Include="Facades\Gz2DlzDecoderFacade.cs" />
     <Compile Include="Facades\Gz2DlzEncoderFacade.cs" />
     <Compile Include="Helpers\BestMatch.cs" />
+    <Compile Include="Helpers\BestMatchDetails.cs" />
     <Compile Include="Helpers\Dimension.cs" />
     <Compile Include="Helpers\Constants.cs" />
     <Compile Include="Gz2dlzDecoder.cs" />

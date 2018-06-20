@@ -195,7 +195,6 @@ namespace G2_2D_LZ
         
         private void EncodeWorkImage(int? specificGeometricTransform)
         {
-
             int countIdentiy = 0;
             int countVertical = 0;
             int countHorizontal = 0;
@@ -208,83 +207,40 @@ namespace G2_2D_LZ
                 {
                     if (!IsPixelEncoded[y, x])
                     {
-                        PixelLocation rootPoint;
                         var encoderPoint = new PixelLocation(x, y);
-                        BestMatch bestMatch;
-                        int geometricTransformation;
+                        BestMatchDetails bestMatchDetails;
+                        var isForAllGeometricTransformation = specificGeometricTransform == null;
 
-                        if (specificGeometricTransform == null)
+                        if (isForAllGeometricTransformation)
                         {
-                            geometricTransformation = (int) Constants.GeometricTransformation.Identity;
-                            var rootPointForIdentity = new PixelLocation(GetRootX(encoderPoint.X, geometricTransformation), GetRootY(encoderPoint.Y, geometricTransformation));
-                            var bestMatchIdentity = LocateTheBestAproximateMatchForGivenRootPixel(encoderPoint, rootPointForIdentity, geometricTransformation);
-
-                            geometricTransformation = (int) Constants.GeometricTransformation.VerticalMirror;
-                            var rootPointForVerticalMirror = new PixelLocation(GetRootX(encoderPoint.X, geometricTransformation), GetRootY(encoderPoint.Y, geometricTransformation));
-                            var bestMatchVerticalMirror = LocateTheBestAproximateMatchForGivenRootPixel(encoderPoint, rootPointForVerticalMirror, geometricTransformation);
-
-                            geometricTransformation = (int) Constants.GeometricTransformation.HorizontalMirror;
-                            var rootPointForHorizontalMirror = new PixelLocation(GetRootX(encoderPoint.X, geometricTransformation), GetRootY(encoderPoint.Y, geometricTransformation));
-                            var bestMatchHorizontalMirror = LocateTheBestAproximateMatchForGivenRootPixel(encoderPoint, rootPointForVerticalMirror, geometricTransformation);
-
-                            geometricTransformation = (int)Constants.GeometricTransformation.FirstDiagonalMirror;
-                            var rootPointForFirstDiagonallMirror = new PixelLocation(GetRootX(encoderPoint.X, geometricTransformation), GetRootY(encoderPoint.Y, geometricTransformation));
-                            var bestMatchForFIrstDiagonalMirror = LocateTheBestAproximateMatchForGivenRootPixel(encoderPoint, rootPointForFirstDiagonallMirror, geometricTransformation);
-
-                            if (bestMatchIdentity.Size >= bestMatchVerticalMirror.Size)
-                            {
-                                bestMatch = bestMatchIdentity;
-                                geometricTransformation = (int) Constants.GeometricTransformation.Identity;
-                                rootPoint = rootPointForIdentity;
-                            }
-                            else
-                            {
-                                bestMatch = bestMatchVerticalMirror;
-                                geometricTransformation = (int) Constants.GeometricTransformation.VerticalMirror;
-                                rootPoint = rootPointForVerticalMirror;
-                            }
-
-                            if (bestMatchHorizontalMirror.Size > bestMatch.Size)
-                            {
-                                bestMatch = bestMatchHorizontalMirror;
-                                geometricTransformation = (int) Constants.GeometricTransformation.HorizontalMirror;
-                                rootPoint = rootPointForHorizontalMirror;
-                            }
-                            if (bestMatchForFIrstDiagonalMirror.Size > bestMatch.Size)
-                            {
-                                bestMatch = bestMatchForFIrstDiagonalMirror;
-                                geometricTransformation = (int)Constants.GeometricTransformation.FirstDiagonalMirror;
-                                rootPoint = rootPointForFirstDiagonallMirror;
-                            }
+                            bestMatchDetails = GetBestMatchDetailsOutOfAllGeometricTransformations(encoderPoint);
                         }
                         else
                         {
-                            geometricTransformation = (int) specificGeometricTransform;
-                            rootPoint = new PixelLocation(GetRootX(x, geometricTransformation), GetRootY(y, geometricTransformation));
-                            bestMatch = LocateTheBestAproximateMatchForGivenRootPixel(encoderPoint, rootPoint, geometricTransformation);
+                            bestMatchDetails = GetBestMatchDetails(encoderPoint, (int) specificGeometricTransform);
                         }
-                        if (bestMatch.Size > Constants.MinMatchSize)
+                        if (bestMatchDetails.BestMatch.Size > Constants.MinMatchSize)
                         {
                             IsMatchFound[y, x] = true;
-                            MatchDimension[y, x] = new Dimension(bestMatch.Width, bestMatch.Height);
-                            MatchLocation[y, x] = rootPoint;
-                            GeometricTransformation[y, x] = geometricTransformation;
-                            SetResidualAndIsPixelEncoded(x, y, geometricTransformation);
+                            MatchDimension[y, x] = new Dimension(bestMatchDetails.BestMatch.Width, bestMatchDetails.BestMatch.Height);
+                            MatchLocation[y, x] = bestMatchDetails.RootPoint;
+                            GeometricTransformation[y, x] = bestMatchDetails.GeometricTransformation;
+                            SetResidualAndIsPixelEncoded(x, y, bestMatchDetails.GeometricTransformation);
                             
-                            if (geometricTransformation == (int) Constants.GeometricTransformation.Identity
-                                || geometricTransformation == (int)Constants.GeometricTransformation.NoGeometricTransformation)
+                            if (bestMatchDetails.GeometricTransformation == (int) Constants.GeometricTransformation.Identity
+                                || bestMatchDetails.GeometricTransformation == (int)Constants.GeometricTransformation.NoGeometricTransformation)
                             {
                                 countIdentiy++;
                             }
-                            if (geometricTransformation == (int)Constants.GeometricTransformation.VerticalMirror)
+                            if (bestMatchDetails.GeometricTransformation == (int)Constants.GeometricTransformation.VerticalMirror)
                             {
                                 countVertical++;
                             }
-                            if (geometricTransformation == (int)Constants.GeometricTransformation.HorizontalMirror)
+                            if (bestMatchDetails.GeometricTransformation == (int)Constants.GeometricTransformation.HorizontalMirror)
                             {
                                 countHorizontal++;
                             }
-                            if (geometricTransformation == (int)Constants.GeometricTransformation.FirstDiagonalMirror)
+                            if (bestMatchDetails.GeometricTransformation == (int)Constants.GeometricTransformation.FirstDiagonalMirror)
                             {
                                 count180++;
                             }
@@ -309,6 +265,46 @@ namespace G2_2D_LZ
                 wr.WriteLine(nameof(count180) + ": " + count180);
                 wr.WriteLine(nameof(countPrediction) + ": " + countPrediction);
             }
+        }
+
+        private BestMatchDetails GetBestMatchDetailsOutOfAllGeometricTransformations(PixelLocation encoderPoint)
+        {
+            BestMatchDetails bestMatchDetails;
+            BestMatchDetails bestMatchDetailsForIdentity = GetBestMatchDetails(encoderPoint, (int) Constants.GeometricTransformation.Identity);
+            BestMatchDetails bestMatchDetailsForVerticalMirror = GetBestMatchDetails(encoderPoint, (int) Constants.GeometricTransformation.VerticalMirror);
+            BestMatchDetails bestMatchDetailsForHorizontalMirror = GetBestMatchDetails(encoderPoint, (int) Constants.GeometricTransformation.HorizontalMirror);
+            BestMatchDetails bestMatchDetailsFor180Flip = GetBestMatchDetails(encoderPoint, (int) Constants.GeometricTransformation.FirstDiagonalMirror);
+
+            if (bestMatchDetailsForIdentity.BestMatch.Size >= bestMatchDetailsForVerticalMirror.BestMatch.Size)
+            {
+                bestMatchDetails = bestMatchDetailsForIdentity;
+            }
+            else
+            {
+                bestMatchDetails = bestMatchDetailsForVerticalMirror;
+            }
+            if (bestMatchDetailsForHorizontalMirror.BestMatch.Size > bestMatchDetails.BestMatch.Size)
+            {
+                bestMatchDetails = bestMatchDetailsForHorizontalMirror;
+            }
+            if (bestMatchDetailsFor180Flip.BestMatch.Size > bestMatchDetails.BestMatch.Size)
+            {
+                bestMatchDetails = bestMatchDetailsFor180Flip;
+            }
+
+            return bestMatchDetails;
+        }
+
+        private BestMatchDetails GetBestMatchDetails(PixelLocation encoderPoint, int geometricTransformation)
+        {
+            var rootPoint = new PixelLocation(GetRootX(encoderPoint.X, geometricTransformation), GetRootY(encoderPoint.Y, geometricTransformation));
+
+            return new BestMatchDetails
+            {
+                GeometricTransformation = geometricTransformation,
+                RootPoint = rootPoint,
+                BestMatch = LocateTheBestAproximateMatchForGivenRootPixel(encoderPoint, rootPoint, geometricTransformation)
+            };
         }
 
         public BestMatch LocateTheBestAproximateMatchForGivenRootPixel(PixelLocation encoderPoint, PixelLocation rootPoint, int geometricTransformation)
