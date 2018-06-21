@@ -1011,7 +1011,6 @@ namespace GZ_2D_LZ.IntegrationTests
             CompareValueWithPixelFromBmp(_franceBmpPath, workImage);
         }
 
-
         [TestMethod]
         public void EncodeAndDecodeWithAPredictorAndBitOperationsTestBmpResultsTheSamePixels()
         {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using BitOperations;
 using BitOperations.Contracts;
@@ -329,7 +330,7 @@ namespace G2_2D_LZ
                 var matchSize = widthOfTheMatchInThePreviousRow * rowOffset;
                 var blockDimensions = new Dimension(widthOfTheMatchInThePreviousRow, rowOffset);
                 var matchMse = GetMse(encoderPoint, rootPoint, blockDimensions, geometricTransformation);
-
+                
                 if (matchSize >= bestMatch.Size && matchMse <= Constants.MaxMse)
                 {
                     bestMatch.Height = rowOffset;
@@ -378,7 +379,8 @@ namespace G2_2D_LZ
 
                     var possibleMatchPixel = WorkImage[nextRootPoint.Y, nextRootX];
 
-                    if (Math.Abs(pixelToBeEncoded - possibleMatchPixel) <= Constants.Threshold)
+                    int value = pixelToBeEncoded - possibleMatchPixel;
+                    if (Math.Abs(value) <= Constants.Threshold)
                     {
                         colOffset++;
                     }
@@ -504,14 +506,24 @@ namespace G2_2D_LZ
             {
                 for (int xx = 0; xx < blockDimension.Width; xx++)
                 {
-                    var matchedPointX = NextRoot.GetNextRootX(matchedPoint.X, xx, geometricTransformation);
-                    var matchedPointY = NextRoot.GetNextRootY(matchedPoint.Y, yy, geometricTransformation);
+                    var matchedLocation = new PixelLocation
+                    {
+                        X = NextRoot.GetNextRootX(matchedPoint.X, xx, geometricTransformation),
+                        Y = NextRoot.GetNextRootY(matchedPoint.Y, yy, geometricTransformation)
+                    };
+                    //var matchedPointX = NextRoot.GetNextRootX(matchedPoint.X, xx, geometricTransformation);
+                    //var matchedPointY = NextRoot.GetNextRootY(matchedPoint.Y, yy, geometricTransformation);
                     sum += Convert.ToInt32(Math.Pow(WorkImage[encoderPoint.Y + yy, encoderPoint.X + xx] -
-                                                    WorkImage[matchedPointY, matchedPointX], 2));
+                                                    WorkImage[matchedLocation.Y, matchedLocation.X], 2));
                 }
             }
 
-            return sum / (double) blockDimension.Height * blockDimension.Width;
+            var size = blockDimension.Height * blockDimension.Width;
+            /*Debug.Write("sum: " + sum + " | width: " + blockDimension.Width + " | height: " + blockDimension.Height
+                        + " | size: " + size + " | mse: " + sum / (double) size + Environment.NewLine);*/
+
+
+            return sum / (double) size;
         }
 
         private void InstatiateTables()
