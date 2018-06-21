@@ -2,6 +2,6 @@
 {
     public interface IImageReader
     {
-        byte[,] GetImageFromFile(string inputFileName);
+        byte[,]  GetImageFromFile(string inputFileName);
     }
 }
