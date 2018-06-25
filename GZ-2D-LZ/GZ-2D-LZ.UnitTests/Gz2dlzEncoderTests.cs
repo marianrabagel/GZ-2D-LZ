@@ -481,7 +481,7 @@ namespace GZ_2D_LZ.UnitTests
             G2_2D_LZ.Helpers.Constants.MinMatchSize = 5;
 
             _encoder = new Gz2DlzEncoder(_gz2DlzEncoderFacade);
-           /* _encoder.WorkImage = new byte[10, 12]
+            _encoder.WorkImage = new byte[10, 12]
             {    //0      1      2      3      4      5      6      7      8      9      10    11
                 { 50,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0}, //0
                 {  0,   200,     0,     0,     0,    50,   100,   100,     0,     0,    50,    50}, //1
@@ -493,7 +493,7 @@ namespace GZ_2D_LZ.UnitTests
                 {  0,   100,     0,     0,     0,   250,   250,   250,     0,     0,     0,     0}, //7
                 {  0,     0,     0,     0,     0,   150,   150,   150,     0,     0,     0,     0}, //8
                 {  0,     0,     0,     0,     0,   200,   200,   200,     0,     0,     0,     0}  //9
-            };*/
+            };
 
             _encoder.Encode((int) G2_2D_LZ.Helpers.Constants.GeometricTransformation.FirstDiagonalMirror);
 

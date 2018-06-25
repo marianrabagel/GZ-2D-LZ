@@ -498,7 +498,8 @@ namespace G2_2D_LZ
             throw new InvalidOperationException("geometric tranformation not set" + nameof(GetRootX));
         }
 
-        private double GetMse(PixelLocation encoderPoint, PixelLocation matchedPoint, Dimension blockDimension, Constants.GeometricTransformation geometricTransformation)
+        private double GetMse(PixelLocation encoderPoint, PixelLocation matchedPoint, Dimension blockDimension,
+            Constants.GeometricTransformation geometricTransformation)
         {
             int sum = 0;
 
@@ -511,17 +512,12 @@ namespace G2_2D_LZ
                         X = NextRoot.GetNextRootX(matchedPoint.X, xx, geometricTransformation),
                         Y = NextRoot.GetNextRootY(matchedPoint.Y, yy, geometricTransformation)
                     };
-                    //var matchedPointX = NextRoot.GetNextRootX(matchedPoint.X, xx, geometricTransformation);
-                    //var matchedPointY = NextRoot.GetNextRootY(matchedPoint.Y, yy, geometricTransformation);
                     sum += Convert.ToInt32(Math.Pow(WorkImage[encoderPoint.Y + yy, encoderPoint.X + xx] -
                                                     WorkImage[matchedLocation.Y, matchedLocation.X], 2));
                 }
             }
 
             var size = blockDimension.Height * blockDimension.Width;
-            /*Debug.Write("sum: " + sum + " | width: " + blockDimension.Width + " | height: " + blockDimension.Height
-                        + " | size: " + size + " | mse: " + sum / (double) size + Environment.NewLine);*/
-
 
             return sum / (double) size;
         }
