@@ -363,8 +363,8 @@ namespace G2_2D_LZ
                 {
                     var nextToBeEncoded = new PixelLocation(encoderPoint.X + colOffset, encoderPoint.Y + rowOffset);
 
-                    if (IsOutOfBounds(nextToBeEncoded.X, nextToBeEncoded.Y) 
-                        || IsPixelEncoded[nextToBeEncoded.Y, nextToBeEncoded.X])
+                    if (IsOutOfBounds(nextToBeEncoded.X, nextToBeEncoded.Y)) 
+                        //|| IsPixelEncoded[nextToBeEncoded.Y, nextToBeEncoded.X])
                     {
                         break;
                     }
@@ -502,24 +502,30 @@ namespace G2_2D_LZ
             Constants.GeometricTransformation geometricTransformation)
         {
             int sum = 0;
+            int ct = 0;
 
             for (int yy = 0; yy < blockDimension.Height; yy++)
             {
                 for (int xx = 0; xx < blockDimension.Width; xx++)
                 {
-                    var matchedLocation = new PixelLocation
+                    if (!IsPixelEncoded[encoderPoint.Y, encoderPoint.X])
                     {
-                        X = NextRoot.GetNextRootX(matchedPoint.X, xx, geometricTransformation),
-                        Y = NextRoot.GetNextRootY(matchedPoint.Y, yy, geometricTransformation)
-                    };
-                    sum += Convert.ToInt32(Math.Pow(WorkImage[encoderPoint.Y + yy, encoderPoint.X + xx] -
-                                                    WorkImage[matchedLocation.Y, matchedLocation.X], 2));
+                        ct++;
+
+                        var matchedLocation = new PixelLocation
+                        {
+                            X = NextRoot.GetNextRootX(matchedPoint.X, xx, geometricTransformation),
+                            Y = NextRoot.GetNextRootY(matchedPoint.Y, yy, geometricTransformation)
+                        };
+                        sum += Convert.ToInt32(Math.Pow(WorkImage[encoderPoint.Y + yy, encoderPoint.X + xx] -
+                                                        WorkImage[matchedLocation.Y, matchedLocation.X], 2));
+                    }
                 }
             }
 
-            var size = blockDimension.Height * blockDimension.Width;
+            //var size = blockDimension.Height * blockDimension.Width;
 
-            return sum / (double) size;
+            return sum / (double) ct;
         }
 
         private void InstatiateTables()
