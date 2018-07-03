@@ -986,6 +986,7 @@ namespace GZ_2D_LZ.IntegrationTests
         }
 
         [TestMethod]
+        [Ignore]
         public void EncodeAndDecodeWithCalicPredictorFranceBmpResultsTheSamePixelsAll()
         {
             _gz2DlzEncoderFacade = new Gz2DlzEncoderFacade();
